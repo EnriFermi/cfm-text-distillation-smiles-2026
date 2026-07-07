@@ -1,0 +1,48 @@
+# @package _global_
+# M1 — full-sequence CFM baseline on text8 (the reference for H1/H2).
+# Canonical recipe = upstream text8_dit_ecld, but logger-agnostic (pick logger on the
+# CLI: `logger=comet`) and with standardized eval-step list. Quality is measured with
+# the standalone harness (eval/run_eval.py); training only logs cheap entropy.
+#
+#   python -m semicat.train experiment=cfm_text8_baseline trainer=gpu logger=comet
+#
+defaults:
+  - override /data: text8
+  - override /model: text8_dit_lg
+  - override /trainer: default
+
+seed: 12345
+
+trainer:
+  max_steps: 500000
+  val_check_interval: 10000
+  check_val_every_n_epoch: null
+  precision: bf16-mixed
+  accumulate_grad_batches: 8
+  gradient_clip_val: 1.0
+
+model:
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 1e-4
+    weight_decay: 0.1
+  scheduler:
+    _target_: torch.optim.lr_scheduler.LinearLR
+    _partial_: true
+    start_factor: 1e-3
+    total_iters: 500
+  net:
+    length: ${data.k}
+    dropout: 0.1
+    embed_type: rms
+  compile: true
+  calc_nll: false          # quality comes from eval/run_eval.py; keep training cheap
+  nll_steps: [1, 2, 4, 8, 16]   # standardized so entropy curves are comparable
+  nll_samples: 16
+  sd_type: ecld
+
+data:
+  batch_size: 256
+
+tags: ["M1", "cfm", "text8", "baseline", "ecld"]

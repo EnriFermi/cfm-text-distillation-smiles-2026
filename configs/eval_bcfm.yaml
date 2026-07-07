@@ -1,0 +1,52 @@
+# @package _global_
+# Standalone BCFM evaluation harness (see eval/run_eval.py).
+# Composes data + model + a sampler, loads a checkpoint, writes results/<exp_name>/.
+
+defaults:
+  - _self_
+  - data: text8
+  - model: text8_dit_lg
+  - sampler: bcfm_infer
+  - paths: default
+  - extras: default
+  - hydra: default
+
+task_name: eval_bcfm
+tags: [bcfm, eval]
+
+# null => fresh (untrained) model, for plumbing smoke tests. Set to an M1 checkpoint
+# to evaluate the real thing.
+ckpt_path: null
+
+# The net config MUST match the checkpoint's architecture (loading is strict).
+# These mirror experiment/cfm_text8_baseline.yaml; override on the CLI if you
+# evaluate a checkpoint trained with different net settings.
+model:
+  optimizer: null          # not needed for sampling
+  net:
+    length: ${data.k}
+    embed_type: rms
+    dropout: 0.1
+
+# identifies the model family in metrics.json (M1 / M2 / M3); defaults to the sampler
+# name ("data" for sampler=gold).
+model_id: null
+
+seed: 0
+device: cuda
+
+n_samples: 256
+batch_size: 128
+
+# entropy_per_block bucket size; null => the sampler's block_size (set e.g. 16 for
+# full_cfm so its entropy curve is comparable to blockwise runs — E5).
+report_block_size: null
+
+detok: true          # tensor -> strings (needs data/text8/{train,val}.bin, meta.pkl)
+judge: true          # compute generative perplexity (downloads the judge LM)
+judge_model: gpt2-large
+judge_batch_size: 64
+
+# results land in results/${exp_name}/ — every swept axis must appear here or two jobs
+# overwrite each other. Custom-schedule runs (E10): set exp_name manually.
+exp_name: ${sampler.name}_b${oc.select:sampler.block_size,${data.k}}_s${oc.select:sampler.steps_per_block,${oc.select:sampler.steps,0}}_${oc.select:sampler.prefix,generated}_${oc.select:sampler.prefix_mode,clean}_${oc.select:sampler.discretize,argmax}_seed${seed}

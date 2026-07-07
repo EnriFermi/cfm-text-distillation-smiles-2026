@@ -1,0 +1,185 @@
+% Author Name: José Areia
+% Author Contact: jose.apareia@gmail.com
+% Version: 1.0.3 - 18/04/2025
+% Public Repository: https://github.com/joseareia/nob-article
+
+% Packages & Document Configurations
+\documentclass[twocolumn]{style}
+\runninghead{SMILES Summer School Projects Proceedings}
+\footertext{\textit{SMILES} 2025}
+
+% Algorithm typesetting
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Title
+
+\title{Block Categorical Flow Maps for Few-Step Semi-Autoregressive Text Generation}
+\logo{SKOLTECH_MACHINE-LEA.png}
+
+
+% Authors
+\author{
+    Sergei Kholkin\textsuperscript{1}
+}
+
+% Affiliations
+\date{
+    \textsuperscript{\textbf{1}}
+    Skolkovo Institute of Science and Technology
+}
+
+% Abstract
+
+
+
+\begin{document}
+\twocolumn[\maketitle]
+\small
+\begin{abstract}
+    \noindent Autoregressive (AR) language models generate text one token at a time, so an $L$-token sequence always costs $L$ sequential steps, a hard latency floor. Discrete diffusion and categorical flow based models lifts this floor by decoding many tokens in parallel, yet still spends many denoising steps to reach good quality. Categorical flow maps (CFM) leverage contermporary technique for flow based models acceleration cut this to a single jump from noise to text by distilling the diffusion denoiser, but produce one whole sequence at a fixed length. While the latest discrete diffusion setups do emply semi-autoregressive sampling, which alleviates quality and allow for arbitrary length of sequnce generation as long as other features like KV-cache. Then we propose \textbf{Block Categorical Flow Maps (BCFM)}, which cast categorical flow maps as semi-autoregressive generators that emit a sequence block by block recovering the caching and variable-length generation of AR decoding while keeping the few-step speed of flow maps. We study two routes, a training-free sampler wrapped around an existing CFM and a finetune trained with a block-factorized flow-matching plus self-distillation objective, and evaluate both against full-sequence CFM on Text8 along the quality--speed (NFE/token) tradeoff.
+\end{abstract}
+
+\noindent\small{\textbf{Index Terms.} Discrete generative models, flow maps, semi-autoregressive generation, few-step sampling.}
+
+\section{Introduction}
+Autoregressive generation is the dominant paradigm for text~\citep{radford2019gpt2, grattafiori2024llama3}. Tokens are produced left-to-right, so generating $L$ tokens costs exactly $L$ sequential network evaluations. This sequential decoding is the core latency bottleneck.
+
+Discrete diffusion models~\citep{sahoo2024mdlm, lou2023sedd, sahoo2025duo} instead corrupt the whole sequence with noise and learn to denoise it in parallel, reducing the cost to $N \le L$ refinement steps. But $N$ can still be large, so parallel decoding alone is not fast enough.
+
+Categorical flow maps~\citep{roos2026cfm, potaptchik2026dfm, lee2026onestep} distill such a denoiser into a one- (or few-) step noise-to-data generator on the probability simplex, collapsing the multi-step trajectory into a single jump and bringing $N$ down to $1$--$4$.
+
+However, CFM generates one full sequence at once, at a fixed length. In practice, semi-autoregressive (block-by-block) generation is preferable. It often reaches better quality, is cacheable, supports variable-length outputs, and is how state-of-the-art discrete-diffusion systems operate~\citep{arriola2025block, bie2025llada2, deepmind2026diffgemma}.
+
+\paragraph{Problem.} Categorical flow maps and semi-autoregressive generation are, today, mutually exclusive. CFM gives few-step sampling but only as a monolithic full-sequence jump. It commits to all $L$ tokens from a single prior draw, has no notion of a causal prefix, and therefore cannot cache finalized context or extend a sequence beyond its training length. Block-autoregressive diffusion (BD3-LM) gives exactly that causal, cacheable, length-flexible structure, but each block is still produced by a many-step masked-diffusion reverse process and cannot be distilled with consistency-style objectives, because those require continuous, deterministic trajectories rather than discrete stochastic jumps.
+
+\paragraph{Solution.} We realize categorical flow maps as semi-autoregressive (block) models, \emph{Block Categorical Flow Maps} (BCFM), by keeping BD3-LM's block factorization and block-causal mask but replacing each block's masked diffusion with a \emph{conditional categorical flow map} from a simplex prior to the block's tokens, conditioned on the clean prefix. We pursue two adaptations. An \textbf{inference-time (training-free)} one runs an existing full-sequence CFM block-by-block (each block sampled in a few steps, discretized, and fed as conditioning to the next), and a \textbf{training-time} one finetunes the model into a genuine block-conditional flow map with a block-factorized flow-matching plus self-distillation loss (Sec.~\ref{sec:methods}).
+
+
+\section{Background}
+\paragraph{From autoregression to discrete diffusion.} An autoregressive model produces text one token at a time, so generating $L$ tokens always costs $L$ sequential forward passes. Discrete diffusion~\citep{sahoo2024mdlm, lou2023sedd} breaks this serial constraint by enabling \emph{multi-token} generation. A forward process progressively corrupts the whole sequence (replacing tokens with a \texttt{[MASK]} symbol, or driving the categorical toward a known prior), and a learned denoiser inverts it, revising many positions at once. Generation then takes $N\le L$ parallel refinement steps rather than $L$ sequential ones, and quality improves with $N$, the cost MDLM, SEDD, and the Diffusion Duality (Duo)~\citep{sahoo2025duo} all pay.
+
+\paragraph{Categorical and variational flow matching.} A second route to parallel token decoding is to leverage the popular family of flow-based generative models, which cast denoising as a \emph{flow} between noise and data. Realizing such a flow over discrete tokens requires a continuous notion of partial corruption, which Variational Flow Matching (VFM / CatFlow)~\citep{eijkelboom2024vfm} supplies. Let $x=(x_1,\dots,x_L)$ be a sequence with $x_i\in\{1,\dots,K\}$, let $\delta_x\in(\Delta^K)^L$ be its one-hot embedding on the product of probability simplices $\Delta^K$, and let $z_0\sim p_0$ be a continuous prior on $(\Delta^K)^L$. VFM connects noise to data by the straight-line interpolant
+\begin{equation}
+z_t=(1-t)\,z_0+t\,\delta_x,\qquad t\in[0,1],
+\label{eq:interp}
+\end{equation}
+which runs from pure noise $z_0$ at $t{=}0$ to the clean data $z_1=\delta_x$ at $t{=}1$ and stays in $(\Delta^K)^L$ throughout (a convex combination of simplex points). Rather than regressing a velocity directly (awkward on the simplex), it learns the \emph{mean-field posterior} over the clean tokens given the noisy state,
+\begin{equation}
+q_\theta(x\mid z_t)=\textstyle\prod_{i=1}^{L} q_\theta(x_i\mid z_t),
+\label{eq:posterior}
+\end{equation}
+in which each factor $q_\theta(x_i\mid z_t)$ is a categorical over $\{1,\dots,K\}$ trained by per-token cross-entropy. Stacking these marginals gives the \emph{denoiser} $q_{t,t}(z_t)\in(\Delta^K)^L$, with entries $[q_{t,t}(z_t)]_{i,k}=q_\theta(x_i{=}k\mid z_t)$, from which the marginal generative velocity follows in closed form,
+\begin{equation}
+b_t(z)=\frac{q_{t,t}(z)-z}{1-t}.
+\label{eq:velocity}
+\end{equation}
+\emph{Sampling} then draws $z_0\sim p_0$ and integrates the ODE $\dot z_t=b_t(z_t)$ from $t{=}0$ to $1$ with $N$ Euler steps on a grid $0=\tau_0<\dots<\tau_N=1$,
+\begin{equation}
+z_{\tau_{m+1}}=z_{\tau_m}+(\tau_{m+1}-\tau_m)\,b_{\tau_m}(z_{\tau_m}),
+\label{eq:euler}
+\end{equation}
+each step costing one evaluation of the denoiser $q_{t,t}$; the tokens are read off from the endpoint as $x_i=\arg\max_k[z_{\tau_N}]_{i,k}$.
+
+\paragraph{Categorical flow maps.} The ODE \eqref{eq:euler} still has to be integrated over many steps. Categorical Flow Maps (CFM)~\citep{roos2026cfm}, and the related discrete flow maps and one-step continuous-denoising models~\citep{potaptchik2026dfm, lee2026onestep}, remove that cost by distilling the field into a \emph{flow map} $X_{s,t}$ that jumps directly from time $s$ to a later time $t$. CFM generalizes the diagonal denoiser $q_{t,t}$ to a two-time head $q_{s,t}(z_s)\in(\Delta^K)^L$ (the clean-token distribution predicted from state $z_s$ when targeting time $t$, which reduces to the VFM denoiser on the diagonal $s=t$), and parametrizes the map through this endpoint (``partial-denoiser'') prediction,
+\begin{equation}
+X_{s,t}(z_s)=z_s+\frac{t-s}{1-s}\,\bigl(q_{s,t}(z_s)-z_s\bigr).
+\label{eq:endpoint}
+\end{equation}
+The map is pinned down by two conditions, a \emph{tangent condition} $\partial_t X_{s,t}\big|_{t=s}=b_s(z_s)$ recovering the VFM velocity~\eqref{eq:velocity}, and a \emph{Lagrangian condition} $(1-t)\,\partial_t X_{s,t}=q_{t,t}(X_{s,t})-X_{s,t}$. CFM enforces them by self-distillation, adding to the VFM endpoint loss an Endpoint-Consistent Lagrangian Distillation (ECLD) term over $s<t$ that forces the few-step map to agree with the model's own instantaneous denoiser (requiring a forward-mode / JVP derivative of $q_{s,t}$ in $t$). Sampling then replaces the $N$ Euler steps of~\eqref{eq:euler} with a few jumps of the map. We draw $z_0\sim p_0$ and, over a short grid $0=s_0<s_1<\dots<s_n<s_{n+1}=1$ with $n$ small, iterate
+\begin{equation}
+z_{s_{j+1}}=X_{s_j,\,s_{j+1}}(z_{s_j}),\qquad j=0,\dots,n,
+\label{eq:cfmsample}
+\end{equation}
+followed by $x_i=\arg\max_k[z_1]_{i,k}$; the one-step case $n=0$ is the single jump $z_1=X_{0,1}(z_0)$. The official implementation can be seen at:
+
+\begin{center}
+    \url{https://github.com/olsdavis/semicat}
+\end{center}
+
+\paragraph{Block-autoregressive diffusion.} Everything so far treats the sequence as one monolithic, fixed-length object. Block diffusion (BD3-LM)~\citep{arriola2025block} reintroduces autoregressive structure at the level of \emph{blocks}. It splits the sequence into $L/B$ blocks $x^{(b)}\in\{1,\dots,K\}^B$ of size $B$, factorizes $p_\theta(x)=\prod_{b} p_\theta(x^{(b)}\mid x^{(<b)})$, and models each conditional by a masked diffusion over block $b$ given the \emph{clean} previous blocks $x^{(<b)}$. A single block-causal attention mask over the concatenation $[\,x_\text{clean};x_\text{noisy}]$ yields all block losses in one forward pass; at inference the finalized blocks form a KV cache and the generation length is unconstrained, though each block still pays the full multi-step diffusion cost. This block-autoregressive recipe underlies today's strongest diffusion language models, including LLaDA~2.0~\citep{bie2025llada2} and DiffusionGemma~\citep{deepmind2026diffgemma}. BCFM sits precisely at this intersection, keeping BD3-LM's block structure while replacing the per-block diffusion with CFM's few-step jump.
+
+
+\section{Methods}
+\label{sec:methods}
+\paragraph{Block condition and probabilistic model.} For block $b$ we define the \emph{block condition}
+\begin{equation}
+c^{(b)} = x^{(<b)} = \bigl(x^{(1)},\dots,x^{(b-1)}\bigr),
+\end{equation}
+the finalized, \emph{clean} discrete tokens of all previous blocks. BCFM keeps BD3-LM's factorization but realizes each conditional by a conditional categorical flow map.
+\begin{equation}
+p_\theta\!\bigl(x^{(b)}\mid c^{(b)}\bigr)=\mathrm{Law}\,\mathcal{D}\!\Bigl(X^\theta_{0,1}\bigl(z_0^{(b)};\,c^{(b)}\bigr)\Bigr),\quad z_0^{(b)}\!\sim p_0^{\otimes B},
+\end{equation}
+where $\mathcal{D}$ discretizes the endpoint (argmax / sample from $q^\theta_{\cdot,1}$) and the conditional map is Eq.~\eqref{eq:endpoint} with the head $q^\theta_{s,t}(z_s^{(b)},c^{(b)})$ now reading the prefix. Each block carries its own time pair $(s_b,t_b)$, injected per token via adaLN modulation with two time embeddings. The limiting cases sanity-check the design. Here $B=1$ is an AR latent-noise model and $B=L$ recovers full-sequence CFM; we expect a sweet spot at $B\in\{4,8,16\}$.
+
+\paragraph{Training objective.} Training conditions block $b$ on the gold prefix $c^{(b)}$. For a data sequence $x\sim p_{\mathrm{data}}$ we draw, per block, $t_b\sim\mathcal{U}(0,1{-}\varepsilon)$, $s_b\sim\mathcal{U}(0,t_b)$ and $z_0^{(b)}\sim p_0^{\otimes B}$, and form the block interpolant $z_u^{(b)}=(1-u)\,z_0^{(b)}+u\,\delta_{x^{(b)}}$ at $u\in\{s_b,t_b\}$. All expectations below are taken over the resulting per-block sampling measure
+\begin{equation}
+\mu_b\;=\;p_{\mathrm{data}}(x)\;\mathcal{U}(t_b;0,1{-}\varepsilon)\;\mathcal{U}(s_b;0,t_b)\;p_0^{\otimes B}\!\bigl(z_0^{(b)}\bigr).
+\label{eq:measure}
+\end{equation}
+The per-block \emph{flow-matching} (VFM endpoint) loss is the mean-field cross-entropy of recovering the clean block from its noised copy at the diagonal time $s=t$ (it depends on $\mu_b$ only through $x,t_b,z_0^{(b)}$).
+\begin{equation}
+\mathcal{L}^{(b)}_{\mathrm{VFM}}(\theta)= -\,\mathbb{E}_{\mu_b}\!\left[\sum_{i=1}^{B}\log\bigl[q^\theta_{t_b,t_b}\!\bigl(z_{t_b}^{(b)};c^{(b)}\bigr)\bigr]_{i,\,x^{(b)}_i}\right].
+\end{equation}
+The per-block \emph{self-distillation} (ECLD) loss enforces the flow-map conditions over $s_b<t_b$,
+\begin{align}
+\mathcal{L}^{(b)}_{\mathrm{ECLD}}(\theta)=\;& 4\,\mathbb{E}_{\mu_b}\!\Bigl[(1-t_b)^{-2}\,\mathrm{CE}\bigl(\underbrace{\mathrm{sg}\,q^\theta_{t_b,t_b}(X^\theta_{s_b,t_b}(z_{s_b}^{(b)};c^{(b)}))}_{\text{teacher target}},\nonumber\\[-2pt]
+&\hphantom{4\,\mathbb{E}_{\mu_b}\Bigl[}\ q^\theta_{s_b,t_b}(z_{s_b}^{(b)};c^{(b)})\bigr)\Bigr]\nonumber\\
+&+\,2\,\mathbb{E}_{\mu_b}\!\left[\gamma_{s_b,t_b}^2\,\bigl\|\partial_t\,q^\theta_{s_b,t_b}(z_{s_b}^{(b)};c^{(b)})\bigr\|^2\right],
+\end{align}
+with $\gamma_{s,t}=(t-s)/(1-s)$ and $\mathrm{sg}$ the stop-gradient. The total objective sums both terms over blocks,
+\begin{equation}
+\mathcal{L}(\theta)=\sum_{b=1}^{L/B}\Bigl[\mathcal{L}^{(b)}_{\mathrm{VFM}}(\theta)+\lambda\,\mathcal{L}^{(b)}_{\mathrm{ECLD}}(\theta)\Bigr],
+\label{eq:total}
+\end{equation}
+and all $L/B$ block losses are obtained in \emph{one} masked forward pass. Because each block's targets read only its own noisy state and the clean prefix $c^{(b)}$, the per-block stop-gradient targets stay mutually independent, so the next block's loss is well-defined given the previous blocks' clean condition.
+
+\paragraph{Training-time adaptation.} Concretely, we finetune by optimizing Eq.~\eqref{eq:total} with BD3-LM's efficient training scheme. The clean and noisy streams are concatenated into a doubled sequence $[\,x_\text{clean};z_\text{noisy}\,]$ of length $2L$, over which attention runs with a single $2L\times 2L$ block-causal mask, so all $L/B$ blocks are trained simultaneously in one forward pass rather than block by block. The one correctness-critical detail is the mask, which must let a noisy block see only \emph{strictly previous} clean blocks and never its own clean copy.
+
+\paragraph{Inference-time adaptation.} The training-free variant skips Eq.~\eqref{eq:total} entirely and reuses a pretrained full-sequence CFM as the head $q^\theta_{s,t}$, feeding it the discrete prefix as conditioning and running the same blockwise sampler below. It measures how much semi-AR behavior is available ``for free,'' and isolates the value added by training (H1).
+
+\paragraph{Blockwise sampling.} Both variants share one loop. Starting from an empty cache, for each $b=1,\dots,L/B$ we draw $z_0^{(b)}\sim p_0^{\otimes B}$; apply the flow map for $1$--$4$ steps following a schedule (e.g.\ $\{(0,1)\}$ or $\{(0,\tfrac12),(\tfrac12,1)\}$) conditioned on $c^{(b)}$; discretize the endpoint to $x^{(b)}$; and append it to the prefix/cache. Algorithm~\ref{alg:onestep} spells out the cheapest, one-step-per-block case (a single jump $X_{0,1}$ per block, i.e.\ $n=0$ in Eq.~\eqref{eq:cfmsample}). Since each block conditions only on the \emph{clean} prefix, finalized blocks form a reusable KV cache, giving fast, length-flexible inference. The central knob is $B\times$ steps-per-block; the honest risks are entropy collapse compounding across blocks and exposure bias, since at inference $c^{(b)}$ comes from \emph{generated} (not gold) blocks.
+
+\begin{algorithm}[t]
+\caption{One-step-per-block BCFM sampling.}
+\label{alg:onestep}
+\begin{algorithmic}[1]
+\Require trained head $q^\theta$, block size $B$, length $L$, prior $p_0$
+\Ensure sequence $x=(x^{(1)},\dots,x^{(L/B)})$
+\State $c \gets \varnothing$ \Comment{empty prefix / KV cache}
+\For{$b = 1$ \textbf{to} $L/B$}
+    \State $z_0^{(b)} \sim p_0^{\otimes B}$ \Comment{block prior on the simplex}
+    \State $z_1^{(b)} \gets X^\theta_{0,1}\!\bigl(z_0^{(b)};\,c\bigr)=q^\theta_{0,1}\!\bigl(z_0^{(b)};\,c\bigr)$ \Comment{single jump $0\!\to\!1$}
+    \State $x^{(b)}_i \gets \arg\max_k\,[z_1^{(b)}]_{i,k}$, \ $i=1,\dots,B$ \Comment{discretize}
+    \State $c \gets c \mathbin{\Vert} x^{(b)}$ \Comment{append finalized block}
+\EndFor
+\State \Return $x=(x^{(1)},\dots,x^{(L/B)})$
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{Proposed Experiments}
+\paragraph{What we compare.} Three models on the quality--speed (NFE/quality) tradeoff, namely (1) regular full-sequence CFM, (2) inference-time (training-free) BCFM, and (3) training-time BCFM.
+
+\paragraph{Hypotheses.} \textbf{H1.} The training-time model beats the training-free adaptation. \textbf{H2.} The blockwise model has a better NFE/quality tradeoff than full-sequence CFM.
+
+\paragraph{Data \& evaluation.} \textbf{Text8} (character-level, $L=256$, $B=16$). Generation quality is scored by an external model (GPT-2 or GPT-J-6B) via generative perplexity / NLL on $256$--$512$ samples, complemented by token entropy logged \emph{per block index} (the early-warning signal for blockwise entropy collapse) and qualitative samples. All comparisons are relative across our own runs.
+
+\paragraph{Timeline.} The project runs in four phases over $\sim$13 days.
+\begin{itemize}
+\item \textbf{Phase 1, Literature analysis (3 days).} Study the CFM, VFM, BD3-LM and discrete-diffusion sources. Fix the block-conditional construction and the loss of Eq.~\eqref{eq:total}. Fork the base repository \url{https://github.com/olsdavis/semicat}, look through the repository, install the suitable python environment and try to launch the text8 training.
+\item \textbf{Phase 2, Implementation of inference and training (3 days).} Manual masked attention with the ported block-causal mask, the block module with per-token $(s_b,t_b)$ conditioning, ECLD on the noisy stream, and the shared blockwise sampler.
+\item \textbf{Phase 3, Training the models (5 days).} Train the three models, full-sequence CFM, training-time BCFM, and the inference-time wrapper around the pretrained CFM.
+\item \textbf{Phase 4, Evaluation and write-up (2 days).} External-LM NLL, per-block entropy, and qualitative samples at $1/2/4$ steps/block; the two headline curves (judge-NLL vs.\ NFE/token; quality vs.\ steps-per-block); limitations.
+\end{itemize}
+
+\paragraph{Deliverables.} Implementations of (a) inference-time and (b) training-time BCFM, plus the three-model quality/speed comparison on Text8 testing H1 and H2.
+
+
+\section{Conclusion}
+BCFM reframes few-step categorical flow maps as semi-autoregressive generators by replacing each block's masked diffusion with a prefix-conditioned flow map, trained with a block-factorized flow-matching plus self-distillation loss. It aims to combine the per-step speed of flow maps with the caching and length flexibility of block-autoregressive decoding. The proposed Text8 study isolates the value of the block structure (H2) and of learned versus free conditioning (H1).
+
+
+\printbibliography
+
+\end{document}

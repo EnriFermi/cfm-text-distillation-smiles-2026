@@ -1,0 +1,3 @@
+# Reference "sampler": scores real text8 test sequences instead of a model.
+# Gives the data-reference lines (gen-PPL floor, entropy ceiling) for all figures.
+name: gold

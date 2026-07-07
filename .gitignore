@@ -1,0 +1,30 @@
+# --- data & large artifacts (never committed) ---
+/data/
+/logs/
+/outputs/
+/multirun/
+/script/
+/slurm/
+*.ckpt
+*.bin
+
+# --- experiment trackers ---
+.env
+wandb/
+comet_config/
+.cometml-runs/
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+*.egg-info/
+
+# --- os / editor junk ---
+.DS_Store
+.idea/
+.vscode/
+
+# NOTE: results/**/metrics.json IS committed on purpose (small, schema in CLAUDE.md).
+# Everything heavy (checkpoints, samples dumps, hydra outputs) stays out of git.
