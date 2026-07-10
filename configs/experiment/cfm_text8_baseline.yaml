@@ -1,8 +1,8 @@
 # @package _global_
 # M1 — full-sequence CFM baseline on text8 (the reference for H1/H2).
 # Canonical recipe = upstream text8_dit_ecld, but logger-agnostic (pick logger on the
-# CLI: `logger=comet`) and with standardized eval-step list. Quality is measured with
-# the standalone harness (eval/run_eval.py); training only logs cheap entropy.
+# CLI: `logger=comet`) and with the CFM Text8 judge setup. Validation logs both
+# gen-PPL and NLL=log(gen-PPL), where the paper reports Text8 NLL under GPT-J-6B.
 #
 #   python -m semicat.train experiment=cfm_text8_baseline trainer=gpu logger=comet
 #
@@ -37,9 +37,12 @@ model:
     dropout: 0.1
     embed_type: rms
   compile: true
-  calc_nll: false          # quality comes from eval/run_eval.py; keep training cheap
-  nll_steps: [1, 2, 4, 8, 16]   # standardized so entropy curves are comparable
-  nll_samples: 16
+  calc_nll: true
+  nll_model: EleutherAI/gpt-j-6B
+  nll_steps: [1, 2, 4, 8, 32, 64]
+  nll_samples: 512
+  nll_model_batch_size: 1
+  nll_sampling_batch_size: 128
   sd_type: ecld
 
 data:

@@ -99,6 +99,9 @@ def main(cfg: DictConfig) -> None:
         )
         _sync(device)
         sampling_seconds = time.perf_counter() - t0
+        del module
+        if device == "cuda":
+            torch.cuda.empty_cache()
 
     metrics = {
         "model": cfg.get("model_id") or ("data" if is_gold else sampler.name),

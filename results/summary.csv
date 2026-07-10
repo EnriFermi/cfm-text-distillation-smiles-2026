@@ -1,0 +1,2 @@
+_exp,model,sampler,block_size,steps_per_block,nfe_per_token,flop_cost_per_token,cost_model,seed,prefix,prefix_mode,discretize,schedule,gen_ppl,tokens_per_sec,sampling_seconds,report_block_size,n_samples,commit
+e0_ref_gold_b16_seed0,data,gold,256,0,0.0,0.0,full_recompute,0,generated,clean,argmax,,159.01730346679688,,,16,512,b3e5ac2

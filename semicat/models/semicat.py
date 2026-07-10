@@ -330,8 +330,7 @@ class SemicatModule(L.LightningModule):
                 "optimizer": optimizer,
                 "lr_scheduler": {
                     "scheduler": scheduler,
-                    "monitor": "val/loss",
-                    "interval": "epoch",
+                    "interval": "step",
                     "frequency": 1,
                 },
             }

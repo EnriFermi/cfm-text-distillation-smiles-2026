@@ -44,8 +44,8 @@ report_block_size: null
 
 detok: true          # tensor -> strings (needs data/text8/{train,val}.bin, meta.pkl)
 judge: true          # compute generative perplexity (downloads the judge LM)
-judge_model: gpt2-large
-judge_batch_size: 64
+judge_model: EleutherAI/gpt-j-6B  # CFM Text8 paper judge; override for smoke tests
+judge_batch_size: 1
 
 # results land in results/${exp_name}/ — every swept axis must appear here or two jobs
 # overwrite each other. Custom-schedule runs (E10): set exp_name manually.
