@@ -10,10 +10,9 @@ the metric used in the proposal's speed axis.
 
 How NFE relates to actual FLOPs differs between the two adaptations:
 
-- **M2 (inference-time wrapper)** re-runs the *full-length* model every jump, so each
-  of its NFEs costs the same as a full-sequence CFM NFE — NFE/token is directly
-  FLOP-comparable between M1 and M2. Note this makes M2 *expensive*: B=16 with 2
-  steps/block is 32 full forwards vs. 4 for a 4-step full-sequence CFM.
+- **M2 (inference-time, masked)** runs the full-sequence head on a doubled ``[clean;
+  noisy]`` sequence (length ``2L``) every jump. NFE/token matches M1 accounting, but
+  each forward processes twice as many positions — use ``flop_cost_per_token_masked``.
 - **M3 (block-causal, KV-cached)** only processes the current block per forward, so a
   raw NFE count *overstates* its cost relative to M1/M2. ``forward_token_cost`` gives
   the attention-aware view for that case.
@@ -37,13 +36,22 @@ def nfe_per_token(block_size: int, steps_per_block: int, length: int) -> float:
 
 
 def flop_cost_per_token_full_recompute(block_size: int, steps_per_block: int, length: int) -> float:
-    """Token-passes per generated token when every forward runs the full length.
+    """Token-passes per generated token when every forward runs length ``L``.
 
-    Applies to M1 (trivially: = steps) and M2 (the training-free wrapper): cost of one
-    forward = ``length`` token-passes, so per generated token the cost equals the
-    total number of forwards.
+    Applies to M1 (trivially: = steps) and legacy pin-prefix M2. Cost of one forward =
+    ``length`` token-passes, so per generated token the cost equals the total number of
+    forwards.
     """
     return float(total_forwards(block_size, steps_per_block, length))
+
+
+def flop_cost_per_token_masked(block_size: int, steps_per_block: int, length: int) -> float:
+    """Token-passes per generated token for proper masked M2 (``2L`` forwards).
+
+    Each jump runs the denoiser on ``[clean; noisy]`` of length ``2 * length``, so the
+    FLOP proxy is twice the full-recompute cost at the same NFE count.
+    """
+    return 2.0 * flop_cost_per_token_full_recompute(block_size, steps_per_block, length)
 
 
 def forward_token_cost(block_size: int, steps_per_block: int, length: int) -> float:

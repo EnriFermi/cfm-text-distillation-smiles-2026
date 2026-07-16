@@ -49,4 +49,4 @@ judge_batch_size: 64
 
 # results land in results/${exp_name}/ — every swept axis must appear here or two jobs
 # overwrite each other. Custom-schedule runs (E10): set exp_name manually.
-exp_name: ${sampler.name}_b${oc.select:sampler.block_size,${data.k}}_s${oc.select:sampler.steps_per_block,${oc.select:sampler.steps,0}}_${oc.select:sampler.prefix,generated}_${oc.select:sampler.prefix_mode,clean}_${oc.select:sampler.discretize,argmax}_seed${seed}
+exp_name: ${sampler.name}_b${oc.select:sampler.block_size,${data.k}}_s${oc.select:sampler.steps_per_block,${oc.select:sampler.steps,0}}_${oc.select:sampler.prefix,generated}_${oc.select:sampler.discretize,argmax}_seed${seed}

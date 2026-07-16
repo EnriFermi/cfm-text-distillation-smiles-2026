@@ -1,10 +1,8 @@
-# M2: inference-time (training-free) BCFM — blockwise wrapper over a full-seq CFM.
+# M2: inference-time (training-free) BCFM — BD3-LM masked blockwise wrapper over M1.
 name: bcfm_infer
 block_size: 16          # B; sweep {4,8,16,32}. block_size == data.k reproduces M1.
 steps_per_block: 2      # flow-map jumps per block; sweep {1,2,4}
 discretize: argmax      # or "sample" (collapse-mitigation ablation, E11)
 prefix: generated       # "generated" (real inference) or "gold" (exposure-bias probe, E6)
-prefix_mode: clean      # "clean" = one-hot prefix as-is; "renoise" = keep prefix on the
-                        # training interpolant at the current time (E10b; needs steps>1)
 schedule: null          # null => uniform grid; else explicit "[[0,0.5],[0.5,1]]" (E10);
                         # overrides steps_per_block — set exp_name manually for these runs

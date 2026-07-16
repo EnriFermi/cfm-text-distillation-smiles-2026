@@ -60,6 +60,36 @@ def entropy_per_block_per_sample(tokens: Tensor, block_size: int) -> list[float]
     return out
 
 
-def mean_entropy(tokens: Tensor) -> float:
-    """Whole-sequence mean token entropy (matches upstream ``compute_mean_entropy``)."""
-    return float(np.mean(entropy_per_block(tokens, tokens.shape[1])))
+def mean_entropy(tokens: Tensor, block_size: int) -> float:
+    """Mean pooled block entropy (nats), averaged over block indices."""
+    vals = entropy_per_block(tokens, block_size)
+    return float(np.mean(vals)) if vals else 0.0
+
+
+def mean_entropy_per_sample(tokens: Tensor, block_size: int) -> float:
+    """Mean within-sample block entropy (nats), averaged over block indices."""
+    vals = entropy_per_block_per_sample(tokens, block_size)
+    return float(np.mean(vals)) if vals else 0.0
+
+
+def entropy_summary(tokens: Tensor, block_size: int) -> dict:
+    """Headline entropy stats for metrics.json."""
+    pooled = entropy_per_block(tokens, block_size)
+    per_sample = entropy_per_block_per_sample(tokens, block_size)
+    if not pooled:
+        return {
+            "mean_entropy_pooled": 0.0,
+            "mean_entropy_per_sample": 0.0,
+            "entropy_block0_pooled": 0.0,
+            "entropy_block_last_pooled": 0.0,
+            "entropy_block0_per_sample": 0.0,
+            "entropy_block_last_per_sample": 0.0,
+        }
+    return {
+        "mean_entropy_pooled": float(np.mean(pooled)),
+        "mean_entropy_per_sample": float(np.mean(per_sample)),
+        "entropy_block0_pooled": pooled[0],
+        "entropy_block_last_pooled": pooled[-1],
+        "entropy_block0_per_sample": per_sample[0],
+        "entropy_block_last_per_sample": per_sample[-1],
+    }

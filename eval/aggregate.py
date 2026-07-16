@@ -28,7 +28,7 @@ import rootutils
 ROOT = rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 RESULTS = ROOT / "results"
 FIELDS = ["model", "sampler", "block_size", "steps_per_block", "nfe_per_token",
-          "flop_cost_per_token", "cost_model", "seed", "prefix", "prefix_mode",
+          "flop_cost_per_token", "cost_model", "seed", "prefix",
           "discretize", "schedule", "gen_ppl", "tokens_per_sec", "sampling_seconds",
           "report_block_size", "n_samples", "commit"]
 
@@ -78,6 +78,14 @@ def _data_reference(rows) -> float | None:
     return st.mean(vals) if vals else None
 
 
+def _is_legacy_pin_run(row: dict) -> bool:
+    """Exclude deprecated pin-prefix M2 runs from headline figures."""
+    model = str(row.get("model", ""))
+    if model.endswith("-pin"):
+        return True
+    return row.get("use_mask") is False  # old metrics.json field
+
+
 def make_figures(rows: list[dict]) -> None:
     try:
         import matplotlib
@@ -88,7 +96,7 @@ def make_figures(rows: list[dict]) -> None:
         return
     figdir = RESULTS / "figures"
     figdir.mkdir(exist_ok=True)
-    model_rows = [r for r in rows if r.get("sampler") != "gold"]
+    model_rows = [r for r in rows if r.get("sampler") != "gold" and not _is_legacy_pin_run(r)]
     ref_ppl = _data_reference(rows)
 
     def _lineplot(agg, xlabel, fname, title, logx=False):

@@ -1,0 +1,35 @@
+{
+  "model": "M2",
+  "sampler": "bcfm_infer",
+  "length": 256,
+  "block_size": 128,
+  "steps_per_block": 16,
+  "nfe_per_token": 0.125,
+  "flop_cost_per_token": 64.0,
+  "cost_model": "masked_2L",
+  "seed": 12345,
+  "prefix": "generated",
+  "discretize": "argmax",
+  "schedule": null,
+  "report_block_size": 128,
+  "entropy_per_block": [
+    2.770416259765625,
+    2.7616493701934814
+  ],
+  "entropy_per_block_ps": [
+    2.6422080993652344,
+    2.632202625274658
+  ],
+  "mean_entropy_pooled": 2.7660328149795532,
+  "mean_entropy_per_sample": 2.6372053623199463,
+  "entropy_block0_pooled": 2.770416259765625,
+  "entropy_block_last_pooled": 2.7616493701934814,
+  "entropy_block0_per_sample": 2.6422080993652344,
+  "entropy_block_last_per_sample": 2.632202625274658,
+  "gen_ppl": 784.6549682617188,
+  "sampling_seconds": 51.51880986499964,
+  "tokens_per_sec": 1272.0790750355284,
+  "ckpt": "/root/checkpoints/last.ckpt",
+  "commit": "b3e5ac2",
+  "n_samples": 256
+}

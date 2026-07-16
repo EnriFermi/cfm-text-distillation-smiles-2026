@@ -97,7 +97,6 @@ def sample_tokens(
                 batch_size=bs,
                 length=length,
                 discretize=sampler.discretize,
-                prefix_mode=sampler.get("prefix_mode", "clean"),
                 schedule=sched,
                 gold_prefix=gp,
             )

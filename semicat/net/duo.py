@@ -38,8 +38,20 @@ class Rotary(torch.nn.Module):
         self.register_buffer("cos_cached", cos_cached)
         self.register_buffer("sin_cached", sin_cached)
 
-    def forward(self):
-        return self.cos_cached, self.sin_cached
+    def forward(self, seq_len: int | None = None):
+        """Return (cos, sin) for ``seq_len`` positions (default: trained length).
+
+        For the BD3-LM doubled stream ``[clean; noisy]`` at length ``2L``, positions
+        ``0..L-1`` and ``L..2L-1`` share the same rotary embeddings (``pos % L``).
+        """
+        L = self.cos_cached.shape[1]
+        if seq_len is None or seq_len == L:
+            return self.cos_cached, self.sin_cached
+        if seq_len == 2 * L:
+            cos = torch.cat([self.cos_cached[:, :L], self.cos_cached[:, :L]], dim=1)
+            sin = torch.cat([self.sin_cached[:, :L], self.sin_cached[:, :L]], dim=1)
+            return cos, sin
+        raise ValueError(f"rotary supports length {L} or {2 * L}, got {seq_len}")
 
 
 def split_and_apply_rotary_pos_emb(qkv, rotary_cos_sin):
@@ -124,9 +136,10 @@ class DDiTBlock(nn.Module):
             self.adaLN_modulation.weight.data.zero_()
             self.adaLN_modulation.bias.data.zero_()
 
-    def forward(self, x, rotary_cos_sin, c=None, jvp_attention=False):
+    def forward(self, x, rotary_cos_sin, c=None, jvp_attention=False, attn_mask=None):
         x_skip = x
         x = self.norm1(x)
+        seq_len = x.shape[1]
 
         if self.adaLN:
             (shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp) = (
@@ -134,17 +147,19 @@ class DDiTBlock(nn.Module):
             )
             x = modulate_fused(x, shift_msa, scale_msa)
 
-        qkv = self.attn_qkv(x).reshape(x.shape[0], self.seq_len, 3, self.n_heads, self.dim_per_head)
+        qkv = self.attn_qkv(x).reshape(x.shape[0], seq_len, 3, self.n_heads, self.dim_per_head)
         q, k, v = split_and_apply_rotary_pos_emb(qkv, rotary_cos_sin)
 
         if jvp_attention:
+            if attn_mask is not None:
+                raise ValueError("jvp_attention does not support attn_mask")
             x = safe_sdpa_jvp(q.contiguous(), k.contiguous(), v.contiguous())
         else:
             attention_output = F.scaled_dot_product_attention(
                 query=q.transpose(1, 2),
                 key=k.transpose(1, 2),
                 value=v.transpose(1, 2),
-                attn_mask=None,
+                attn_mask=attn_mask,
                 dropout_p=0.0,
                 is_causal=False,
             )
@@ -152,7 +167,7 @@ class DDiTBlock(nn.Module):
             x = attention_output.transpose(1, 2)
 
         # B, S, (H D)
-        x = x.reshape(x.shape[0], self.seq_len, self.dim)
+        x = x.reshape(x.shape[0], seq_len, self.dim)
 
         if self.adaLN:
             x = self.dropout(self.attn_out(x) * gate_msa) + x_skip
@@ -310,6 +325,7 @@ class DIT(nn.Module):
     ):
         super().__init__()
         self.adaLN = True
+        self.length = length
         self.vocab_size = vocab_size
         if embed_type == "naive":
             self.vocab_embed = EmbeddingLayer(hidden_size, vocab_size)
@@ -342,7 +358,7 @@ class DIT(nn.Module):
             adaLN=self.adaLN,
         )
 
-    def forward(self, x, s, t, jvp_attention: bool = False):
+    def forward(self, x, s, t, jvp_attention: bool = False, attn_mask=None):
         # time reparameterisation
         t = t - s
 
@@ -351,10 +367,10 @@ class DIT(nn.Module):
         cond = s_cond + t_cond
         x = self.vocab_embed(x, s, cond)
 
-        rotary_cos_sin = self.rotary_emb()
+        rotary_cos_sin = self.rotary_emb(x.shape[1])
 
         for b in self.blocks:
-            x = b(x, rotary_cos_sin, c=cond, jvp_attention=jvp_attention)
+            x = b(x, rotary_cos_sin, c=cond, jvp_attention=jvp_attention, attn_mask=attn_mask)
         x = self.output_layer(x, c=cond)
 
         return x

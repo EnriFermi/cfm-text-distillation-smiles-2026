@@ -28,3 +28,7 @@ __pycache__/
 
 # NOTE: results/**/metrics.json IS committed on purpose (small, schema in CLAUDE.md).
 # Everything heavy (checkpoints, samples dumps, hydra outputs) stays out of git.
+
+# eval dumps (metrics.json + figures stay)
+results/**/samples.txt
+*.log

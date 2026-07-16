@@ -69,8 +69,11 @@ class TextMetrics:
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
             ppls = []
             effective_size = 0
-            tokenizer = TextMetrics._load_tokenizer()
-            model = transformers.AutoModelForCausalLM.from_pretrained(ppl_model).eval()
+            tokenizer = TextMetrics._load_tokenizer(ppl_model)
+            load_kwargs: dict = {}
+            if device == "cuda" and "gpt-j" in ppl_model.lower():
+                load_kwargs["torch_dtype"] = torch.float16
+            model = transformers.AutoModelForCausalLM.from_pretrained(ppl_model, **load_kwargs).eval()
             model = model.to(device)
             samples, attn_mask = TextMetrics._retokenize(tokenizer, context_size, text_samples, device)
             batch_size = min(samples.size(0), batch_size)

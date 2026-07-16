@@ -8,7 +8,8 @@ conditioning behavior, not just shapes.
 
 import torch
 
-from block.sampling import blockwise_sample, uniform_schedule
+from block.sampling_pin import blockwise_sample
+from block.sampling import uniform_schedule
 
 K = 27
 
@@ -121,3 +122,38 @@ def test_sample_discretize_runs():
     toks = blockwise_sample(m, 4, 2, batch_size=3, length=16, discretize="sample")
     assert toks.shape == (3, 16)
     assert 0 <= int(toks.min()) and int(toks.max()) < K
+
+
+class FakeMaskedNet:
+    """Minimal ``module.net`` for masked sampling tests (no flash-attn)."""
+
+    def __init__(self, length: int, k: int = K):
+        self.length = length
+        g = torch.Generator().manual_seed(11)
+        self.W = torch.randn(k, k, generator=g)
+
+    def __call__(self, x, s, t, attn_mask=None):
+        # x: (B, 2L, K) — only use noisy half pooled with masked clean prefix
+        B, N, K_ = x.shape
+        L = N // 2
+        clean, noisy = x[:, :L], x[:, L:]
+        if attn_mask is not None:
+            # prefix influence: mean of clean positions the mask would allow is approximated
+            ctx = clean.mean(dim=1, keepdim=True)
+        else:
+            ctx = x.mean(dim=1, keepdim=True)
+        logits = noisy @ self.W + ctx.expand_as(noisy) + s.view(-1, 1, 1)
+        return torch.cat([torch.zeros(B, L, K_, dtype=x.dtype), logits], dim=1)
+
+
+class FakeMaskedCFM(FakeCFM):
+    def __init__(self, length: int, k: int = K):
+        super().__init__(length, k)
+        self.net = FakeMaskedNet(length, k)
+
+
+def test_masked_sample_shapes():
+    m = FakeMaskedCFM(32)
+    from block.sampling import blockwise_sample
+    toks = blockwise_sample(m, block_size=8, steps_per_block=2, batch_size=4, length=32)
+    assert toks.shape == (4, 32) and toks.dtype == torch.long

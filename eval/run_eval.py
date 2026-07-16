@@ -30,10 +30,17 @@ rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 
 from block.nfe import (  # noqa: E402
     flop_cost_per_token_full_recompute,
+    flop_cost_per_token_masked,
+    forward_token_cost,
     nfe_per_token,
 )
 from eval.generate import load_module, make_datamodule, sample_tokens, gold_sequences  # noqa: E402
-from eval.metrics import entropy_per_block, entropy_per_block_per_sample, gen_ppl  # noqa: E402
+from eval.metrics import (  # noqa: E402
+    entropy_per_block,
+    entropy_per_block_per_sample,
+    entropy_summary,
+    gen_ppl,
+)
 
 
 def _git_commit() -> str:
@@ -100,24 +107,34 @@ def main(cfg: DictConfig) -> None:
         _sync(device)
         sampling_seconds = time.perf_counter() - t0
 
+    if sampler.name == "bcfm_infer":
+        flop_cost = flop_cost_per_token_masked(block_size, n_jumps, length)
+        cost_model = "masked_2L"
+    elif sampler.name == "bcfm_train":
+        flop_cost = forward_token_cost(block_size, n_jumps, length)
+        cost_model = "cached"
+    else:
+        flop_cost = flop_cost_per_token_full_recompute(block_size, n_jumps, length)
+        cost_model = "full_recompute"
+
+    ent = entropy_summary(tokens, report_block_size)
     metrics = {
         "model": cfg.get("model_id") or ("data" if is_gold else sampler.name),
         "sampler": sampler.name,
+        "length": int(length),
         "block_size": int(block_size),
         "steps_per_block": int(n_jumps),
         "nfe_per_token": nfe_per_token(block_size, n_jumps, length),
-        # honest FLOP proxy for M1/M2 (every forward runs the full length); M3 will
-        # switch cost_model to "cached" and use forward_token_cost.
-        "flop_cost_per_token": flop_cost_per_token_full_recompute(block_size, n_jumps, length),
-        "cost_model": "full_recompute",
+        "flop_cost_per_token": flop_cost,
+        "cost_model": cost_model,
         "seed": int(cfg.seed),
         "prefix": sampler.get("prefix", "generated"),
-        "prefix_mode": sampler.get("prefix_mode", "clean"),
         "discretize": sampler.get("discretize", "argmax"),
         "schedule": ([list(st) for st in sampler.schedule] if sampler.get("schedule") else None),
         "report_block_size": int(report_block_size),
         "entropy_per_block": entropy_per_block(tokens, report_block_size),
         "entropy_per_block_ps": entropy_per_block_per_sample(tokens, report_block_size),
+        **ent,
         "gen_ppl": None,
         "sampling_seconds": sampling_seconds,
         "tokens_per_sec": (cfg.n_samples * length / sampling_seconds if sampling_seconds else None),
@@ -141,9 +158,13 @@ def main(cfg: DictConfig) -> None:
     if strings is not None:
         (out_dir / "samples.txt").write_text("\n".join(strings[:64]))
     print(f"Wrote {out_dir / 'metrics.json'}")
-    print(json.dumps({k: metrics[k] for k in ("model", "sampler", "block_size",
-                                              "steps_per_block", "nfe_per_token",
-                                              "gen_ppl", "tokens_per_sec")}, indent=2))
+    print(json.dumps({k: metrics[k] for k in (
+        "model", "sampler", "length", "block_size", "steps_per_block",
+        "nfe_per_token", "flop_cost_per_token", "gen_ppl",
+        "mean_entropy_pooled", "mean_entropy_per_sample",
+        "entropy_block0_pooled", "entropy_block_last_pooled",
+        "tokens_per_sec",
+    )}, indent=2))
 
 
 if __name__ == "__main__":
