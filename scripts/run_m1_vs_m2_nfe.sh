@@ -11,9 +11,10 @@
 #
 # Writes results/<exp>/metrics.json, then:
 #   results/summary.csv
-#   results/figures/fig1_nfe_vs_genppl.png   (headline)
-#   results/figures/fig1b_flops_vs_genppl.png
-#   results/figures/fig3_steps.png ...
+#   results/figures/nfe_total_vs_genppl.png
+#   results/figures/nfe_total_vs_nll.png
+#   results/figures/sequence_latency.png
+#   results/figures/tokens_per_sec.png
 #
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -122,6 +123,8 @@ python -m eval.aggregate
 echo
 echo "Done."
 echo "  CSV:    results/summary.csv"
-echo "  Figs:   results/figures/fig1_nfe_vs_genppl.png"
-echo "          results/figures/fig1b_flops_vs_genppl.png"
+echo "  Figs:   results/figures/nfe_total_vs_genppl.png"
+echo "          results/figures/nfe_total_vs_nll.png"
+echo "          results/figures/sequence_latency.png"
+echo "          results/figures/tokens_per_sec.png"
 echo "  Tip:    ONLY_AGGREGATE=1 bash scripts/run_m1_vs_m2_nfe.sh   # replot only"

@@ -8,11 +8,9 @@ Writes:
 - ``results/summary.csv``            one row per run (seeds included)
 - ``results/figures/*.png``          the headline figures (if matplotlib is present)
 
-Figures map to docs/experiment_plan.md: Fig.1 gen-PPL vs NFE/token (E1), Fig.1b vs
-FLOP cost, Fig.2 vs block size (E3), Fig.3 vs steps/block (E4), Fig.4 entropy per
-block index (E5), Fig.5 vs wall-clock tokens/sec (E13), Fig.5a sequence latency,
-Fig.5b tokens/sec vs steps/block. A ``sampler=gold`` run adds the data-reference
-line to quality plots. Numbers are averaged over seeds with std as error bars.
+Figures kept: gen-PPL / NLL vs total network forwards, sequence latency, and
+tokens/sec vs steps/block. A ``sampler=gold`` run adds the data-reference line
+to quality plots. Numbers are averaged over seeds with std as error bars.
 Kept dependency-light: CSV always, plots only if matplotlib is importable.
 """
 
@@ -37,6 +35,14 @@ FIELDS = ["metric_schema", "model", "sampler", "block_size", "steps_per_block",
           "sampling_seconds", "sequence_latency_ms", "sequence_latency_p10_ms",
           "sequence_latency_p90_ms", "sequence_latency_repeats", "latency_device",
           "report_block_size", "n_samples", "commit"]
+
+# Only these plots are generated; anything else under figures/ is removed on aggregate.
+KEEP_FIGURES = {
+    "nfe_total_vs_genppl.png",
+    "nfe_total_vs_nll.png",
+    "sequence_latency.png",
+    "tokens_per_sec.png",
+}
 
 
 def load_rows() -> list[dict]:
@@ -99,6 +105,10 @@ def _with_gen_nll(rows: list[dict]) -> list[dict]:
     return out
 
 
+def _recipe_label(r: dict) -> str:
+    return "M1" if r.get("model") == "M1" else f"M2 B{r['block_size']}"
+
+
 def make_figures(rows: list[dict]) -> None:
     try:
         import matplotlib
@@ -115,7 +125,7 @@ def make_figures(rows: list[dict]) -> None:
     ref_ppl = _data_reference(rows)
     ref_nll = _data_reference(rows_nll, y_field="gen_nll")
 
-    def _lineplot(agg, xlabel, fname, title, logx=False, *, grid=False, label_xticks=False,
+    def _lineplot(agg, xlabel, fname, title, logx=False, *, grid=False,
                   figsize=(6.5, 4.5), ylabel="gen-PPL (↓)", ref=None):
         by_group = defaultdict(list)
         for x, m, s, g in agg:
@@ -123,97 +133,75 @@ def make_figures(rows: list[dict]) -> None:
         if not by_group:
             return
         fig, ax = plt.subplots(figsize=figsize)
-        all_xs: list[float] = []
         for g, pts in by_group.items():
             pts.sort()
             xs, ms, ss = zip(*pts)
-            all_xs.extend(xs)
             label = "-".join(str(x) for x in g) if isinstance(g, tuple) else str(g)
             ax.errorbar(xs, ms, yerr=ss, marker="o", capsize=3, label=label)
         if ref is not None:
             ax.axhline(ref, ls="--", lw=1, color="gray", label="data")
         if logx:
             ax.set_xscale("log")
-        if label_xticks and all_xs:
-            ticks = sorted({float(x) for x in all_xs})
-            ax.set_xticks(ticks)
-            ax.set_xticklabels([f"{t:g}" for t in ticks], rotation=45, ha="right", fontsize=8)
         if grid:
             ax.grid(True, which="both", ls="--", alpha=0.4)
-        ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.set_title(title)
-        ax.legend(fontsize=7); fig.tight_layout()
-        fig.savefig(figdir / fname, dpi=150); plt.close(fig)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.set_title(title)
+        ax.legend(fontsize=7)
+        fig.tight_layout()
+        fig.savefig(figdir / fname, dpi=150)
+        plt.close(fig)
         print(f"wrote {figdir / fname}")
 
-    # Fig.1 — all network forwards per generated token, one series per recipe.
-    _lineplot(_agg(model_rows, ["model", "block_size"], "nfe_per_token"),
-              "network forwards / token", "fig1_nfe_vs_genppl.png",
-              "Quality vs network forwards / token", logx=True, ref=ref_ppl)
-    # Fig.1a — all network forwards per sequence; cache construction is included.
+    # Quality vs total network forwards (PPL and NLL).
     _lineplot(_agg(model_rows, ["model", "block_size"], "nfe_total"),
-              "network forwards / sequence", "fig1a_nfe_total_vs_genppl.png",
+              "network forwards / sequence", "nfe_total_vs_genppl.png",
               "Quality vs total network forwards", logx=True, grid=True,
               figsize=(7.5, 4.8), ref=ref_ppl)
-    # Fig.1a (NLL) — same axes, y = ln(gen_ppl) in nats.
     _lineplot(_agg(model_rows_nll, ["model", "block_size"], "nfe_total", y_field="gen_nll"),
-              "network forwards / sequence", "fig1a_nfe_total_vs_nll.png",
+              "network forwards / sequence", "nfe_total_vs_nll.png",
               "Quality vs total network forwards", logx=True, grid=True,
               figsize=(7.5, 4.8), ylabel="NLL (↓)", ref=ref_nll)
-    # Fig.1b — context-token proxy including clean-prefix cache construction.
-    _lineplot(_agg(model_rows, ["model", "block_size"], "context_token_cost_per_token"),
-              "context token-passes / output token (proxy)", "fig1b_flops_vs_genppl.png",
-              "Quality vs context-token compute proxy", logx=True, ref=ref_ppl)
-    # Fig.2 — gen-PPL vs block size at steps/block=1 (E3, sweet spot)
-    _lineplot(_agg(model_rows, ["model"], "block_size", where=lambda r: r.get("steps_per_block") == 1),
-              "block size B", "fig2_blocksize.png", "Quality vs block size (1 step/block)",
-              logx=True, ref=ref_ppl)
-    # Fig.3 — gen-PPL vs steps/block at B=16 (E4)
-    _lineplot(_agg(model_rows, ["model"], "steps_per_block", where=lambda r: r.get("block_size") == 16),
-              "steps / block", "fig3_steps.png", "Quality vs steps/block (B=16)", ref=ref_ppl)
-    # Fig.5 — gen-PPL vs wall-clock throughput (E13)
-    _lineplot(_agg(model_rows, ["model", "block_size"], "tokens_per_sec"),
-              "tokens / sec", "fig5_speed_vs_genppl.png", "Quality vs throughput",
-              logx=True, ref=ref_ppl)
 
-    def _recipe_label(r: dict) -> str:
-        return "M1" if r.get("model") == "M1" else f"M2 B{r['block_size']}"
-
-    # Fig.5a — end-to-end batch-size-one latency. p10–p90 captures run-to-run jitter.
+    # End-to-end batch-size-one latency. p10–p90 captures run-to-run jitter.
+    # One point per steps_per_block (median over seeds if several measured).
     latency_rows = [
         r for r in model_rows
         if r.get("sequence_latency_ms") is not None
     ]
     if latency_rows:
-        by_recipe = defaultdict(list)
+        by_recipe: dict[str, list[dict]] = defaultdict(list)
         for r in latency_rows:
             by_recipe[_recipe_label(r)].append(r)
         fig, ax = plt.subplots(figsize=(7, 4.5))
         for label, rows_for_recipe in sorted(by_recipe.items()):
-            rows_for_recipe.sort(key=lambda r: r["steps_per_block"])
-            xs = [r["steps_per_block"] for r in rows_for_recipe]
-            ys = [r["sequence_latency_ms"] for r in rows_for_recipe]
-            lower = [
-                y - r.get("sequence_latency_p10_ms", y)
-                for y, r in zip(ys, rows_for_recipe)
-            ]
-            upper = [
-                r.get("sequence_latency_p90_ms", y) - y
-                for y, r in zip(ys, rows_for_recipe)
-            ]
+            # one point per steps_per_block: median over seeds if several measured
+            by_steps: dict[int, list[dict]] = defaultdict(list)
+            for r in rows_for_recipe:
+                by_steps[int(r["steps_per_block"])].append(r)
+            xs, ys, lower, upper = [], [], [], []
+            for steps in sorted(by_steps):
+                pts = by_steps[steps]
+                y = st.median([p["sequence_latency_ms"] for p in pts])
+                p10 = st.median([p.get("sequence_latency_p10_ms", y) for p in pts])
+                p90 = st.median([p.get("sequence_latency_p90_ms", y) for p in pts])
+                xs.append(steps)
+                ys.append(y)
+                lower.append(y - p10)
+                upper.append(p90 - y)
             ax.errorbar(
-                xs, ys, yerr=[lower, upper], marker="o", capsize=3,
-                label=label,
+                xs, ys, yerr=[lower, upper], marker="o", capsize=3, label=label,
             )
         ax.set_xlabel("steps / block")
         ax.set_ylabel("latency (ms)")
         ax.set_title("End-to-end sequence latency")
         ax.legend(fontsize=8)
         fig.tight_layout()
-        fig.savefig(figdir / "fig5a_sequence_latency.png", dpi=150)
+        fig.savefig(figdir / "sequence_latency.png", dpi=150)
         plt.close(fig)
-        print(f"wrote {figdir / 'fig5a_sequence_latency.png'}")
+        print(f"wrote {figdir / 'sequence_latency.png'}")
 
-    # Fig.5b — batched throughput vs steps/block (same recipes as fig5a).
+    # Batched throughput vs steps/block (mean ± std over seeds).
     tps_rows = [r for r in model_rows if r.get("tokens_per_sec") is not None]
     if tps_rows:
         buckets: dict[tuple[str, int], list[float]] = defaultdict(list)
@@ -236,21 +224,14 @@ def make_figures(rows: list[dict]) -> None:
         ax.legend(fontsize=8)
         ax.grid(True, which="both", ls="--", alpha=0.4)
         fig.tight_layout()
-        fig.savefig(figdir / "fig5b_tokens_per_sec.png", dpi=150)
+        fig.savefig(figdir / "tokens_per_sec.png", dpi=150)
         plt.close(fig)
-        print(f"wrote {figdir / 'fig5b_tokens_per_sec.png'}")
+        print(f"wrote {figdir / 'tokens_per_sec.png'}")
 
-    # Fig.4 — per-sample entropy per block index (E5, collapse), one line per run
-    curves = [r for r in model_rows if len(r.get("entropy_per_block_ps", [])) > 1]
-    if curves:
-        fig, ax = plt.subplots(figsize=(5, 4))
-        for r in curves:
-            ax.plot(range(len(r["entropy_per_block_ps"])), r["entropy_per_block_ps"],
-                    marker=".", label=f"{r.get('model')} B{r.get('block_size')}")
-        ax.set_xlabel("block index"); ax.set_ylabel("token entropy / sample (nats)")
-        ax.set_title("Entropy collapse across blocks"); ax.legend(fontsize=7)
-        fig.tight_layout(); fig.savefig(figdir / "fig4_entropy_per_block.png", dpi=150)
-        plt.close(fig); print(f"wrote {figdir / 'fig4_entropy_per_block.png'}")
+    for stale in figdir.glob("*.png"):
+        if stale.name not in KEEP_FIGURES:
+            stale.unlink()
+            print(f"removed {stale}")
 
 
 def main() -> None:

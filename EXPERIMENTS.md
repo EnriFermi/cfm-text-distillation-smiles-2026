@@ -30,9 +30,8 @@ Priority (docs/experiment_plan.md §6): **must-have** E0,E1,E2,E3,E5,E13 · shou
 nice-to-have E7–E11.
 
 ## Deliverables → artifacts (produced by eval/aggregate.py)
-- **Fig.1** gen-PPL vs network forwards/token (H2) — `results/figures/fig1_nfe_vs_genppl.png`
-- **Fig.2** gen-PPL vs block size (sweet spot) — `fig2_blocksize.png`
-- **Fig.3** gen-PPL vs steps/block — `fig3_steps.png`
-- **Fig.4** entropy per block index (collapse) — `fig4_entropy_per_block.png`
+- gen-PPL vs total network forwards — `results/figures/nfe_total_vs_genppl.png`
+- NLL vs total network forwards — `results/figures/nfe_total_vs_nll.png`
+- sequence latency (bs=1) — `results/figures/sequence_latency.png`
+- batched tokens/sec vs steps/block — `results/figures/tokens_per_sec.png`
 - **Tab. H1** M3 vs M2 paired — from `results/summary.csv`
-- **Fig.5 / E13** wall-clock tokens/sec — separate timing run (see plan §5).
