@@ -152,6 +152,63 @@ def test_block_causal_sample():
     assert 0 <= int(toks.min()) and int(toks.max()) < K
 
 
+def test_cached_matches_full_sample():
+    """KV-cached M3 sampling must match the full 2L masked path bit-for-bit."""
+    m = _dezero(_tiny_module()).eval()
+    torch.manual_seed(0)
+    full = block_causal_sample(m, B, steps_per_block=2, batch_size=4, length=L, use_kv_cache=False)
+    torch.manual_seed(0)
+    cached = block_causal_sample(m, B, steps_per_block=2, batch_size=4, length=L, use_kv_cache=True)
+    assert torch.equal(full, cached)
+
+
+def test_cached_block_logits_match_full_forward():
+    """Single-block noisy logits from forward_block == sliced full masked forward."""
+    from block.block_dit import empty_kv_cache
+    from block.mask import block_causal_mask
+
+    net = _dezero(_tiny_net()).eval()
+    mask = block_causal_mask(L, B)
+    torch.manual_seed(1)
+    clean_tok = torch.randint(0, K, (2, L))
+    # finalize first two blocks as clean prefix, denoise block 2
+    lo, hi = 2 * B, 3 * B
+    z_blk = torch.randn(2, B, K)
+    s_val, t_val = 0.2, 0.7
+
+    clean_oh = F.one_hot(clean_tok, K).float()
+    noisy = torch.zeros(2, L, K)
+    noisy[:, lo:hi] = z_blk
+    x = torch.cat([clean_oh, noisy], 1)
+    s_tok = torch.zeros(2, L)
+    t_tok = torch.zeros(2, L)
+    s_tok[:, lo:hi], t_tok[:, lo:hi] = s_val, t_val
+    ones = torch.ones(2, L)
+    full_logits = net(x, torch.cat([ones, s_tok], 1), torch.cat([ones, t_tok], 1), mask)[:, L + lo:L + hi]
+
+    kv = empty_kv_cache(len(net.blocks))
+    for b in range(2):
+        a, c = b * B, (b + 1) * B
+        kv = net.encode_clean(clean_oh[:, a:c], torch.arange(a, c), kv)
+    s_b = torch.full((2, B), s_val)
+    t_b = torch.full((2, B), t_val)
+    cached_logits = net.forward_block(z_blk, s_b, t_b, torch.arange(lo, hi), kv)
+    assert torch.allclose(full_logits, cached_logits, atol=1e-5, rtol=1e-4)
+
+
+def test_cache_grows_with_blocks():
+    from block.block_dit import cache_seq_len, empty_kv_cache
+
+    net = _tiny_net().eval()
+    kv = empty_kv_cache(len(net.blocks))
+    assert cache_seq_len(kv) == 0
+    for b in range(NB):
+        lo, hi = b * B, (b + 1) * B
+        x = F.one_hot(torch.randint(0, K, (1, B)), K).float()
+        kv = net.encode_clean(x, torch.arange(lo, hi), kv)
+        assert cache_seq_len(kv) == hi
+
+
 def test_sample_flow_map_batch_onehot():
     m = _tiny_module().eval()
     out = m.sample_flow_map_batch(batch_size=2, sampling_steps=1)

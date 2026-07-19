@@ -7,7 +7,7 @@ design — what each experiment tests and its decision rule — is in
 
 ## Claim → experiment (see docs/experiment_plan.md for details)
 `C1/H2`→E1,E13 · `C2/H1`→E2,E2b · `C3` sweet-spot→E3 · `C4` B×steps→E4 · `C5` collapse→E5 ·
-`C6` exposure→E6,E10b · `C7` cache/length→E12,E13 · `C8` ECLD→E7.
+`C6` exposure→E6 · `C7` cache/length→E12,E13 · `C8` ECLD→E7.
 
 ## Run tracking
 
@@ -18,7 +18,6 @@ design — what each experiment tests and its decision rule — is in
 | E1/E3/E4 | `sampler=bcfm_infer` (B×steps grid) | M2 | 1–256 | 1,2,4 | 0,1,2 | — | planned | |
 | E6 | `sampler.prefix=generated,gold` | M2 | 16 | 1,2 | 0,1,2 | — | planned | |
 | E10 | `sampler.schedule=... exp_name=...` | M2 | 16 | 2 | 0 | — | planned | |
-| E10b | `sampler.prefix_mode=clean,renoise` | M2 | 16 | 2,4 | 0,1,2 | — | planned | |
 | E11 | `sampler.discretize=argmax,sample` | M2 | 16 | 1 | 0,1,2 | — | planned | |
 | — train — | `experiment=cfm_text8_baseline` | M1 | – | – | 12345 | misha | planned | |
 | E2b | continue M1 for M3's finetune budget (M1+) | M1+ | – | – | 12345 | — | planned (P1) | |
@@ -31,7 +30,7 @@ Priority (docs/experiment_plan.md §6): **must-have** E0,E1,E2,E3,E5,E13 · shou
 nice-to-have E7–E11.
 
 ## Deliverables → artifacts (produced by eval/aggregate.py)
-- **Fig.1** gen-PPL vs NFE/token (H2) — `results/figures/fig1_nfe_vs_genppl.png`
+- **Fig.1** gen-PPL vs network forwards/token (H2) — `results/figures/fig1_nfe_vs_genppl.png`
 - **Fig.2** gen-PPL vs block size (sweet spot) — `fig2_blocksize.png`
 - **Fig.3** gen-PPL vs steps/block — `fig3_steps.png`
 - **Fig.4** entropy per block index (collapse) — `fig4_entropy_per_block.png`

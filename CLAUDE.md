@@ -73,20 +73,25 @@ Local = Hydra's default launcher (nothing to configure). Trackers: `logger=comet
 4. **Commit results as small JSON** (schema below). Distinct paths ⇒ trivial merges.
 5. **Register your runs in `EXPERIMENTS.md`** (append a row: name, owner, status, Comet link).
 
-## results/<exp>/metrics.json schema (frozen — don't break downstream plots)
+## results/<exp>/metrics.json schema
 ```json
-{ "model": "M2", "sampler": "bcfm_infer", "block_size": 16, "steps_per_block": 2,
-  "nfe_per_token": 0.125, "flop_cost_per_token": 32.0, "cost_model": "full_recompute",
-  "seed": 0, "prefix": "generated|gold", "prefix_mode": "clean|renoise",
+{ "metric_schema": "network_forwards_v2",
+  "model": "M2", "sampler": "bcfm_infer", "block_size": 16, "steps_per_block": 2,
+  "flow_nfe_total": 32, "cache_encode_forwards": 15, "nfe_total": 47,
+  "nfe_per_token": 0.1836, "context_token_cost_per_token": 24.5,
+  "cost_model": "cached_context_token_proxy",
+  "seed": 0, "prefix": "generated|gold",
   "discretize": "argmax|sample", "schedule": null, "report_block_size": 16,
   "entropy_per_block": [/* pooled, nats */], "entropy_per_block_ps": [/* per-sample */],
   "gen_ppl": 0.0, "sampling_seconds": 0.0, "tokens_per_sec": 0.0,
-  "ckpt": "...", "commit": "<sha>", "n_samples": 256 }
+  "ckpt": "...", "commit": "<sha>", "n_samples": 512 }
 ```
-`block/nfe.py` is the single source of truth for `nfe_per_token` / FLOP cost (read its
-docstring: M2 forwards cost as much as M1's, M3's are cheaper). Full-sequence CFM is the
-`block_size == length` case (one block). `sampler=gold` scores real data — the reference
-lines for every figure.
+`block/nfe.py` is the single source of truth. `flow_nfe_total` counts flow-map calls only;
+`nfe_total` additionally counts each useful clean-prefix cache build, and is the headline
+NFE. `context_token_cost_per_token` is a context-token proxy, not measured FLOPs. The M2
+inference sampler is always KV-cached; it has no doubled-stream fallback because M1 uses
+scalar time conditioning. Full-sequence CFM is the `block_size == length` case (one block).
+`sampler=gold` scores real data — the reference lines for every figure.
 
 ## Eval gotchas
 - **Checkpoint loading is strict**: `eval_bcfm.yaml`'s `model.net` block must match the
@@ -94,8 +99,8 @@ lines for every figure.
   mirror `cfm_text8_baseline`; if you trained something else, override `model.net.*` to
   the values in that run's resolved config (in its `logs/` dir).
 - **Every swept axis must show up in `exp_name`**, or two multirun jobs overwrite each
-  other's results dir. The default template covers B/steps/prefix/prefix_mode/discretize/
-  seed; custom `sampler.schedule` runs must set `exp_name` manually.
+  other's results dir. The default template covers B/steps/prefix/discretize/seed; custom
+  `sampler.schedule` runs must set `exp_name` manually.
 - With `sampler.prefix=gold`, returned sequences are still the *generated* blocks (each
   conditioned on the gold prefix) — that's the exposure-bias probe, not a copy of the data.
 

@@ -38,6 +38,12 @@ device: cuda
 n_samples: 256
 batch_size: 128
 
+# Set true to update an existing results/<exp_name>/metrics.json with end-to-end
+# batch-size-one generation latency. The benchmark excludes warmup and judge time.
+latency_only: false
+latency_warmup_runs: 5
+latency_repeats: 30
+
 # entropy_per_block bucket size; null => the sampler's block_size (set e.g. 16 for
 # full_cfm so its entropy curve is comparable to blockwise runs — E5).
 report_block_size: null

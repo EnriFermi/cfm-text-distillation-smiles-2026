@@ -4,3 +4,4 @@ block_size: 16          # must match the trained model's block_size
 steps_per_block: 2      # flow-map jumps per block; sweep {1,2,4}
 discretize: argmax      # or "sample"
 schedule: null          # null => uniform grid
+use_kv_cache: true      # clean-prefix KV cache; false => full 2L masked forward

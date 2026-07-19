@@ -27,7 +27,8 @@ Success = each of C1–C8 has an artifact + decision rule below. C1/C2 are the p
 
 ## 2. Experiment catalog
 
-Models: **M1** full-seq CFM · **M2** inference-time BCFM (wrap M1) · **M3** training-time BCFM.
+Models: **M1** full-seq CFM · **M2** inference-time KV-cached BCFM (wrap M1) ·
+**M3** training-time BCFM.
 Default data: text8, L=256. Judge: gpt2-large gen-PPL (primary), GPT-J-6B (one confirm table).
 Samples: **256** for sweeps, **512** for final headline points. Seeds: see §4.
 
@@ -35,7 +36,7 @@ Samples: **256** for sweeps, **512** for final headline points. Seeds: see §4.
 |----|----------|----------|-----------|----------------|-------------------------------|----------|
 | **E0** | prereq | M1 | steps {1,2,4,8,16} | gen-PPL | sanity: PPL improves with steps (matches CFM) | Tab. baselines |
 | **E0-ref** | all figs | – (data) | `sampler=gold` | gen-PPL + entropy of real text8 | reference lines: the PPL floor and entropy ceiling every figure is read against | dashed line in Figs. 1–5 |
-| **E1** | C1 (H2) | M1,M2,M3 | full NFE grid (see §3) | gen-PPL vs **NFE/token** | H2 holds if M2/M3 Pareto frontier lies below M1's over some NFE range **and** those points keep per-sample entropy within ~10% of the E0-ref value (a PPL win from entropy collapse is not a win); report crossover | **Fig. 1** (headline) |
+| **E1** | C1 (H2) | M1,M2,M3 | full NFE grid (see §3) | gen-PPL vs **network forwards/token** | H2 holds if M2/M3 Pareto frontier lies below M1's over some NFE range **and** those points keep per-sample entropy within ~10% of the E0-ref value (a PPL win from entropy collapse is not a win); report crossover | **Fig. 1** (headline) |
 | **E2** | C2 (H1) | M2,M3 | matched (B,steps/blk) | Δ gen-PPL (paired) | H1 holds if M3 < M2 at equal NFE on majority of grid; paired test | **Tab. H1** |
 | **E2b** | C2 control | M1+ (train) | continue M1 for the same extra steps as the M3 finetune | gen-PPL | guards H1 against "M3 is better only because it trained longer": M3 must also beat the compute-matched M1+ | row in Tab. H1 |
 | **E3** | C3 | M2,M3 | B {1,2,4,8,16,32,64,128,256}, steps/blk=1,2 | gen-PPL vs **B** | sweet spot = argmin region; **B=256 must ≈ M1** (sanity), B=1 = AR-latent | **Fig. 2** |
@@ -46,7 +47,6 @@ Samples: **256** for sweeps, **512** for final headline points. Seeds: see §4.
 | **E8** | C8 | M3 (train) | sd_prop {0, .25, .5}, λ | gen-PPL | sensitivity of self-distillation strength | Tab. ablation-λ |
 | **E9** | robustness | M1/M3 (train) | prior {gaussian, discunif} | gen-PPL | prior choice effect | Tab. ablation-prior |
 | **E10** | C4 / M2 heuristic | M2 | schedule {uniform, front-loaded, single-jump} @steps/blk=2 | gen-PPL | "how much is free": best (s,t) heuristic for un-trained-blockwise model | Tab. ablation-sched |
-| **E10b** | C6 / M2 heuristic | M2 | prefix_mode {clean, renoise} × steps/blk {2,4} | gen-PPL | the other half of the M2 heuristic: a clean prefix at small s is off-distribution; re-noising is on-distribution but weakens conditioning (information-free at 1 step). Which wins decides how M2 should be run | Tab. ablation-prefix |
 | **E11** | C5 mitig. | M2,M3 | discretize {argmax, sample} | gen-PPL + entropy | sampling vs argmax at block boundary (collapse mitigation) | Tab. ablation-disc |
 | **E12** | C7 | M3 | length {256, 512, 1024} | gen-PPL + samples | M3 generates L>train-length; M1 cannot ⇒ length-flexibility | **Tab.+qual.** |
 | **E13** | C7 speed | M1,M2,M3 | matched-quality points | **tokens/sec**, FLOPs | back "fast/cacheable": wall-clock, not just NFE (see §5). Timing is auto-recorded in every eval run (`tokens_per_sec` in metrics.json) | **Fig. 5** |
@@ -80,10 +80,6 @@ python -m eval.run_eval -m ckpt_path=$CKPT model_id=M2 sampler=bcfm_infer \
 # E10: schedule heuristic for M2 (custom schedules need a manual exp_name)
 python -m eval.run_eval ckpt_path=$CKPT model_id=M2 sampler=bcfm_infer \
     sampler.block_size=16 sampler.schedule="[[0,0.8],[0.8,1]]" exp_name=e10_frontload_seed0
-# E10b: prefix representation (clean vs renoise)
-python -m eval.run_eval -m ckpt_path=$CKPT model_id=M2 sampler=bcfm_infer \
-    sampler.block_size=16 sampler.steps_per_block=2,4 sampler.prefix_mode=clean,renoise seed=0,1,2
-
 # E11: discretization
 python -m eval.run_eval -m ckpt_path=$CKPT model_id=M2 sampler=bcfm_infer \
     sampler.block_size=16 sampler.steps_per_block=1 sampler.discretize=argmax,sample seed=0,1,2
@@ -109,18 +105,19 @@ python -m eval.aggregate            # -> results/summary.csv + figures/*.png
 - **Sample count**: 512 for Fig. 1/Tab. H1 final numbers; 256 for wide sweeps.
 - **Paired comparison (E2)**: same seeds + same NFE grid; report mean Δ and sign-consistency across grid points (not a heavy significance test — "all relative across our own runs" per the proposal).
 
-## 5. The NFE/token caveat (must address in the paper)
-What one NFE *costs* differs by adaptation (`block/nfe.py`):
-- **M1 vs M2**: every M2 forward re-runs the *full-length* model, so M1 and M2 NFEs cost
-  the same and NFE/token is directly FLOP-comparable — which makes M2 expensive:
-  B=16 × 2 steps/block = 32 full forwards vs 4 for a 4-step M1. On this axis M2 can only
-  win where quality per forward is dramatically better (or at large B / 1 step).
-- **M3 (KV-cached)** forwards process only the current block, so raw NFE/token *overstates*
-  M3's true cost; `forward_token_cost` gives the attention-aware view and wall-clock is
-  ground truth.
-Therefore Fig. 1 uses NFE/token (the proposal's axis), Fig. 1b uses the FLOP-aware cost,
-and Fig. 5 (E13) uses measured tokens/sec. If H2 holds on one axis and not another, say so
-explicitly — that is a real, publishable finding, not a failure.
+## 5. NFE and compute accounting
+`block/nfe.py` distinguishes flow-map evaluations from all transformer invocations:
+- `flow_nfe_total` counts only denoising calls.
+- `cache_encode_forwards` counts the non-final clean blocks encoded to construct a
+  KV prefix.
+- `nfe_total` is their sum and is the Fig. 1 axis. It is the only NFE reported as a
+  total number of forwards.
+
+M2 and cached M3 process only the current block while reading clean K/V context. Fig. 1b
+therefore reports `context_token_cost_per_token`, an analytical context-token proxy that
+also includes cache construction; it is not measured FLOPs. Fig. 5 reports measured
+tokens/sec and is the hardware-level comparison. If conclusions differ by axis, report it
+explicitly.
 
 The harness measures tokens/sec honestly: a throwaway warmup batch absorbs cudnn autotune +
 torch.compile, and the timed region is bracketed by device synchronize; the RNG is reset

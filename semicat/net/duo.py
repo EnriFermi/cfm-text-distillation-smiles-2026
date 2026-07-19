@@ -2,8 +2,10 @@
 Changed architecture from Duo to be able to edit.
 """
 
+from __future__ import annotations
+
 import math
-from typing import Literal
+from typing import Literal, TypeAlias
 
 # import einops
 import flash_attn
@@ -13,6 +15,21 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from semicat.jvp_utils.functional import safe_sdpa_jvp
+
+# Per-layer clean-prefix cache: RoPE-applied (K, V), shape (batch, n_cached, n_heads, head_dim).
+LayerKV: TypeAlias = tuple[torch.Tensor, torch.Tensor]
+KVCache: TypeAlias = list[LayerKV | None]
+
+
+def empty_kv_cache(n_layers: int) -> KVCache:
+    return [None] * n_layers
+
+
+def cache_seq_len(kv_cache: KVCache) -> int:
+    for entry in kv_cache:
+        if entry is not None:
+            return int(entry[0].shape[1])
+    return 0
 
 
 def modulate_fused(
@@ -24,7 +41,10 @@ def modulate_fused(
 class Rotary(torch.nn.Module):
     def __init__(self, seq_len, dim, base=10_000):
         super().__init__()
+        self.dim = dim
+        self.base = float(base)
         inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2) / dim))
+        self.register_buffer("inv_freq", inv_freq, persistent=False)
 
         t = torch.arange(seq_len)
         freqs = torch.einsum("i,j->ij", t, inv_freq)
@@ -38,11 +58,26 @@ class Rotary(torch.nn.Module):
         self.register_buffer("cos_cached", cos_cached)
         self.register_buffer("sin_cached", sin_cached)
 
+    def _tables_from_emb(self, emb: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        cos = emb.cos()[None, :, None, None, :].repeat(1, 1, 3, 1, 1)
+        sin = emb.sin()[None, :, None, None, :].repeat(1, 1, 3, 1, 1)
+        cos[:, :, 2, :, :].fill_(1.0)
+        sin[:, :, 2, :, :].fill_(0.0)
+        return cos, sin
+
+    def for_positions(self, positions: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """On-the-fly RoPE tables for arbitrary absolute positions ``(S,)``."""
+        inv_freq = self.inv_freq.to(device=positions.device, dtype=torch.float32)
+        freqs = torch.einsum("i,j->ij", positions.float(), inv_freq)
+        emb = torch.cat((freqs, freqs), dim=-1)
+        return self._tables_from_emb(emb)
+
     def forward(self, seq_len: int | None = None):
         """Return (cos, sin) for ``seq_len`` positions (default: trained length).
 
         For the BD3-LM doubled stream ``[clean; noisy]`` at length ``2L``, positions
         ``0..L-1`` and ``L..2L-1`` share the same rotary embeddings (``pos % L``).
+        Any other ``seq_len`` is built on the fly (same formula as training RoPE).
         """
         L = self.cos_cached.shape[1]
         if seq_len is None or seq_len == L:
@@ -51,7 +86,7 @@ class Rotary(torch.nn.Module):
             cos = torch.cat([self.cos_cached[:, :L], self.cos_cached[:, :L]], dim=1)
             sin = torch.cat([self.sin_cached[:, :L], self.sin_cached[:, :L]], dim=1)
             return cos, sin
-        raise ValueError(f"rotary supports length {L} or {2 * L}, got {seq_len}")
+        return self.for_positions(torch.arange(seq_len, device=self.cos_cached.device))
 
 
 def split_and_apply_rotary_pos_emb(qkv, rotary_cos_sin):
@@ -179,6 +214,65 @@ class DDiTBlock(nn.Module):
             x = self.dropout(self.attn_out(x)) + x_skip
             x = self.dropout(self.mlp(self.norm2(x))) + x
         return x
+
+    def forward_cached(
+        self,
+        x: torch.Tensor,
+        rotary_cos_sin,
+        c: torch.Tensor | None,
+        kv_cache: LayerKV | None,
+        *,
+        update_cache: bool,
+    ) -> tuple[torch.Tensor, LayerKV | None]:
+        """Run this layer on new tokens only; attend to optional clean-prefix KV cache.
+
+        When ``update_cache=True`` (encode clean), new K/V are appended to the cache.
+        When ``False`` (denoise current block), cache is left unchanged — only clean
+        prefix state is stored across blocks, not intermediate denoising steps.
+        """
+        x_skip = x
+        x = self.norm1(x)
+        seq_len = x.shape[1]
+
+        if self.adaLN:
+            (shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp) = (
+                self.adaLN_modulation(c)[:, None].chunk(6, dim=2)
+            )
+            x = modulate_fused(x, shift_msa, scale_msa)
+
+        qkv = self.attn_qkv(x).reshape(x.shape[0], seq_len, 3, self.n_heads, self.dim_per_head)
+        q, k, v = split_and_apply_rotary_pos_emb(qkv, rotary_cos_sin)
+
+        if kv_cache is not None:
+            k_c, v_c = kv_cache
+            k_full = torch.cat([k_c, k], dim=1)
+            v_full = torch.cat([v_c, v], dim=1)
+        else:
+            k_full, v_full = k, v
+
+        attention_output = F.scaled_dot_product_attention(
+            query=q.transpose(1, 2),
+            key=k_full.transpose(1, 2),
+            value=v_full.transpose(1, 2),
+            attn_mask=None,
+            dropout_p=0.0,
+            is_causal=False,
+        )
+        x = attention_output.transpose(1, 2).reshape(x.shape[0], seq_len, self.dim)
+
+        if self.adaLN:
+            x = self.dropout(self.attn_out(x) * gate_msa) + x_skip
+            x_skip = x
+            x = self.norm2(x) * (1.0 + scale_mlp) + shift_mlp
+            x = self.dropout(self.mlp(x) * gate_mlp) + x_skip
+        else:
+            x = self.dropout(self.attn_out(x)) + x_skip
+            x = self.dropout(self.mlp(self.norm2(x))) + x
+
+        new_cache: LayerKV | None = kv_cache
+        if update_cache:
+            new_cache = (k_full, v_full) if kv_cache is not None else (k, v)
+        return x, new_cache
 
 
 class EmbeddingLayer(nn.Module):
@@ -358,13 +452,14 @@ class DIT(nn.Module):
             adaLN=self.adaLN,
         )
 
-    def forward(self, x, s, t, jvp_attention: bool = False, attn_mask=None):
-        # time reparameterisation
-        t = t - s
+    def _time_cond(self, s: torch.Tensor, t: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return ``(s_for_embed, cond)`` with the usual ``t <- t - s`` reparameterisation."""
+        t_eff = t - s
+        cond = F.silu(self.s_map(s)) + F.silu(self.t_map(t_eff))
+        return s, cond
 
-        s_cond = F.silu(self.s_map(s))
-        t_cond = F.silu(self.t_map(t))
-        cond = s_cond + t_cond
+    def forward(self, x, s, t, jvp_attention: bool = False, attn_mask=None):
+        s, cond = self._time_cond(s, t)
         x = self.vocab_embed(x, s, cond)
 
         rotary_cos_sin = self.rotary_emb(x.shape[1])
@@ -374,3 +469,54 @@ class DIT(nn.Module):
         x = self.output_layer(x, c=cond)
 
         return x
+
+    def encode_clean(
+        self,
+        x_clean: torch.Tensor,
+        positions: torch.Tensor,
+        kv_cache: KVCache | None = None,
+    ) -> KVCache:
+        """Append K/V for a finalized clean block at ``s=t=1`` (stable prefix state).
+
+        ``x_clean``: ``(batch, B, K)`` one-hot; ``positions``: ``(B,)`` absolute indices.
+        Only this clean state is cached — not intermediate denoising K/V.
+        """
+        if kv_cache is None:
+            kv_cache = empty_kv_cache(len(self.blocks))
+        batch = x_clean.shape[0]
+        device = x_clean.device
+        ones = torch.ones(batch, device=device, dtype=torch.float32)
+        s, cond = self._time_cond(ones, ones)
+        h = self.vocab_embed(x_clean, s, cond)
+        rotary = self.rotary_emb.for_positions(positions.to(device))
+        new_cache: KVCache = []
+        for i, blk in enumerate(self.blocks):
+            h, layer_cache = blk.forward_cached(
+                h, rotary, cond, kv_cache[i], update_cache=True,
+            )
+            new_cache.append(layer_cache)
+        return new_cache
+
+    def forward_block(
+        self,
+        x_noisy: torch.Tensor,
+        s: torch.Tensor,
+        t: torch.Tensor,
+        positions: torch.Tensor,
+        kv_cache: KVCache | None = None,
+    ) -> torch.Tensor:
+        """Denoise one noisy block against the clean-prefix KV cache.
+
+        ``x_noisy``: ``(batch, B, K)``; ``s``, ``t``: ``(batch,)`` jump times.
+        Does **not** update the cache (denoising steps are not stored).
+        """
+        if kv_cache is None:
+            kv_cache = empty_kv_cache(len(self.blocks))
+        s, cond = self._time_cond(s, t)
+        h = self.vocab_embed(x_noisy, s, cond)
+        rotary = self.rotary_emb.for_positions(positions.to(x_noisy.device))
+        for i, blk in enumerate(self.blocks):
+            h, _ = blk.forward_cached(
+                h, rotary, cond, kv_cache[i], update_cache=False,
+            )
+        return self.output_layer(h, c=cond)

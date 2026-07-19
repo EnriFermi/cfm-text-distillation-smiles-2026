@@ -78,8 +78,9 @@ def sample_tokens(
 ) -> Tensor:
     """Generate ``n_samples`` sequences under the given sampler config.
 
-    Dispatches on ``sampler.name``: ``full_cfm`` (M1, full-sequence) or
-    ``bcfm_infer`` (M2, blockwise wrapper). Returns ``(n_samples, length)`` on CPU.
+    Dispatches on ``sampler.name``: ``full_cfm`` (M1, full-sequence),
+    ``bcfm_infer`` (M2, blockwise + clean-prefix KV cache), or ``bcfm_train`` (M3).
+    Returns ``(n_samples, length)`` on CPU.
     """
     out, done = [], 0
     while done < n_samples:
@@ -90,12 +91,14 @@ def sample_tokens(
         elif sampler.name == "bcfm_infer":
             gp = gold_prefix[done:done + bs] if gold_prefix is not None else None
             sched = [tuple(st) for st in sampler.schedule] if sampler.get("schedule") else None
+            num_blocks = sampler.get("num_blocks")
             toks = blockwise_sample(
                 module,
                 sampler.block_size,
                 sampler.steps_per_block,
                 batch_size=bs,
-                length=length,
+                length=length if num_blocks is None else None,
+                num_blocks=int(num_blocks) if num_blocks is not None else None,
                 discretize=sampler.discretize,
                 schedule=sched,
                 gold_prefix=gp,
@@ -110,6 +113,7 @@ def sample_tokens(
                 length=length,
                 discretize=sampler.discretize,
                 schedule=sched,
+                use_kv_cache=bool(sampler.get("use_kv_cache", True)),
             )
         else:
             raise ValueError(f"unknown sampler '{sampler.name}'")

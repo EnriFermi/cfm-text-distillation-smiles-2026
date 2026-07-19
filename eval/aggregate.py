@@ -1,4 +1,4 @@
-"""Turn results/<exp>/metrics.json into the paper's tables and figures.
+"""Turn versioned results/<exp>/metrics.json into the paper's tables and figures.
 
 Run after a sweep::
 
@@ -10,15 +10,17 @@ Writes:
 
 Figures map to docs/experiment_plan.md: Fig.1 gen-PPL vs NFE/token (E1), Fig.1b vs
 FLOP cost, Fig.2 vs block size (E3), Fig.3 vs steps/block (E4), Fig.4 entropy per
-block index (E5), Fig.5 vs wall-clock tokens/sec (E13). A ``sampler=gold`` run adds
-the data-reference line to quality plots. Numbers are averaged over seeds with std as
-error bars. Kept dependency-light: CSV always, plots only if matplotlib is importable.
+block index (E5), Fig.5 vs wall-clock tokens/sec (E13), Fig.5a sequence latency,
+Fig.5b tokens/sec vs steps/block. A ``sampler=gold`` run adds the data-reference
+line to quality plots. Numbers are averaged over seeds with std as error bars.
+Kept dependency-light: CSV always, plots only if matplotlib is importable.
 """
 
 from __future__ import annotations
 
 import csv
 import json
+import math
 import statistics as st
 from collections import defaultdict
 from pathlib import Path
@@ -27,9 +29,13 @@ import rootutils
 
 ROOT = rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 RESULTS = ROOT / "results"
-FIELDS = ["model", "sampler", "block_size", "steps_per_block", "nfe_per_token",
-          "flop_cost_per_token", "cost_model", "seed", "prefix",
-          "discretize", "schedule", "gen_ppl", "tokens_per_sec", "sampling_seconds",
+METRIC_SCHEMA = "network_forwards_v2"
+FIELDS = ["metric_schema", "model", "sampler", "block_size", "steps_per_block",
+          "flow_nfe_total", "flow_nfe_per_token", "cache_encode_forwards",
+          "nfe_total", "nfe_per_token", "context_token_cost_per_token", "cost_model",
+          "seed", "prefix", "discretize", "schedule", "gen_ppl", "tokens_per_sec",
+          "sampling_seconds", "sequence_latency_ms", "sequence_latency_p10_ms",
+          "sequence_latency_p90_ms", "sequence_latency_repeats", "latency_device",
           "report_block_size", "n_samples", "commit"]
 
 
@@ -37,6 +43,8 @@ def load_rows() -> list[dict]:
     rows = []
     for f in sorted(RESULTS.glob("*/metrics.json")):
         d = json.loads(f.read_text())
+        if d.get("metric_schema") != METRIC_SCHEMA:
+            continue
         d["_exp"] = f.parent.name
         rows.append(d)
     return rows
@@ -45,7 +53,9 @@ def load_rows() -> list[dict]:
 def write_csv(rows: list[dict]) -> None:
     out = RESULTS / "summary.csv"
     with out.open("w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=["_exp", *FIELDS], extrasaction="ignore")
+        w = csv.DictWriter(
+            fh, fieldnames=["_exp", *FIELDS], extrasaction="ignore", lineterminator="\n",
+        )
         w.writeheader()
         w.writerows(rows)
     print(f"wrote {out} ({len(rows)} runs)")
@@ -72,18 +82,21 @@ def _agg(rows, key_fields, x_field, y_field="gen_ppl", where=None):
     return sorted(out, key=lambda t: (str(t[3]), t[0]))
 
 
-def _data_reference(rows) -> float | None:
-    """Mean gen-PPL of ``sampler=gold`` runs (the data floor), if present."""
-    vals = [r["gen_ppl"] for r in rows if r.get("sampler") == "gold" and r.get("gen_ppl")]
+def _data_reference(rows, *, y_field: str = "gen_ppl") -> float | None:
+    """Mean quality of ``sampler=gold`` runs (the data floor), if present."""
+    vals = [r[y_field] for r in rows if r.get("sampler") == "gold" and r.get(y_field)]
     return st.mean(vals) if vals else None
 
 
-def _is_legacy_pin_run(row: dict) -> bool:
-    """Exclude deprecated pin-prefix M2 runs from headline figures."""
-    model = str(row.get("model", ""))
-    if model.endswith("-pin"):
-        return True
-    return row.get("use_mask") is False  # old metrics.json field
+def _with_gen_nll(rows: list[dict]) -> list[dict]:
+    """Attach ``gen_nll = ln(gen_ppl)`` (nats); judge PPL is defined as ``exp(NLL)``."""
+    out = []
+    for r in rows:
+        d = dict(r)
+        if d.get("gen_ppl"):
+            d["gen_nll"] = math.log(float(d["gen_ppl"]))
+        out.append(d)
+    return out
 
 
 def make_figures(rows: list[dict]) -> None:
@@ -96,44 +109,136 @@ def make_figures(rows: list[dict]) -> None:
         return
     figdir = RESULTS / "figures"
     figdir.mkdir(exist_ok=True)
-    model_rows = [r for r in rows if r.get("sampler") != "gold" and not _is_legacy_pin_run(r)]
+    rows_nll = _with_gen_nll(rows)
+    model_rows = [r for r in rows if r.get("sampler") != "gold"]
+    model_rows_nll = [r for r in rows_nll if r.get("sampler") != "gold"]
     ref_ppl = _data_reference(rows)
+    ref_nll = _data_reference(rows_nll, y_field="gen_nll")
 
-    def _lineplot(agg, xlabel, fname, title, logx=False):
+    def _lineplot(agg, xlabel, fname, title, logx=False, *, grid=False, label_xticks=False,
+                  figsize=(6.5, 4.5), ylabel="gen-PPL (↓)", ref=None):
         by_group = defaultdict(list)
         for x, m, s, g in agg:
             by_group[g].append((x, m, s))
         if not by_group:
             return
-        fig, ax = plt.subplots(figsize=(5, 4))
+        fig, ax = plt.subplots(figsize=figsize)
+        all_xs: list[float] = []
         for g, pts in by_group.items():
             pts.sort()
             xs, ms, ss = zip(*pts)
-            ax.errorbar(xs, ms, yerr=ss, marker="o", capsize=3, label=str(g))
-        if ref_ppl is not None:
-            ax.axhline(ref_ppl, ls="--", lw=1, color="gray", label="data")
+            all_xs.extend(xs)
+            label = "-".join(str(x) for x in g) if isinstance(g, tuple) else str(g)
+            ax.errorbar(xs, ms, yerr=ss, marker="o", capsize=3, label=label)
+        if ref is not None:
+            ax.axhline(ref, ls="--", lw=1, color="gray", label="data")
         if logx:
             ax.set_xscale("log")
-        ax.set_xlabel(xlabel); ax.set_ylabel("gen-PPL (↓)"); ax.set_title(title)
+        if label_xticks and all_xs:
+            ticks = sorted({float(x) for x in all_xs})
+            ax.set_xticks(ticks)
+            ax.set_xticklabels([f"{t:g}" for t in ticks], rotation=45, ha="right", fontsize=8)
+        if grid:
+            ax.grid(True, which="both", ls="--", alpha=0.4)
+        ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.set_title(title)
         ax.legend(fontsize=7); fig.tight_layout()
         fig.savefig(figdir / fname, dpi=150); plt.close(fig)
         print(f"wrote {figdir / fname}")
 
-    # Fig.1 — gen-PPL vs NFE/token, one series per model (E1, H2)
-    _lineplot(_agg(model_rows, ["model"], "nfe_per_token"),
-              "NFE / token", "fig1_nfe_vs_genppl.png", "Quality vs NFE", logx=True)
-    # Fig.1b — same on the honest FLOP axis (full-recompute cost; see block/nfe.py)
-    _lineplot(_agg(model_rows, ["model"], "flop_cost_per_token"),
-              "token-passes / token", "fig1b_flops_vs_genppl.png", "Quality vs FLOP cost", logx=True)
+    # Fig.1 — all network forwards per generated token, one series per recipe.
+    _lineplot(_agg(model_rows, ["model", "block_size"], "nfe_per_token"),
+              "network forwards / token", "fig1_nfe_vs_genppl.png",
+              "Quality vs network forwards / token", logx=True, ref=ref_ppl)
+    # Fig.1a — all network forwards per sequence; cache construction is included.
+    _lineplot(_agg(model_rows, ["model", "block_size"], "nfe_total"),
+              "network forwards / sequence", "fig1a_nfe_total_vs_genppl.png",
+              "Quality vs total network forwards", logx=True, grid=True,
+              figsize=(7.5, 4.8), ref=ref_ppl)
+    # Fig.1a (NLL) — same axes, y = ln(gen_ppl) in nats.
+    _lineplot(_agg(model_rows_nll, ["model", "block_size"], "nfe_total", y_field="gen_nll"),
+              "network forwards / sequence", "fig1a_nfe_total_vs_nll.png",
+              "Quality vs total network forwards", logx=True, grid=True,
+              figsize=(7.5, 4.8), ylabel="NLL (↓)", ref=ref_nll)
+    # Fig.1b — context-token proxy including clean-prefix cache construction.
+    _lineplot(_agg(model_rows, ["model", "block_size"], "context_token_cost_per_token"),
+              "context token-passes / output token (proxy)", "fig1b_flops_vs_genppl.png",
+              "Quality vs context-token compute proxy", logx=True, ref=ref_ppl)
     # Fig.2 — gen-PPL vs block size at steps/block=1 (E3, sweet spot)
     _lineplot(_agg(model_rows, ["model"], "block_size", where=lambda r: r.get("steps_per_block") == 1),
-              "block size B", "fig2_blocksize.png", "Quality vs block size (1 step/block)", logx=True)
+              "block size B", "fig2_blocksize.png", "Quality vs block size (1 step/block)",
+              logx=True, ref=ref_ppl)
     # Fig.3 — gen-PPL vs steps/block at B=16 (E4)
     _lineplot(_agg(model_rows, ["model"], "steps_per_block", where=lambda r: r.get("block_size") == 16),
-              "steps / block", "fig3_steps.png", "Quality vs steps/block (B=16)")
+              "steps / block", "fig3_steps.png", "Quality vs steps/block (B=16)", ref=ref_ppl)
     # Fig.5 — gen-PPL vs wall-clock throughput (E13)
-    _lineplot(_agg(model_rows, ["model"], "tokens_per_sec"),
-              "tokens / sec", "fig5_speed_vs_genppl.png", "Quality vs throughput", logx=True)
+    _lineplot(_agg(model_rows, ["model", "block_size"], "tokens_per_sec"),
+              "tokens / sec", "fig5_speed_vs_genppl.png", "Quality vs throughput",
+              logx=True, ref=ref_ppl)
+
+    def _recipe_label(r: dict) -> str:
+        return "M1" if r.get("model") == "M1" else f"M2 B{r['block_size']}"
+
+    # Fig.5a — end-to-end batch-size-one latency. p10–p90 captures run-to-run jitter.
+    latency_rows = [
+        r for r in model_rows
+        if r.get("sequence_latency_ms") is not None
+    ]
+    if latency_rows:
+        by_recipe = defaultdict(list)
+        for r in latency_rows:
+            by_recipe[_recipe_label(r)].append(r)
+        fig, ax = plt.subplots(figsize=(7, 4.5))
+        for label, rows_for_recipe in sorted(by_recipe.items()):
+            rows_for_recipe.sort(key=lambda r: r["steps_per_block"])
+            xs = [r["steps_per_block"] for r in rows_for_recipe]
+            ys = [r["sequence_latency_ms"] for r in rows_for_recipe]
+            lower = [
+                y - r.get("sequence_latency_p10_ms", y)
+                for y, r in zip(ys, rows_for_recipe)
+            ]
+            upper = [
+                r.get("sequence_latency_p90_ms", y) - y
+                for y, r in zip(ys, rows_for_recipe)
+            ]
+            ax.errorbar(
+                xs, ys, yerr=[lower, upper], marker="o", capsize=3,
+                label=label,
+            )
+        ax.set_xlabel("steps / block")
+        ax.set_ylabel("latency (ms)")
+        ax.set_title("End-to-end sequence latency")
+        ax.legend(fontsize=8)
+        fig.tight_layout()
+        fig.savefig(figdir / "fig5a_sequence_latency.png", dpi=150)
+        plt.close(fig)
+        print(f"wrote {figdir / 'fig5a_sequence_latency.png'}")
+
+    # Fig.5b — batched throughput vs steps/block (same recipes as fig5a).
+    tps_rows = [r for r in model_rows if r.get("tokens_per_sec") is not None]
+    if tps_rows:
+        buckets: dict[tuple[str, int], list[float]] = defaultdict(list)
+        for r in tps_rows:
+            buckets[(_recipe_label(r), int(r["steps_per_block"]))].append(
+                float(r["tokens_per_sec"])
+            )
+        by_recipe_tps: dict[str, list[tuple[int, float, float]]] = defaultdict(list)
+        for (label, steps), vals in buckets.items():
+            m, s = _mean_std(vals)
+            by_recipe_tps[label].append((steps, m, s))
+        fig, ax = plt.subplots(figsize=(7, 4.5))
+        for label, pts in sorted(by_recipe_tps.items()):
+            pts.sort()
+            xs, ms, ss = zip(*pts)
+            ax.errorbar(xs, ms, yerr=ss, marker="o", capsize=3, label=label)
+        ax.set_xlabel("steps / block")
+        ax.set_ylabel("tokens / sec")
+        ax.set_title("Batched throughput vs steps/block")
+        ax.legend(fontsize=8)
+        ax.grid(True, which="both", ls="--", alpha=0.4)
+        fig.tight_layout()
+        fig.savefig(figdir / "fig5b_tokens_per_sec.png", dpi=150)
+        plt.close(fig)
+        print(f"wrote {figdir / 'fig5b_tokens_per_sec.png'}")
 
     # Fig.4 — per-sample entropy per block index (E5, collapse), one line per run
     curves = [r for r in model_rows if len(r.get("entropy_per_block_ps", [])) > 1]
@@ -141,7 +246,7 @@ def make_figures(rows: list[dict]) -> None:
         fig, ax = plt.subplots(figsize=(5, 4))
         for r in curves:
             ax.plot(range(len(r["entropy_per_block_ps"])), r["entropy_per_block_ps"],
-                    marker=".", label=f"{r.get('model')} B{r.get('report_block_size')}")
+                    marker=".", label=f"{r.get('model')} B{r.get('block_size')}")
         ax.set_xlabel("block index"); ax.set_ylabel("token entropy / sample (nats)")
         ax.set_title("Entropy collapse across blocks"); ax.legend(fontsize=7)
         fig.tight_layout(); fig.savefig(figdir / "fig4_entropy_per_block.png", dpi=150)
@@ -151,7 +256,10 @@ def make_figures(rows: list[dict]) -> None:
 def main() -> None:
     rows = load_rows()
     if not rows:
-        print(f"no results found under {RESULTS}/*/metrics.json — run eval.run_eval first")
+        print(
+            f"no {METRIC_SCHEMA} results found under {RESULTS}/*/metrics.json "
+            "— run the current evaluation sweep first"
+        )
         return
     write_csv(rows)
     make_figures(rows)

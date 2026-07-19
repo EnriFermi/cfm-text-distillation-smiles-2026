@@ -1,8 +1,13 @@
-# M2: inference-time (training-free) BCFM — BD3-LM masked blockwise wrapper over M1.
+# M2: inference-time (training-free) BCFM — blockwise sampler over M1 with
+# clean-prefix KV cache (encode only non-final prefix blocks at s=t=1; denoise
+# only the current B tokens).
 name: bcfm_infer
-block_size: 16          # B; sweep {4,8,16,32}. block_size == data.k reproduces M1.
+block_size: 16          # B; sweep {4,8,16,32}. block_size == length => one block.
 steps_per_block: 2      # flow-map jumps per block; sweep {1,2,4}
 discretize: argmax      # or "sample" (collapse-mitigation ablation, E11)
 prefix: generated       # "generated" (real inference) or "gold" (exposure-bias probe, E6)
 schedule: null          # null => uniform grid; else explicit "[[0,0.5],[0.5,1]]" (E10);
                         # overrides steps_per_block — set exp_name manually for these runs
+# length / num_blocks: omit to use data.k from eval; override for shorter/longer
+# runs (must be a multiple of block_size). num_blocks takes precedence if set.
+num_blocks: null

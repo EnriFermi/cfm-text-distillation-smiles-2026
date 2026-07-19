@@ -13,23 +13,32 @@ Based on ``semicat/net/duo.py::DIT`` but with three changes the block model need
 3. **Doubled-sequence forward**: consumes ``[x_clean ; z_noisy]`` (length 2L) with the
    block-causal mask; positions in the two streams share rotary positions (``pos % L``).
 
+Inference also supports a **KV cache** over finalized clean-prefix keys/values
+(``encode_clean`` / ``forward_block``), so each block jump only runs attention over
+``|prefix| + B`` keys instead of the full ``2L`` sequence.
+
 Pure torch, no flash-attn/Triton import, so it runs and is testable on CPU.
 """
 
 from __future__ import annotations
 
 import math
+from typing import TypeAlias
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
+# Per-layer clean-prefix cache: (K, V) with shape (batch, n_cached, n_heads, head_dim).
+LayerKV: TypeAlias = tuple[Tensor, Tensor]
+KVCache: TypeAlias = list[LayerKV | None]
+
 
 # --------------------------------------------------------------------------- rotary
 def _rope_tables(positions: Tensor, dim: int, base: float = 10_000.0) -> tuple[Tensor, Tensor]:
     """cos/sin tables of shape ``(len(positions), dim)`` for rotary embedding."""
-    inv_freq = 1.0 / base ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim)
+    inv_freq = 1.0 / base ** (torch.arange(0, dim, 2, dtype=torch.float32, device=positions.device) / dim)
     ang = positions[:, None].float() * inv_freq[None, :]           # (S, dim/2)
     ang = torch.cat([ang, ang], dim=-1)                            # (S, dim)
     return ang.cos(), ang.sin()
@@ -70,6 +79,18 @@ class TimestepEmbedder(nn.Module):
 def _modulate(x: Tensor, shift: Tensor, scale: Tensor) -> Tensor:
     # per-token: shift/scale are (B, N, D)
     return x * (1.0 + scale) + shift
+
+
+def empty_kv_cache(n_layers: int) -> KVCache:
+    return [None] * n_layers
+
+
+def cache_seq_len(kv_cache: KVCache) -> int:
+    """Number of cached clean positions (0 if empty)."""
+    for entry in kv_cache:
+        if entry is not None:
+            return int(entry[0].shape[1])
+    return 0
 
 
 # --------------------------------------------------------------------------- block
@@ -113,6 +134,49 @@ class BlockDiTLayer(nn.Module):
         x = x + gate_m * self.dropout(self.mlp(_modulate(self.norm2(x), shift_m, scale_m)))
         return x
 
+    def forward_cached(
+        self,
+        x: Tensor,
+        cos: Tensor,
+        sin: Tensor,
+        cond: Tensor,
+        kv_cache: LayerKV | None,
+        *,
+        update_cache: bool,
+    ) -> tuple[Tensor, LayerKV | None]:
+        """Run this layer on ``x`` (new tokens only), attending to optional clean KV cache.
+
+        New queries attend to ``cat(cache, new)`` with full (dense) attention over that
+        set — correct when ``x`` is one block and ``kv_cache`` holds only strictly
+        previous clean blocks.
+        """
+        shift_a, scale_a, gate_a, shift_m, scale_m, gate_m = self.adaLN(cond).chunk(6, dim=-1)
+        h = _modulate(self.norm1(x), shift_a, scale_a)
+        batch, n_new, _ = h.shape
+        qkv = self.attn_qkv(h).reshape(batch, n_new, 3, self.n_heads, self.head_dim)
+        q, k, v = qkv.unbind(2)
+        q, k = _apply_rope(q, cos, sin), _apply_rope(k, cos, sin)
+
+        if kv_cache is not None:
+            k_c, v_c = kv_cache
+            k_full = torch.cat([k_c, k], dim=1)
+            v_full = torch.cat([v_c, v], dim=1)
+        else:
+            k_full, v_full = k, v
+
+        scale = self.head_dim ** -0.5
+        scores = torch.einsum("bqhd,bkhd->bhqk", q, k_full).float() * scale
+        attn = scores.softmax(dim=-1).to(v_full.dtype)
+        out = torch.einsum("bhqk,bkhd->bqhd", attn, v_full).reshape(batch, n_new, self.dim)
+
+        x = x + gate_a * self.attn_out(out)
+        x = x + gate_m * self.dropout(self.mlp(_modulate(self.norm2(x), shift_m, scale_m)))
+
+        new_cache: LayerKV | None = kv_cache
+        if update_cache:
+            new_cache = (k_full, v_full) if kv_cache is not None else (k, v)
+        return x, new_cache
+
 
 class BlockFinalLayer(nn.Module):
     def __init__(self, dim: int, vocab_size: int, cond_dim: int):
@@ -138,6 +202,10 @@ class BlockDIT(nn.Module):
       - ``s``, ``t``: ``(B, 2L)`` per-token times (clean positions at 1.0).
       - ``attn_mask``: ``(2L, 2L)`` bool from ``block.mask.block_causal_mask``.
       - returns ``(B, 2L, K)`` logits; the caller uses the noisy half ``[:, L:]``.
+
+    Cached inference (clean prefix KV):
+      - ``encode_clean`` appends K/V for a finalized clean block (at s=t=1).
+      - ``forward_block`` denoises the current noisy block against that cache.
     """
 
     def __init__(
@@ -154,7 +222,10 @@ class BlockDIT(nn.Module):
     ):
         super().__init__()
         self.length = length
+        self.block_size = block_size
         self.vocab_size = vocab_size
+        self.n_heads = n_heads
+        self.head_dim = hidden_size // n_heads
         self._coeff = vocab_size ** 0.5
         self.vocab_embed = nn.Linear(vocab_size, hidden_size)
         self.s_map = TimestepEmbedder(cond_dim)
@@ -170,12 +241,64 @@ class BlockDIT(nn.Module):
         self.register_buffer("rope_cos", cos, persistent=False)
         self.register_buffer("rope_sin", sin, persistent=False)
 
+    def _time_cond(self, s: Tensor, t: Tensor) -> Tensor:
+        """``s``, ``t`` shaped ``(batch, n)`` -> cond ``(batch, n, cond_dim)``."""
+        batch, n = s.shape
+        t_eff = t - s
+        return (F.silu(self.s_map(s.reshape(-1)))
+                + F.silu(self.t_map(t_eff.reshape(-1)))).reshape(batch, n, -1)
+
     def forward(self, x: Tensor, s: Tensor, t: Tensor, attn_mask: Tensor | None = None) -> Tensor:
         B, N, _ = x.shape
-        t_eff = t - s
-        cond = (F.silu(self.s_map(s.reshape(-1)))
-                + F.silu(self.t_map(t_eff.reshape(-1)))).reshape(B, N, -1)
+        cond = self._time_cond(s, t)
         h = self.vocab_embed(x / self._coeff)
         for blk in self.blocks:
             h = blk(h, self.rope_cos, self.rope_sin, cond, attn_mask)
+        return self.output_layer(h, cond)
+
+    def encode_clean(self, x_clean: Tensor, positions: Tensor, kv_cache: KVCache | None = None) -> KVCache:
+        """Append K/V for a finalized clean block (conditioning at ``s=t=1``).
+
+        ``x_clean``: ``(batch, B, K)`` one-hot (or simplex) for positions ``positions``
+        (``(B,)`` absolute indices in ``[0, L)``). Returns an updated cache list.
+        """
+        if kv_cache is None:
+            kv_cache = empty_kv_cache(len(self.blocks))
+        batch, n_new, _ = x_clean.shape
+        device = x_clean.device
+        ones = torch.ones(batch, n_new, device=device)
+        cond = self._time_cond(ones, ones)
+        cos, sin = _rope_tables(positions.to(device), self.head_dim)
+        h = self.vocab_embed(x_clean / self._coeff)
+        new_cache: KVCache = []
+        for i, blk in enumerate(self.blocks):
+            h, layer_cache = blk.forward_cached(
+                h, cos, sin, cond, kv_cache[i], update_cache=True,
+            )
+            new_cache.append(layer_cache)
+        return new_cache
+
+    def forward_block(
+        self,
+        x_noisy: Tensor,
+        s: Tensor,
+        t: Tensor,
+        positions: Tensor,
+        kv_cache: KVCache | None = None,
+    ) -> Tensor:
+        """Denoise one noisy block against the clean-prefix KV cache.
+
+        ``x_noisy``: ``(batch, B, K)``; ``s``, ``t``: ``(batch, B)`` per-token times;
+        ``positions``: ``(B,)`` absolute indices (shared with the clean stream).
+        Returns logits ``(batch, B, K)`` for the noisy block. Does **not** update the cache.
+        """
+        if kv_cache is None:
+            kv_cache = empty_kv_cache(len(self.blocks))
+        cond = self._time_cond(s, t)
+        cos, sin = _rope_tables(positions.to(x_noisy.device), self.head_dim)
+        h = self.vocab_embed(x_noisy / self._coeff)
+        for i, blk in enumerate(self.blocks):
+            h, _ = blk.forward_cached(
+                h, cos, sin, cond, kv_cache[i], update_cache=False,
+            )
         return self.output_layer(h, cond)

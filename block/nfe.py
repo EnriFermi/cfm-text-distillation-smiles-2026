@@ -1,65 +1,94 @@
-"""Single source of truth for NFE accounting.
+"""Single source of truth for inference work accounting.
 
-One NFE = one forward pass of the denoiser network. We report **NFE per token**,
-the metric used in the proposal's speed axis.
+An NFE is one invocation of transformer layers.  In cached blockwise inference this
+includes both a denoising ``forward_block`` and an ``encode_clean`` invocation that
+constructs the K/V prefix needed by a later block.  The latter is not a flow-map
+evaluation, so it is also reported separately.
 
-- Full-sequence CFM produces all ``length`` tokens with ``steps`` forwards, so it
-  is exactly the block case with ``block_size == length``.
-- Blockwise BCFM does ``length / block_size`` blocks, each in ``steps_per_block``
-  forwards.
-
-How NFE relates to actual FLOPs differs between the two adaptations:
-
-- **M2 (inference-time, masked)** runs the full-sequence head on a doubled ``[clean;
-  noisy]`` sequence (length ``2L``) every jump. NFE/token matches M1 accounting, but
-  each forward processes twice as many positions — use ``flop_cost_per_token_masked``.
-- **M3 (block-causal, KV-cached)** only processes the current block per forward, so a
-  raw NFE count *overstates* its cost relative to M1/M2. ``forward_token_cost`` gives
-  the attention-aware view for that case.
-
-Wall-clock tokens/sec (recorded by the eval harness) is the ground truth; these
-functions are the analytical axes for the paper's figures.
+``context_token_cost_per_token`` is an analytical proxy rather than measured FLOPs:
+each block pass is charged for its current block plus the clean K/V context it reads.
+Use measured ``tokens_per_sec`` for hardware-level comparisons.
 """
 
 from __future__ import annotations
 
 
-def total_forwards(block_size: int, steps_per_block: int, length: int) -> int:
+def _n_blocks(block_size: int, length: int) -> int:
     if length % block_size != 0:
         raise ValueError(f"length {length} not divisible by block_size {block_size}")
-    return (length // block_size) * steps_per_block
+    return length // block_size
 
 
-def nfe_per_token(block_size: int, steps_per_block: int, length: int) -> float:
-    """The headline speed metric. Full-sequence CFM = ``block_size=length``."""
-    return total_forwards(block_size, steps_per_block, length) / length
+def flow_forwards(block_size: int, steps_per_block: int, length: int) -> int:
+    """Number of flow-map denoising calls, excluding cache construction."""
+    return _n_blocks(block_size, length) * steps_per_block
 
 
-def flop_cost_per_token_full_recompute(block_size: int, steps_per_block: int, length: int) -> float:
-    """Token-passes per generated token when every forward runs length ``L``.
+def cache_encode_forwards(block_size: int, length: int) -> int:
+    """Clean-prefix cache builds required by cached generation.
 
-    Applies to M1 (trivially: = steps) and legacy pin-prefix M2. Cost of one forward =
-    ``length`` token-passes, so per generated token the cost equals the total number of
-    forwards.
+    The final generated block is deliberately not encoded because no later block can
+    consume its K/V cache.
     """
-    return float(total_forwards(block_size, steps_per_block, length))
+    return max(_n_blocks(block_size, length) - 1, 0)
 
 
-def flop_cost_per_token_masked(block_size: int, steps_per_block: int, length: int) -> float:
-    """Token-passes per generated token for proper masked M2 (``2L`` forwards).
+def network_forwards(
+    block_size: int,
+    steps_per_block: int,
+    length: int,
+    *,
+    uses_kv_cache: bool,
+) -> int:
+    """All transformer-layer invocations performed while generating a sequence."""
+    total = flow_forwards(block_size, steps_per_block, length)
+    return total + (cache_encode_forwards(block_size, length) if uses_kv_cache else 0)
 
-    Each jump runs the denoiser on ``[clean; noisy]`` of length ``2 * length``, so the
-    FLOP proxy is twice the full-recompute cost at the same NFE count.
+
+def nfe_per_token(
+    block_size: int,
+    steps_per_block: int,
+    length: int,
+    *,
+    uses_kv_cache: bool,
+) -> float:
+    """All network forwards per generated token."""
+    return network_forwards(
+        block_size, steps_per_block, length, uses_kv_cache=uses_kv_cache,
+    ) / length
+
+
+def full_sequence_token_cost(
+    block_size: int,
+    steps_per_block: int,
+    length: int,
+) -> float:
+    """Token-pass proxy when each flow evaluation processes all ``length`` tokens."""
+    return float(flow_forwards(block_size, steps_per_block, length))
+
+
+def masked_2l_token_cost(
+    block_size: int,
+    steps_per_block: int,
+    length: int,
+) -> float:
+    """Token-pass proxy for the M3 doubled-stream reference sampler."""
+    return 2.0 * full_sequence_token_cost(block_size, steps_per_block, length)
+
+
+def context_token_cost_per_token(
+    block_size: int,
+    steps_per_block: int,
+    length: int,
+) -> float:
+    """Context-token proxy for KV-cached blockwise inference.
+
+    A denoising pass for block ``b`` reads ``(b + 1) * block_size`` positions: its
+    current block and the cached prefix.  Each non-final block performs one additional
+    clean-prefix cache build with the same context size.
     """
-    return 2.0 * flop_cost_per_token_full_recompute(block_size, steps_per_block, length)
-
-
-def forward_token_cost(block_size: int, steps_per_block: int, length: int) -> float:
-    """Token-passes per generated token for a KV-cached block-causal model (M3).
-
-    Each block forward processes its own ``block_size`` tokens while attending to the
-    cached prefix, so block ``b`` touches ``(b+1) * block_size`` token positions.
-    """
-    n_blocks = length // block_size
-    seen = sum((b + 1) * block_size for b in range(n_blocks)) * steps_per_block
-    return seen / length
+    n_blocks = _n_blocks(block_size, length)
+    per_block_context = [(b + 1) * block_size for b in range(n_blocks)]
+    flow_context = sum(per_block_context) * steps_per_block
+    cache_context = sum(per_block_context[:-1])
+    return (flow_context + cache_context) / length
