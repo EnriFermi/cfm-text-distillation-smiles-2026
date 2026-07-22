@@ -2,8 +2,6 @@
 Text for semicat.
 """
 
-import math
-
 import wandb
 
 import torch
@@ -21,7 +19,6 @@ class TextSemicatModule(SemicatModule):
     :param nll_steps: For many how steps the model should be evaluated. If `None`,
         `[1, 2, 4, 8, 16]` by default.
     :param nll_samples: The number of samples to draw per step to evaluate the NLL.
-    :param nll_model: The external language model used as the generative PPL judge.
     :param nll_model_batch_size: The batch size to use for the underlying NLL model.
     :param nll_sampling_batch_size: The batch size to use for the model's sampling.
     """
@@ -32,7 +29,6 @@ class TextSemicatModule(SemicatModule):
         calc_nll: bool = False,
         nll_steps: list[int] | None = None,
         nll_samples: int = 1000,
-        nll_model: str = "gpt2-large",
         nll_model_batch_size: int = 128,
         nll_sampling_batch_size: int = 256,
         **kwargs,
@@ -40,10 +36,6 @@ class TextSemicatModule(SemicatModule):
         super().__init__(*args, **kwargs)
         self.calc_nll = calc_nll
         self.nll_steps = nll_steps or [1, 2, 4, 8, 16]
-        self.nll_samples = nll_samples
-        self.nll_model = nll_model
-        self.nll_model_batch_size = nll_model_batch_size
-        self.nll_sampling_batch_size = nll_sampling_batch_size
 
     @torch.inference_mode()
     def sample_batch(
@@ -104,21 +96,20 @@ class TextSemicatModule(SemicatModule):
             self.logger.experiment.log({title: tab}, commit=False)
         print(f"{title}: {xs}")
 
-    def _compute_gen_ppl(
+    def _compute_nll(
         self,
         strings: list[str],
     ) -> float:
         """
-        Compute generative PPL for strings using the configured external LM judge.
+        Compute the NLL of a list of strings using a pre-trained GPT model.
 
-        :param strings: The list of strings to score.
-        :return: The average generative perplexity of the strings.
+        :param strings: The list of strings to compute the NLL for.
+        :return: The average NLL of the strings.
         """
         return TextMetrics.compute_mean_gen_ppl(
             strings,
-            self.nll_model_batch_size,
+            self.hparams.nll_model_batch_size,
             context_size=self.in_shape[0],
-            ppl_model=self.nll_model,
         )
 
     def on_validation_epoch_end(self) -> None:
@@ -129,8 +120,8 @@ class TextSemicatModule(SemicatModule):
             torch.cuda.empty_cache()
             print(f"Sampling validation strings for {n_step} steps...")
             val_tokens = self.sample_batch(
-                n_samples=self.nll_samples,
-                batch_size=self.nll_sampling_batch_size,
+                n_samples=self.hparams.nll_samples,
+                batch_size=self.hparams.nll_sampling_batch_size,
                 sampling_steps=n_step,
             )
 
@@ -148,16 +139,8 @@ class TextSemicatModule(SemicatModule):
             val_strings = self._tokens_to_strings(val_tokens)
 
             if self.calc_nll:
-                print(f"Computing generative PPL/NLL with {self.nll_model} for {n_step} steps...")
-                gen_ppl = self._compute_gen_ppl(val_strings)
-                nll = math.log(gen_ppl)
-                self.log(
-                    f"val/gen_ppl_{n_step}_steps",
-                    gen_ppl,
-                    prog_bar=True,
-                    on_epoch=True,
-                    logger=True,
-                )
+                print(f"Computing NLL for {n_step} steps...")
+                nll = self._compute_nll(val_strings)
                 self.log(
                     f"val/nll_{n_step}_steps",
                     nll,

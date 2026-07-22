@@ -69,7 +69,7 @@ class TextMetrics:
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
             ppls = []
             effective_size = 0
-            tokenizer = TextMetrics._load_tokenizer(ppl_model)
+            tokenizer = TextMetrics._load_tokenizer()
             model = transformers.AutoModelForCausalLM.from_pretrained(ppl_model).eval()
             model = model.to(device)
             samples, attn_mask = TextMetrics._retokenize(tokenizer, context_size, text_samples, device)

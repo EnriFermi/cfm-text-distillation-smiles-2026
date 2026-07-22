@@ -1,0 +1,89 @@
+# @package _global_
+# Fine-tune the trained full-sequence CFM as a block-conditional CFM.
+#
+# This is initialization, not Lightning resume: only net.* is strict-loaded
+# from s_baseline.ckpt; optimizer/scheduler/global_step start fresh.
+#
+# Launch (intentionally not run by repository setup):
+#   python -m semicat.train experiment=bcfm_finetune_text8 trainer=gpu logger=comet
+#
+# Loss alternatives:
+#   model.sd_type=lag   # source checkpoint's upstream CFM/Lagrangian objective
+#   model.sd_type=ecld  # upstream ECLD objective, block-generalized
+defaults:
+  - override /data: text8
+  - override /model: block_text8
+  - override /trainer: default
+
+seed: 12345
+test: false
+
+trainer:
+  max_steps: 100000
+  val_check_interval: 10000
+  check_val_every_n_epoch: null
+  precision: bf16-mixed
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+
+model:
+  init_from_cfm_ckpt: ${paths.root_dir}/baseline/s_baseline.ckpt
+  expected_source_sd_type: lag
+  block_size: 16
+  sd_type: lag
+  sd_prop: 0.25
+  time_eps: 0.0
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 1e-4
+    weight_decay: 0.01
+  scheduler: null
+  compile: false
+  calc_nll: false
+  nll_steps: [1, 2, 4]
+  nll_samples: 1000
+  nll_model_batch_size: 128
+  nll_sampling_batch_size: 128
+  net:
+    vocab_size: 27
+    hidden_size: 768
+    cond_dim: 128
+    n_blocks: 12
+    n_heads: 12
+    dropout: 0.1
+    length: ${data.k}
+    block_size: ${model.block_size}
+    embed_type: naive
+    attention_backend: flex
+    jvp_attention_backend: auto
+    flex_kernel_block_size: 64
+
+data:
+  # Matches the checkpoint's datamodule_hyper_parameters exactly.
+  train_val_test_split: [351563, 20000, 19063]
+  k: 256
+  batch_size: 128
+  num_workers: 4
+  pin_memory: true
+  prefetch_factor: 4
+  small_run: false
+
+callbacks:
+  model_checkpoint:
+    # Keep every periodic BCFM checkpoint, not only the best and last one.
+    filename: step_{step:07d}
+    monitor: val/loss
+    save_last: true
+    save_top_k: -1
+    every_n_train_steps: ${trainer.val_check_interval}
+
+tags:
+  - M3
+  - bcfm
+  - text8
+  - finetune
+  - init-step390000
+  - lag
+  - upstream-parity
+  - flex-attention

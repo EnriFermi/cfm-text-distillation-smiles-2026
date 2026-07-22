@@ -12,7 +12,7 @@ vendored `semicat/` package stays as close to upstream as possible so diffs and 
 clean.
 
 ```
-block/      our core: nfe, blockwise sampling (M2 now, M3 later), block net + module (P1)
+block/      our core: nfe, blockwise sampling, checkpoint-compatible M3 net + module
 eval/       standalone eval harness: generate -> metrics -> results/<exp>/metrics.json
 semicat/    vendored upstream (touch minimally, guard changes behind flags)
 configs/    Hydra configs (see below)
@@ -23,9 +23,9 @@ paper/      the .tex sources
 ## The three models (see paper/main.tex §Experiments)
 - **M1** full-sequence CFM (baseline) — `experiment=cfm_text8_baseline`.
 - **M2** inference-time BCFM — training-free; wrap an M1 checkpoint (`sampler=bcfm_infer`).
-- **M3** training-time BCFM — block-causal model, `experiment=bcfm_train_text8`, eval with
-  `sampler=bcfm_train model=block_text8`. Built (`block/mask.py`, `block_dit.py`,
-  `block_semicat.py`); trains from scratch (see that experiment's note on finetuning).
+- **M3** training-time BCFM — block-causal model initialized strictly from the trained M1,
+  `experiment=bcfm_finetune_text8`, then evaluated with
+  `sampler=bcfm_train model=block_text8`.
 
 ## Environment
 GPU/cluster boxes:
@@ -53,8 +53,8 @@ python -m eval.run_eval ckpt_path=/path/to/m1.ckpt sampler=bcfm_infer \
 python -m eval.run_eval -m ckpt_path=/path/to/m1.ckpt sampler=bcfm_infer \
     sampler.block_size=4,8,16,32 sampler.steps_per_block=1,2,4
 
-# Train M3 (block-causal) and evaluate it
-python -m semicat.train experiment=bcfm_train_text8 trainer=gpu logger=comet
+# Fine-tune M3 from baseline/s_baseline.ckpt and evaluate it
+./scripts/train_bcfm_from_baseline.sh
 python -m eval.run_eval ckpt_path=/path/to/m3.ckpt sampler=bcfm_train model=block_text8 \
     model_id=M3 sampler.block_size=16 sampler.steps_per_block=2
 
@@ -101,14 +101,17 @@ lines for every figure.
 
 ## M3 internals (implemented — `block/`)
 - `block/mask.py` — BD3-LM block-causal 2L×2L mask (the correctness-critical piece: a noisy
-  block sees only *strictly previous* clean blocks, never its own clean copy).
+  block sees only *strictly previous* clean blocks, never its own clean copy), exposed both
+  as a dense reference and the official-style compiled FlexAttention mask.
 - `block/block_dit.py` — `BlockDIT`: DiT over `[x_clean; z_noisy]` with the mask + per-token
-  (s_b, t_b) adaLN. Uses **manual (plain-torch) attention** instead of duo's flash/Triton
-  SDPA, because the ECLD term needs `torch.func.jvp` to flow *through a masked* attention —
-  the upstream `jvp_utils` Triton kernel supports neither masks nor CPU. At L=256 the O(L²)
-  attention is cheap; the win is a jvp-safe, CPU-testable net.
-- `block/block_semicat.py` — `BlockSemicatModule`: block-factorized VFM + ECLD (paper Eq.
-  total) in one masked forward; per-block ECLD mirrors `SemicatModule.sd_model_step`.
+  (s_b, t_b) adaLN and the exact trainable namespace of upstream `duo.DIT`. Ordinary
+  VFM/teacher passes use compiled BD3-LM-style FlexAttention; CFM/ECLD JVP passes cache the
+  clean stream and run SemiCat's custom Triton JVP kernel on each permitted sparse context.
+- `block/block_semicat.py` — block-factorized VFM plus either the checkpoint's CFM/
+  Lagrangian objective (`sd_type=lag`, default) or untouched-upstream ECLD.
+- `block/checkpoint.py` — strict network-only initialization from M1, with source
+  loss/shape validation and a JSON provenance report. Lightning resume remains a separate
+  full-state path.
 - `block/sampling.py::block_causal_sample` — M3 sampler (block by block through the masked
-  forward). `block/` is fully unit-tested on CPU (`pytest tests/`, incl. mask isolation
-  through the real net), so M3 is verifiable without a GPU.
+  forward). CPU fallbacks are tested, and CUDA tests cover Flex/JVP/backward and `B=L`
+  equivalence to untouched CFM.

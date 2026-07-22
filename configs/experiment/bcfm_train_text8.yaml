@@ -1,5 +1,10 @@
 # @package _global_
-# M3 — training-time BCFM finetune/train on text8 (block-causal, VFM + ECLD).
+# LEGACY scratch-only M3 recipe. It does NOT initialize from the trained CFM.
+# For the checkpoint-compatible baseline fine-tune requested here, use:
+#   ./scripts/train_bcfm_from_baseline.sh
+# or experiment=bcfm_finetune_text8.
+#
+# M3 — training-time BCFM train from scratch on text8.
 #
 #   python -m semicat.train experiment=bcfm_train_text8 trainer=gpu logger=comet
 #   # ablations: model.sd_type=... (E7 uses block ecld/none), model.sd_prop=... (E8),

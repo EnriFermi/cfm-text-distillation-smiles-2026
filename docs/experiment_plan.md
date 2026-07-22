@@ -90,9 +90,9 @@ python -m eval.run_eval -m ckpt_path=$CKPT model_id=M2 sampler=bcfm_infer \
 
 # --- M3 (needs training runs first; one per block size) ---
 # E7/E8/E9 ablations are training-time:
-python -m semicat.train -m experiment=bcfm_train_text8 model.sd_type=ecld,lag,none        # E7
-python -m semicat.train -m experiment=bcfm_train_text8 model.sd_prop=0,0.25,0.5           # E8
-python -m semicat.train -m experiment=bcfm_train_text8 model.prior_type=gaussian,discunif # E9
+python -m semicat.train -m experiment=bcfm_finetune_text8 model.sd_type=ecld,lag          # E7
+python -m semicat.train -m experiment=bcfm_finetune_text8 model.sd_prop=0,0.25,0.5        # E8
+python -m semicat.train -m experiment=bcfm_finetune_text8 model.prior_type=gaussian,discunif # E9
 # E1(M3 arm)/E2/E3/E4/E12 eval each trained M3 like M2 but sampler=bcfm_train, ckpt=<M3>
 ```
 

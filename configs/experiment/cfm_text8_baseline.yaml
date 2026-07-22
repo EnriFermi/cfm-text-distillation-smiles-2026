@@ -1,8 +1,8 @@
 # @package _global_
 # M1 — full-sequence CFM baseline on text8 (the reference for H1/H2).
 # Canonical recipe = upstream text8_dit_ecld, but logger-agnostic (pick logger on the
-# CLI: `logger=comet`) and with the CFM Text8 judge setup. Validation logs both
-# gen-PPL and NLL=log(gen-PPL), where the paper reports Text8 NLL under GPT-J-6B.
+# CLI: `logger=comet`). The untouched upstream validation helper uses its
+# original GPT-2-large generative-PPL judge.
 #
 #   python -m semicat.train experiment=cfm_text8_baseline trainer=gpu logger=comet
 #
@@ -15,10 +15,10 @@ seed: 12345
 
 trainer:
   max_steps: 500000
-  val_check_interval: 10000
+  val_check_interval: 1000
   check_val_every_n_epoch: null
   precision: bf16-mixed
-  accumulate_grad_batches: 8
+  accumulate_grad_batches: 1
   gradient_clip_val: 1.0
 
 model:
@@ -38,7 +38,6 @@ model:
     embed_type: rms
   compile: true
   calc_nll: true
-  nll_model: EleutherAI/gpt-j-6B
   nll_steps: [1, 2, 4, 8, 32, 64]
   nll_samples: 512
   nll_model_batch_size: 1
@@ -46,6 +45,25 @@ model:
   sd_type: ecld
 
 data:
-  batch_size: 256
+  batch_size: 128
 
-tags: ["M1", "cfm", "text8", "baseline", "ecld"]
+callbacks:
+  # Keep a full, immutable optimization snapshot after every completed eval.
+  # This is event-based rather than derived from val_check_interval because
+  # validation counts train batches while global_step counts optimizer updates.
+  eval_checkpoint:
+    _target_: semicat.callbacks.eval_checkpoint.EvalCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints/eval
+    filename: "eval-step={step:08d}-epoch={epoch:04d}"
+    every_n_evals: 1
+    save_weights_only: false
+    skip_step_zero: true
+
+tags:
+  - M1
+  - cfm
+  - text8
+  - baseline-reproduction
+  - ecld-1x1
+  - full-text8
+  - lr1e-4

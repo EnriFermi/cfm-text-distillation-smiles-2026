@@ -6,3 +6,7 @@ batch_size: 256
 k: 256
 prefetch_factor: 4
 small_run: false
+# "chars": upstream behaviour, the split slices raw characters and keeps 0.39%
+# of train.bin. "sequences": the split counts k-token sequences (its intended
+# meaning), giving the full corpus.
+split_units: chars

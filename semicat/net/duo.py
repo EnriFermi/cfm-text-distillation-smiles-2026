@@ -6,6 +6,8 @@ import math
 from typing import Literal
 
 # import einops
+import flash_attn
+import flash_attn.layers.rotary
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -42,43 +44,21 @@ class Rotary(torch.nn.Module):
 
 def split_and_apply_rotary_pos_emb(qkv, rotary_cos_sin):
     cos, sin = rotary_cos_sin
+    #cos = cos.to(qkv.dtype)
+    #sin = sin.to(qkv.dtype)
     cos = cos[0, :, 0, 0, : cos.shape[-1] // 2]
     sin = sin[0, :, 0, 0, : sin.shape[-1] // 2]
-    q, k, v = qkv.unbind(dim=2)
-    q = _apply_rotary_emb_torch(q, cos, sin)
-    k = _apply_rotary_emb_torch(k, cos, sin)
+    q, k, v = qkv.chunk(3, dim=2)
+    q = flash_attn.layers.rotary.apply_rotary_emb_torch(q.squeeze(dim=2), cos, sin)
+    k = flash_attn.layers.rotary.apply_rotary_emb_torch(k.squeeze(dim=2), cos, sin)
+    v = v.squeeze(dim=2)
     return q, k, v
 
 
 def apply_rotary_pos_emb(qkv, cos, sin):
     cos = cos[0, :, 0, 0, : cos.shape[-1] // 2]
     sin = sin[0, :, 0, 0, : sin.shape[-1] // 2]
-    q, k, v = qkv.unbind(dim=2)
-    q = _apply_rotary_emb_torch(q, cos, sin)
-    k = _apply_rotary_emb_torch(k, cos, sin)
-    return torch.stack((q, k, v), dim=2)
-
-
-def _rotate_half(x: torch.Tensor) -> torch.Tensor:
-    x1, x2 = x.chunk(2, dim=-1)
-    return torch.cat((-x2, x1), dim=-1)
-
-
-def _apply_rotary_emb_torch(x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor) -> torch.Tensor:
-    """Torch equivalent of flash_attn.layers.rotary.apply_rotary_emb_torch.
-
-    flash-attn's prebuilt wheel is unavailable on older glibc systems used by some
-    cluster images. The model only needs its rotary helper here; attention itself
-    already uses PyTorch SDPA below.
-    """
-    rotary_dim = cos.shape[-1] * 2
-    if rotary_dim > x.shape[-1]:
-        raise ValueError(f"rotary_dim {rotary_dim} exceeds head dim {x.shape[-1]}")
-    cos = torch.cat((cos, cos), dim=-1).to(device=x.device, dtype=x.dtype).unsqueeze(-2)
-    sin = torch.cat((sin, sin), dim=-1).to(device=x.device, dtype=x.dtype).unsqueeze(-2)
-    x_rot = x[..., :rotary_dim]
-    out = x_rot * cos + _rotate_half(x_rot) * sin
-    return torch.cat((out, x[..., rotary_dim:]), dim=-1)
+    return flash_attn.layers.rotary.apply_rotary_emb_qkv_(qkv, cos, sin)
 
 
 #################################################################################

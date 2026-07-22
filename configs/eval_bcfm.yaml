@@ -19,13 +19,13 @@ tags: [bcfm, eval]
 ckpt_path: null
 
 # The net config MUST match the checkpoint's architecture (loading is strict).
-# These mirror experiment/cfm_text8_baseline.yaml; override on the CLI if you
-# evaluate a checkpoint trained with different net settings.
+# These mirror the provided baseline/s_baseline.ckpt and its BCFM fine-tune;
+# override on the CLI for a different checkpoint architecture.
 model:
   optimizer: null          # not needed for sampling
   net:
     length: ${data.k}
-    embed_type: rms
+    embed_type: naive
     dropout: 0.1
 
 # identifies the model family in metrics.json (M1 / M2 / M3); defaults to the sampler

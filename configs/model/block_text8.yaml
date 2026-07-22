@@ -1,4 +1,4 @@
-# M3 — training-time BCFM model (block-causal DiT + block VFM/ECLD module).
+# M3 — checkpoint-compatible block CFM model.
 _target_: block.block_semicat.BlockSemicatModule
 
 in_shape:
@@ -7,10 +7,12 @@ in_shape:
 
 prior_type: gaussian
 scheduler: null
-sd_type: ecld          # inherited flag; the block ECLD is implemented in BlockSemicatModule
-sd_prop: 0.25          # fraction of the batch used for the ECLD term
+sd_type: lag           # upstream CFM/Lagrangian loss; override with ecld
+sd_prop: 0.25          # exact upstream VFM/self-distillation batch split
 block_size: 16
-ecld_weight: 1.0       # λ on the ECLD loss
+time_eps: 0.0          # torch.rand semantics, identical to upstream SemiCat
+init_from_cfm_ckpt: null
+expected_source_sd_type: null
 
 net:
   _target_: block.block_dit.BlockDIT
@@ -22,4 +24,7 @@ net:
   dropout: 0.1
   length: ${data.k}
   block_size: ${model.block_size}
-  embed_type: rms
+  embed_type: naive
+  attention_backend: flex
+  jvp_attention_backend: auto
+  flex_kernel_block_size: 64

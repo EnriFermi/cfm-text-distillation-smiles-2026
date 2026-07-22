@@ -22,7 +22,7 @@ design — what each experiment tests and its decision rule — is in
 | E11 | `sampler.discretize=argmax,sample` | M2 | 16 | 1 | 0,1,2 | — | planned | |
 | — train — | `experiment=cfm_text8_baseline` | M1 | – | – | 12345 | misha | planned | |
 | E2b | continue M1 for M3's finetune budget (M1+) | M1+ | – | – | 12345 | — | planned (P1) | |
-| E7 | `experiment=bcfm_train_text8 model.sd_type=ecld,lag,none` | M3 | 16 | – | 0 | — | planned (P1) | |
+| E7 | `experiment=bcfm_finetune_text8 model.sd_type=ecld,lag` | M3 | 16 | – | 0 | — | planned (P1) | |
 | E8 | `... model.sd_prop=0,0.25,0.5` | M3 | 16 | – | 0 | — | planned (P1) | |
 | E9 | `... model.prior_type=gaussian,discunif` | M1/M3 | – | – | 0 | — | planned (P1) | |
 | E1/E2/E12 | eval each trained M3 (`sampler=bcfm_train`) | M3 | 4,8,16 | 1,2,4 | 0,1,2 | — | planned (P1) | |

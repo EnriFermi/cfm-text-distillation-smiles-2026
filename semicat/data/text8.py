@@ -27,6 +27,12 @@ class Text8DataModule(LightningDataModule):
 
     :param k: sequence length.
     :param small_run: useful for debugging.
+    :param split_units: how to read `train_val_test_split`. "chars" is the
+    upstream behaviour: the values slice raw characters, so the canonical
+    `[351563, 20000, 19063]` keeps only 351563 of the 90M training characters
+    (0.39%). "sequences" reads them as counts of `k`-token sequences, which is
+    what those numbers were meant to denote, and yields the full corpus.
+    Defaults to "chars" so existing runs and checkpoints stay reproducible.
     """
 
     def __init__(
@@ -39,7 +45,12 @@ class Text8DataModule(LightningDataModule):
         pin_memory: bool = False,
         small_run: bool = False,
         prefetch_factor: int = 2,
+        split_units: str = "chars",
     ):
+        if split_units not in ("chars", "sequences"):
+            raise ValueError(
+                f"split_units must be 'chars' or 'sequences', got {split_units!r}"
+            )
         super().__init__()
 
         # this line allows to access init params with 'self.hparams' attribute
@@ -87,6 +98,10 @@ class Text8DataModule(LightningDataModule):
         trl = self.hparams.train_val_test_split[0]
         val = self.hparams.train_val_test_split[1]
         tsl = self.hparams.train_val_test_split[2]
+        if self.hparams.split_units == "sequences":
+            # the split counts k-token sequences; convert to the character
+            # offsets the slicing below expects (over-long slices just clamp)
+            trl, val, tsl = trl * self.k, val * self.k, tsl * self.k
         if self.hparams.small_run:
             trl = self.hparams.batch_size * 15
             val = 1024

@@ -143,14 +143,11 @@ def block_causal_sample(
     noisy block, so the (junk) content of not-yet-generated positions is irrelevant and
     a single full-length forward per jump is correct. Returns ``(batch, length)`` ids.
     """
-    from block.mask import block_causal_mask
-
     L = length or module.in_shape[0]
     K = module.in_shape[-1]
     if L % block_size != 0:
         raise ValueError(f"length {L} not divisible by block_size {block_size}")
     device = module.device
-    mask = block_causal_mask(L, block_size, device)
     sched = [(float(s), float(t)) for s, t in (schedule or uniform_schedule(steps_per_block))]
 
     tokens = torch.zeros(batch_size, L, dtype=torch.long, device=device)
@@ -168,7 +165,7 @@ def block_causal_sample(
             x = torch.cat([clean, noisy], dim=1)
             s_full = torch.cat([ones, s_tok], dim=1)
             t_full = torch.cat([ones, t_tok], dim=1)
-            q_blk = module.net(x, s_full, t_full, mask)[:, L + lo:L + hi].softmax(dim=-1)
+            q_blk = module.net(x, s_full, t_full)[:, L + lo:L + hi].softmax(dim=-1)
             z_blk = z_blk + ((t - s) / (1.0 - s + 1e-8)) * (q_blk - z_blk)
         tokens[:, lo:hi] = _discretize(z_blk, discretize)
     return tokens

@@ -1,16 +1,15 @@
-"""Tests for training-time BCFM (M3): mask, block DiT, ECLD jvp, training step, sampler.
+"""Tests for checkpoint-compatible training-time BCFM."""
 
-All run on CPU with tiny dims (BlockDIT is pure torch — no flash-attn), so M3 is
-verifiable end-to-end here, unlike M1/M2.
-"""
-
+import pytest
 import torch
 import torch.nn.functional as F
 
 from block.block_dit import BlockDIT
 from block.block_semicat import BlockSemicatModule
-from block.mask import block_causal_mask
+from block.mask import block_causal_mask, block_causal_mask_mod
 from block.sampling import block_causal_sample
+from semicat.models.semicat import SemicatModule
+from semicat.net.duo import DIT
 
 L, B, K = 8, 2, 5          # length, block_size, vocab -> 4 blocks, doubled length 16
 NB = L // B
@@ -24,6 +23,20 @@ def _blk(pos):  # block id within a stream
 def test_mask_shape():
     m = block_causal_mask(L, B)
     assert m.shape == (2 * L, 2 * L) and m.dtype == torch.bool
+
+
+def test_flex_mask_mod_is_exactly_the_dense_mask():
+    query = torch.arange(2 * L)[:, None]
+    key = torch.arange(2 * L)[None, :]
+    flex_form = block_causal_mask_mod(
+        torch.tensor(0),
+        torch.tensor(0),
+        query,
+        key,
+        length=L,
+        block_size=B,
+    )
+    assert torch.equal(flex_form, block_causal_mask(L, B))
 
 
 def test_noisy_never_sees_own_or_future_clean():
@@ -63,7 +76,8 @@ def test_block0_noisy_has_only_itself():
 # ----------------------------------------------------------------------- block net
 def _tiny_net():
     return BlockDIT(vocab_size=K, hidden_size=16, cond_dim=8, n_blocks=2,
-                    n_heads=2, dropout=0.0, length=L, block_size=B)
+                    n_heads=2, dropout=0.0, length=L, block_size=B,
+                    attention_backend="sdpa", jvp_attention_backend="math")
 
 
 def test_blockdit_forward_shape():
@@ -81,10 +95,42 @@ def test_ecld_jvp_runs():
     x = torch.randn(2, 2 * L, K)
     s = torch.rand(2, 2 * L)
     t = torch.rand(2, 2 * L)
-    q, dq = torch.func.jvp(lambda _t: net(x, s, _t, mask).softmax(-1),
+    q, dq = torch.func.jvp(lambda _t: net(x, s, _t, mask, jvp_attention=True).softmax(-1),
                            (t,), (torch.ones_like(t),))
     assert q.shape == dq.shape == (2, 2 * L, K)
     assert torch.isfinite(q).all() and torch.isfinite(dq).all()
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="Triton JVP requires CUDA")
+def test_triton_block_jvp_backward_batch_greater_than_one():
+    """Regression: block slices must be compact for the custom JVP backward."""
+    net = BlockDIT(
+        vocab_size=K,
+        hidden_size=32,
+        cond_dim=8,
+        n_blocks=1,
+        n_heads=2,
+        dropout=0.0,
+        length=L,
+        block_size=B,
+        attention_backend="sdpa",
+        jvp_attention_backend="triton",
+    ).cuda()
+    clean = torch.randn(2, L, K, device="cuda").softmax(-1)
+    noisy = torch.randn(2, L, K, device="cuda").softmax(-1)
+    s = torch.rand(2, L, device="cuda")
+    t = s + torch.rand_like(s) * (1.0 - s)
+    cache = net.build_clean_kv_cache(clean)
+    prediction, tangent = torch.func.jvp(
+        lambda target: net.forward_noisy_jvp(noisy, s, target, cache).softmax(-1),
+        (t,),
+        (torch.ones_like(t),),
+    )
+    (prediction.square().mean() + tangent.square().mean()).backward()
+    assert all(
+        parameter.grad is None or torch.isfinite(parameter.grad).all()
+        for parameter in net.parameters()
+    )
 
 
 def _dezero(net):
@@ -130,19 +176,81 @@ def test_mask_isolation_in_real_net():
 
 
 # -------------------------------------------------------------------------- module
-def _tiny_module():
+def _tiny_module(sd_type="lag"):
     return BlockSemicatModule(
         net=_tiny_net(), optimizer=None, scheduler=None,
         in_shape=(L, K), prior_type="gaussian", sd_prop=0.5, block_size=B,
+        sd_type=sd_type,
     )
 
 
-def test_training_step_finite():
-    m = _tiny_module()
+def test_cfm_alias_selects_upstream_lagrangian_loss():
+    assert _tiny_module("cfm").hparams.sd_type == "lag"
+
+
+@pytest.mark.parametrize("sd_type", ["lag", "ecld"])
+def test_training_step_finite(sd_type):
+    m = _tiny_module(sd_type)
     x1 = torch.randint(0, K, (4, L))
     vf, sd = m.model_step(x1)
     assert torch.isfinite(vf) and vf > 0
     assert sd is not None and torch.isfinite(sd)
+    (vf + sd).backward()
+    assert any(
+        parameter.grad is not None and torch.isfinite(parameter.grad).all()
+        for parameter in m.net.parameters()
+    )
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="upstream JVP requires CUDA")
+@pytest.mark.parametrize("sd_type", ["lag", "ecld"])
+def test_block_size_length_preserves_upstream_cfm_losses(sd_type):
+    """At B=L the block formulation reduces numerically to untouched CFM."""
+    kwargs = dict(
+        vocab_size=K,
+        hidden_size=32,
+        cond_dim=8,
+        n_blocks=2,
+        n_heads=2,
+        dropout=0.0,
+        length=L,
+        embed_type="naive",
+    )
+    duo = DIT(**kwargs).cuda()
+    block_net = BlockDIT(
+        **kwargs,
+        block_size=L,
+        attention_backend="sdpa",
+        jvp_attention_backend="triton",
+    ).cuda()
+    block_net.load_state_dict(duo.state_dict(), strict=True)
+    upstream = SemicatModule(
+        net=duo,
+        optimizer=None,
+        scheduler=None,
+        in_shape=(L, K),
+        prior_type="gaussian",
+        sd_prop=0.5,
+        sd_type=sd_type,
+    )
+    block = BlockSemicatModule(
+        net=block_net,
+        optimizer=None,
+        scheduler=None,
+        in_shape=(L, K),
+        prior_type="gaussian",
+        sd_prop=0.5,
+        sd_type=sd_type,
+        block_size=L,
+    )
+    batch = torch.randint(0, K, (4, L), device="cuda")
+    torch.manual_seed(29)
+    upstream_vf, upstream_sd = upstream.model_step(batch)
+    torch.manual_seed(29)
+    block_vf, block_sd = block.model_step(batch)
+    assert upstream_sd is not None and block_sd is not None
+    assert torch.allclose(block_vf, upstream_vf, atol=2e-5, rtol=2e-5)
+    assert torch.allclose(block_sd, upstream_sd, atol=2e-5, rtol=2e-5)
 
 
 def test_block_causal_sample():
@@ -157,3 +265,61 @@ def test_sample_flow_map_batch_onehot():
     out = m.sample_flow_map_batch(batch_size=2, sampling_steps=1)
     assert out.shape == (2, L, K)
     assert torch.equal(out.sum(-1), torch.ones(2, L))  # valid one-hots
+
+
+def test_state_dict_namespace_is_exactly_duo_compatible():
+    kwargs = dict(
+        vocab_size=K,
+        hidden_size=16,
+        cond_dim=8,
+        n_blocks=2,
+        n_heads=2,
+        dropout=0.0,
+        length=L,
+        embed_type="naive",
+    )
+    duo = DIT(**kwargs)
+    block = BlockDIT(
+        **kwargs,
+        block_size=B,
+        attention_backend="sdpa",
+        jvp_attention_backend="math",
+    )
+    assert list(block.state_dict()) == list(duo.state_dict())
+    block.load_state_dict(duo.state_dict(), strict=True)
+
+
+def test_block_size_length_preserves_duo_noisy_logits():
+    torch.manual_seed(11)
+    kwargs = dict(
+        vocab_size=K,
+        hidden_size=16,
+        cond_dim=8,
+        n_blocks=2,
+        n_heads=2,
+        dropout=0.0,
+        length=L,
+        embed_type="naive",
+    )
+    duo = _dezero(DIT(**kwargs)).eval()
+    block = BlockDIT(
+        **kwargs,
+        block_size=L,
+        attention_backend="sdpa",
+        jvp_attention_backend="math",
+    ).eval()
+    block.load_state_dict(duo.state_dict(), strict=True)
+
+    noisy = torch.randn(2, L, K)
+    clean = F.one_hot(torch.randint(0, K, (2, L)), K).float()
+    s = torch.rand(2)
+    t = s + torch.rand(2) * (1.0 - s)
+    duo_logits = duo(noisy, s, t)
+    doubled_s = torch.cat((torch.ones(2, L), s[:, None].expand(-1, L)), dim=1)
+    doubled_t = torch.cat((torch.ones(2, L), t[:, None].expand(-1, L)), dim=1)
+    block_logits = block(
+        torch.cat((clean, noisy), dim=1),
+        doubled_s,
+        doubled_t,
+    )[:, L:]
+    assert torch.allclose(block_logits, duo_logits, atol=2e-5, rtol=2e-5)
