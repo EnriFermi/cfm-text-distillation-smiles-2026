@@ -23,10 +23,10 @@ def load_module(cfg: DictConfig, device: str) -> TextSemicatModule:
     Instantiating the *whole* module (net included) from ``cfg.model`` — rather than
     ``load_from_checkpoint`` — keeps this class-agnostic (works for M1/M2's
     ``TextSemicatModule`` and M3's ``BlockSemicatModule`` alike). Loading is
-    ``strict=True`` on purpose: ``cfg.model.net`` must match the checkpoint's
-    architecture, otherwise mismatched weights would silently stay random and the eval
-    would score garbage. If it fails, override ``model.net.*`` to the training run's
-    resolved config (in its ``logs/`` dir).
+    Loading is strict except for deterministic RoPE buffers
+    (``net.rotary_emb.{cos,sin}_cached``), which newer checkpoints may omit.
+    Any other missing/unexpected keys still raise — mismatched ``model.net.*``
+    would otherwise leave random weights and score garbage.
 
     With ``ckpt_path=null`` you get a fresh (untrained) model — enough to smoke-test the
     sampling/eval plumbing without a checkpoint.
@@ -37,7 +37,20 @@ def load_module(cfg: DictConfig, device: str) -> TextSemicatModule:
         state = ckpt.get("state_dict", ckpt)
         # undo the torch.compile prefix (net._orig_mod.) if present
         state = {k.replace("net._orig_mod.", "net."): v for k, v in state.items()}
-        module.load_state_dict(state, strict=True)
+        # RoPE cos/sin tables are deterministic from (length, dim) and may be omitted
+        # from newer checkpoints (non-persistent buffers / recompute-on-init).
+        _ok_missing = {
+            "net.rotary_emb.cos_cached",
+            "net.rotary_emb.sin_cached",
+        }
+        incompatible = module.load_state_dict(state, strict=False)
+        unexpected = list(incompatible.unexpected_keys)
+        missing = [k for k in incompatible.missing_keys if k not in _ok_missing]
+        if unexpected or missing:
+            raise RuntimeError(
+                "Error(s) in loading state_dict: "
+                f"Missing key(s): {missing}; Unexpected key(s): {unexpected}"
+            )
     return module.to(device).eval()
 
 

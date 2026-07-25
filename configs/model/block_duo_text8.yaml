@@ -1,0 +1,30 @@
+# M3: BlockSemicatModule + duo.DIT backbone (this repo's step_0090000.ckpt style).
+# Trained with block-factorized VFM/ECLD; weights are duo.DIT (naive embed), not BlockDIT.
+# Sample with sampler=bcfm_infer (encode_clean / forward_block KV cache).
+_target_: block.block_semicat.BlockSemicatModule
+
+in_shape:
+  - ${data.k}
+  - 27
+
+prior_type: gaussian
+scheduler: null
+sd_type: lag
+sd_prop: 0.25
+block_size: 16
+ecld_weight: 1.0
+time_eps: 0.0
+optimizer: null
+compile: false
+calc_nll: false
+
+net:
+  _target_: semicat.net.duo.DIT
+  hidden_size: 768
+  n_heads: 12
+  cond_dim: 128
+  n_blocks: 12
+  dropout: 0.1
+  vocab_size: 27
+  length: ${data.k}
+  embed_type: naive
