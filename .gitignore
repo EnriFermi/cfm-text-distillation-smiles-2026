@@ -5,6 +5,7 @@
 /multirun/
 /script/
 /slurm/
+/dumps/
 *.ckpt
 *.bin
 
