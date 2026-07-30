@@ -70,5 +70,6 @@
   "sequence_latency_p10_ms": 91.91736113280058,
   "sequence_latency_p90_ms": 94.90334801375866,
   "sequence_latency_repeats": 30,
-  "latency_device": "cuda"
+  "latency_device": "cuda",
+  "dataset": "text8"
 }

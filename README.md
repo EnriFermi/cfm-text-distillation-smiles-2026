@@ -44,6 +44,10 @@ To download the dataset, follow the steps in [github.com/andrew-cr/discrete_flow
 ### LM1B
 LM1B is automatically downloaded into `DATASET_CACHE_DIR`, and then sequence-packed, etc. You can also run `python -m semicat.data.lm1b` separately in order to set up the data before launching your runs.
 
+## :straight_ruler: Baseline eval (AR / MDLM / BD3-LM)
+
+Vendored baseline code lives in [`baselines/`](baselines/). To reproduce gen-PPL / latency sweeps on another machine (checkpoint paths, data prep, scripts), see **[docs/baselines_eval_guide.md](docs/baselines_eval_guide.md)**.
+
 ## :blue_book: Citation
 To cite the paper or the code, please use the following:
 ```

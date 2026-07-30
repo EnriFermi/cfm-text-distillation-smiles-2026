@@ -1,0 +1,5 @@
+inherits: tinystories_base.yaml
+model:
+  type: mdlm
+sampling:
+  use_kv_cache: false

@@ -1,5 +1,6 @@
 # --- data & large artifacts (never committed) ---
 /data/
+/checkpoints/
 /logs/
 /outputs/
 /multirun/
@@ -7,6 +8,7 @@
 /slurm/
 *.ckpt
 *.bin
+*.pt
 
 # --- experiment trackers ---
 .env

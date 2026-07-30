@@ -65,5 +65,11 @@
   "tokens_per_sec": 5764.065306349318,
   "ckpt": "/home/zolotovskijal/checkpoints/step_0090000.ckpt",
   "commit": "bebf2a4",
-  "n_samples": 512
+  "n_samples": 512,
+  "sequence_latency_ms": 1482.8546307981014,
+  "sequence_latency_p10_ms": 1471.754842903465,
+  "sequence_latency_p90_ms": 1510.5549711734056,
+  "sequence_latency_repeats": 30,
+  "latency_device": "cuda",
+  "dataset": "text8"
 }

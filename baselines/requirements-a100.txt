@@ -1,0 +1,6 @@
+torch==2.7.1
+numpy==1.26.4
+omegaconf==2.3.0
+tensorboard==2.18.0
+pytest>=8.0
+

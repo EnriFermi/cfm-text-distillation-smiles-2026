@@ -65,5 +65,6 @@
   "tokens_per_sec": 3047.3443750540428,
   "ckpt": "/home/zolotovskijal/checkpoints/step_0090000.ckpt",
   "commit": "bebf2a4",
-  "n_samples": 512
+  "n_samples": 512,
+  "dataset": "text8"
 }

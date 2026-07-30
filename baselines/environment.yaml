@@ -1,0 +1,13 @@
+name: bcfm-baselines
+channels: [pytorch, nvidia, conda-forge]
+dependencies:
+  - python=3.11
+  - pytorch=2.7
+  - pytorch-cuda=12.4
+  - numpy=1.26
+  - pip
+  - pip:
+      - omegaconf==2.3.0
+      - pytest>=8.0
+      - tensorboard>=2.18
+
