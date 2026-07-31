@@ -22,7 +22,12 @@ paper/      the .tex sources
 
 ## The three models (see paper/main.tex §Experiments)
 - **M1** full-sequence CFM (baseline) — `experiment=cfm_text8_baseline`.
-- **M2** inference-time BCFM — training-free; wrap an M1 checkpoint (`sampler=bcfm_infer`).
+- **M2** inference-time BCFM — training-free: the **same blockwise loop as M3** with an M1
+  checkpoint as the head (`paper/main.tex` 139/141: "both variants share one loop"), i.e.
+  `eval/dump_samples.py --sampler block_causal --infer-block-size B`. M2 and M3 must differ
+  only in the weights, or H1 stops being a test of training. The `bcfm_infer` /
+  `blockwise_infer` sampler is a *different* algorithm (prefix pinned over the noise, one
+  scalar time, no mask) — a legitimate ablation, not M2. See `docs/eval_contract.md`.
 - **M3** training-time BCFM — block-causal model initialized strictly from the trained M1,
   `experiment=bcfm_finetune_text8`, then evaluated with
   `sampler=bcfm_train model=block_text8`.

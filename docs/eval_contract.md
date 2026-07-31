@@ -32,9 +32,9 @@ python -m eval.dump_samples --checkpoint logs/train/<run>/checkpoints/step_00700
 python -m eval.dump_samples --checkpoint baseline/s_baseline.ckpt \
     --nfe 1 2 4 8 --out dumps/text8_m1_s_baseline.json
 
-# same full-sequence model wrapped blockwise (M2, training-free)
+# M2, training-free: the M1 head run through M3's loop (see "Which sampler is M2")
 python -m eval.dump_samples --checkpoint baseline/s_baseline.ckpt \
-    --sampler blockwise_infer --infer-block-size 16 \
+    --sampler block_causal --infer-block-size 16 \
     --nfe 1 2 4 --out dumps/text8_m2_s_baseline_b16.json
 
 # real data, identical schema
@@ -42,9 +42,28 @@ python -m eval.dump_samples --gold tinystories --n-samples 2048 \
     --out dumps/gold_tinystories.json
 ```
 
-Samplers: `full_cfm` (`sample_flow_map_batch`), `block_causal` (M3,
-`block/sampling.py`), `blockwise_infer` (M2, wraps a full-sequence model),
-`gold`. `auto` picks block vs full from the checkpoint.
+Samplers: `full_cfm` (`sample_flow_map_batch`), `block_causal` (the blockwise loop,
+`block/sampling.py::block_causal_sample`), `blockwise_infer` (prefix-pinning wrapper,
+see below), `gold`. `auto` picks block vs full from the checkpoint.
+
+## Which sampler is M2
+
+**M2 is `block_causal` with an M1 checkpoint, not `blockwise_infer`.**
+`paper/main.tex` 139 defines the training-free variant as reusing "a pretrained
+full-sequence CFM as the head ... running the same blockwise sampler", and 141 states
+"Both variants share one loop". So M2 and M3 must run identical inference and differ
+only in which weights are loaded — that is what makes H1 ("training beats training-free")
+a test of training rather than of two samplers. `BlockDIT` is parameter-identical to
+`duo.DIT`, so an M1 checkpoint loads into it strictly and `--sampler block_causal
+--infer-block-size B` gives exactly this.
+
+`blockwise_infer` (`block/sampling.py::blockwise_sample`) is a *different* algorithm:
+one stream of length `L` instead of the doubled `[clean; noisy]`, the prefix written over
+the noise between steps, a single scalar time for every position, and no block-causal
+mask — so the model also sees the not-yet-generated noisy tail. It is worth reporting as
+its own ablation (it is the E10b "clean prefix is off-distribution" question), but a
+`blockwise_infer` vs `block_causal` comparison conflates sampler and training and must
+not be read as H1.
 
 ## Dump schema (`bcfm-textdump/v1`)
 

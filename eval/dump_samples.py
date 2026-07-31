@@ -250,7 +250,18 @@ def main() -> None:
         if kind == "auto":
             kind = "block_causal" if arch["block_size"] else "full_cfm"
         if kind == "block_causal" and not arch["block_size"]:
-            raise SystemExit("block_causal needs a block model; use blockwise_infer")
+            # This is M2 as the paper defines it (main.tex 139/141): the training-free
+            # variant "reuses a pretrained full-sequence CFM as the head ... running the
+            # same blockwise sampler", and "both variants share one loop". So a
+            # checkpoint with no trained block_size is run through BlockDIT at
+            # --infer-block-size, and M2 differs from M3 only in which weights are
+            # loaded. BlockDIT shares duo.DIT's trainable namespace, so the strict load
+            # in build_module still succeeds.
+            #
+            # `--sampler blockwise_infer` is a *different* algorithm (single stream, the
+            # prefix pinned over the noise, one scalar time, no mask). Comparing it
+            # against M3 measures sampler + training together, not training alone.
+            arch["block_size"] = args.infer_block_size
 
         module = build_module(arch, args.device)
         vocab_size = arch["vocab_size"]
