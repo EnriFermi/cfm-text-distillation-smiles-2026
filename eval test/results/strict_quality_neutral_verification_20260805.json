@@ -1,0 +1,286 @@
+{
+ "meta": {
+  "torch": "2.7.1+cu128",
+  "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+  "dtype": "fp32",
+  "seeds": [
+   0,
+   1,
+   1234,
+   12345
+  ],
+  "steps": [
+   1,
+   4,
+   16
+  ],
+  "batch_size": 2,
+  "criterion": "torch.equal on final token tensors"
+ },
+ "summary": {
+  "bd3lm:skip_optional_diagnostics": {
+   "checks": 16,
+   "all_identical": true,
+   "minimum_token_agreement": 1.0
+  },
+  "cfm:sparse_vocab_active_block": {
+   "checks": 12,
+   "all_identical": false,
+   "minimum_token_agreement": 0.87109375
+  }
+ },
+ "rows": [
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 1,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 1,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 1,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 1,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 4,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 4,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 4,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 4,
+   "seed": 12345,
+   "token_agreement": 0.87109375,
+   "identical": false
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 16,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 16,
+   "seed": 1,
+   "token_agreement": 0.873046875,
+   "identical": false
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 16,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "cfm",
+   "optimization": "sparse_vocab_active_block",
+   "sampler": "block_causal_argmax",
+   "steps_per_block": 16,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "model": "bd3lm",
+   "optimization": "skip_optional_diagnostics",
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  }
+ ]
+}

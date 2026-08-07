@@ -1,0 +1,124 @@
+{
+ "meta": {
+  "torch": "2.7.1+cu128",
+  "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+  "dtype": "fp32",
+  "checkpoint": "/home/andrey/Documents/projects/SMILES 2026/2 models/bd3lm/last.pt",
+  "criterion": "torch.equal on final token tensors"
+ },
+ "all_identical": true,
+ "rows": [
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 1,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 4,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "ancestral",
+   "steps_per_block": 16,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 0,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 1,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 1234,
+   "token_agreement": 1.0,
+   "identical": true
+  },
+  {
+   "sampler": "first_hitting",
+   "steps_per_block": 16,
+   "seed": 12345,
+   "token_agreement": 1.0,
+   "identical": true
+  }
+ ]
+}

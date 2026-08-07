@@ -1,0 +1,27 @@
+[fast] exactness vs reference sampler (fp32): token agreement 1.0000
+[fast] optimizations: sparse-vocab, kv-cache, bf16
+[cfm] block_causal step=100000 params=51,957,969 length=256 vocab=50257 hidden=384x6 block_size=16
+[gpu] NVIDIA GeForce RTX 5070 Laptop GPU
+
+  batch=  1 nfe=  1    0.0723 s/batch      72.28 ms/seq      3541.7 tok/s  peak 0.42 GB
+  batch=  1 nfe=  2    0.0980 s/batch      97.97 ms/seq      2613.2 tok/s  peak 0.42 GB
+  batch=  1 nfe=  4    0.1661 s/batch     166.11 ms/seq      1541.1 tok/s  peak 0.42 GB
+  batch=  1 nfe=  8    0.3159 s/batch     315.95 ms/seq       810.3 tok/s  peak 0.42 GB
+  batch=  1 nfe= 16    0.6223 s/batch     622.27 ms/seq       411.4 tok/s  peak 0.42 GB
+  batch=  4 nfe=  1    0.0683 s/batch      17.09 ms/seq     14983.7 tok/s  peak 0.45 GB
+  batch=  4 nfe=  2    0.1016 s/batch      25.41 ms/seq     10074.5 tok/s  peak 0.45 GB
+  batch=  4 nfe=  4    0.1842 s/batch      46.04 ms/seq      5560.4 tok/s  peak 0.45 GB
+  batch=  4 nfe=  8    0.3520 s/batch      88.01 ms/seq      2908.8 tok/s  peak 0.45 GB
+  batch=  4 nfe= 16    0.6856 s/batch     171.40 ms/seq      1493.6 tok/s  peak 0.45 GB
+  batch= 16 nfe=  1    0.1301 s/batch       8.13 ms/seq     31488.3 tok/s  peak 0.61 GB
+  batch= 16 nfe=  2    0.2293 s/batch      14.33 ms/seq     17861.3 tok/s  peak 0.61 GB
+  batch= 16 nfe=  4    0.4277 s/batch      26.73 ms/seq      9576.8 tok/s  peak 0.61 GB
+  batch= 16 nfe=  8    0.8262 s/batch      51.64 ms/seq      4957.8 tok/s  peak 0.61 GB
+  batch= 16 nfe= 16    1.6311 s/batch     101.94 ms/seq      2511.3 tok/s  peak 0.61 GB
+  batch= 32 nfe=  1    0.2195 s/batch       6.86 ms/seq     37318.7 tok/s  peak 0.83 GB
+  batch= 32 nfe=  2    0.3925 s/batch      12.27 ms/seq     20871.4 tok/s  peak 0.83 GB
+  batch= 32 nfe=  4    0.7337 s/batch      22.93 ms/seq     11166.0 tok/s  peak 0.83 GB
+  batch= 32 nfe=  8    1.4194 s/batch      44.36 ms/seq      5771.5 tok/s  peak 0.83 GB
+  batch= 32 nfe= 16    2.7962 s/batch      87.38 ms/seq      2929.7 tok/s  peak 0.83 GB
+
+[saved] /home/andrey/Documents/projects/SMILES 2026/eval test/results/cfm_latency_max.json
