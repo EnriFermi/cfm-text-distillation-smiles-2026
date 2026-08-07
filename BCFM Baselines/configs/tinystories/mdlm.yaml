@@ -1,0 +1,17 @@
+inherits: base.yaml
+model:
+  type: mdlm
+training:
+  # No [noisy, clean] concatenation, so the micro-batch doubles over base.yaml.
+  # Global batch stays 128.
+  batch_size: 32
+  gradient_accumulation_steps: 4
+  # Published MDLM/BD3 training evaluates EMA weights and BD3 initializes from
+  # the MDLM EMA checkpoint.
+  ema_decay: 0.9999
+sampling:
+  start_token_id: 50256
+  num_steps: 5000
+  top_p: 0.9
+  top_p_include_boundary: false
+  use_kv_cache: false

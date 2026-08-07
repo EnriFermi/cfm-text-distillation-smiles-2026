@@ -1,0 +1,7 @@
+inherits: tinystories_base.yaml
+model:
+  type: bd3lm
+  block_size: 4
+sampling:
+  start_token_id: 50256
+  steps_per_block: 2

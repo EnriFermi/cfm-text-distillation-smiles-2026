@@ -1,0 +1,15 @@
+inherits: base.yaml
+model:
+  type: bd3lm
+  block_size: 4
+training:
+  require_pretrained: true
+  require_pretrained_ema: true
+  ema_decay: 0.9999
+sampling:
+  steps_per_block: 5000
+  first_hitting: true
+  top_p: 0.9
+  top_p_include_boundary: false
+generative_evaluation:
+  steps_per_block: 1

@@ -1,0 +1,143 @@
+dataset:
+  name: tinystories
+  data_dir: data/tinystories
+  tokenizer: gpt2
+  vocabulary_size: 50257
+  sequence_length: 256
+  reference_split: false
+
+model:
+  type: null
+  data_vocab_size: 50257
+  mask_token_id: 50257
+  bos_token_id: 50257
+  min_time: 0.001
+  antithetic_time_sampling: true
+  time_conditioning: false
+  # Packed TinyStories blocks start with GPT-2's tokenizer BOS/EOS id. The
+  # official diffusion code keeps that position clean and excludes it at eval.
+  ignore_bos: true
+  mask_rate_min: 0.001
+  mask_rate_max: 1.0
+  schedule_search: true
+  schedule_search_widths: [0.5, 0.6, 0.7, 0.8, 0.9]
+  schedule_search_delta: 0.05
+  schedule_search_batches: 100
+  resample_masked_fraction: true
+  # Matches the CFM reference backbone for TinyStories
+  # (semicat/configs/model/tinystories_dit.yaml): 384 wide, 6 layers, 6 heads,
+  # mlp_ratio 4 -> 1536. That is ~52M parameters; the previous 768/12/12/3072
+  # was ~169M, so the baselines were 3.3x larger than the method they are
+  # compared against.
+  backbone:
+    vocab_size: 50258
+    max_sequence_length: 256
+    num_layers: 6
+    hidden_size: 384
+    num_attention_heads: 6
+    intermediate_size: 1536
+    time_condition_size: 128
+    dropout: 0.1
+    rotary_base: 10000.0
+
+training:
+  seed: 12345
+  # Set for BD3-LM to a compatible checkpoint produced by this repository's
+  # TinyStories MDLM config. BD3_PRETRAIN_CHECKPOINT can override this on Slurm.
+  from_pretrained: null
+  require_pretrained: false
+  device: cuda
+  precision: bf16
+  # Global batch 128 sequences = 32,768 tokens/step, the CFM reference's
+  # 32 x 4 (semicat/configs/data/tinystories.yaml + tinystories_dit.yaml). Over
+  # 100k steps that is 3.28e9 training tokens on both sides; the previous global
+  # batch of 256 gave the baselines twice the token budget. The micro-batch /
+  # accumulation split is free to differ per model as long as the product stays
+  # 128 -- BD3-LM concatenates [noisy, clean] and needs the smaller micro-batch.
+  # Tune live with BATCH_SIZE / GRAD_ACCUM on Slurm.
+  batch_size: 16
+  gradient_accumulation_steps: 8
+  max_steps: 100000
+  learning_rate: 0.0001
+  weight_decay: 0.1
+  # Torch defaults, which is what the reference's AdamW gets: it sets only lr and
+  # weight_decay.
+  betas: [0.9, 0.999]
+  epsilon: 1.0e-8
+  # LinearLR(start_factor=1e-3, total_iters=500) on optimizer steps, then flat at
+  # 1e-4 for the rest of training. `cosine` restores the previous decay.
+  warmup_steps: 500
+  warmup_start_factor: 0.001
+  lr_decay: constant
+  gradient_clip_norm: 1.0
+  log_every: 10
+  # Gen-PPL/MAUVE are expensive (generation plus two GPT-2-Large judge passes),
+  # so track the full validation suite every 5K optimizer steps. Checkpoints are
+  # still written every 1K below, independently of validation cadence.
+  validation_every: 5000
+  # BD3-LM starts adaptive clipping after 5K optimizer/gradient updates, then
+  # repeats the paper's grid search at every validation.
+  schedule_search_start_step: 5000
+  # 100 x 16 = 1,600 packed blocks, matching the reference's 50 x 32.
+  validation_batches: 100
+  evaluation_batch_size: 16
+  validation_stride: null
+  checkpoint_every: 1000
+  # The reference uses no EMA anywhere, in training or at evaluation; 0 disables
+  # it here so neither side gets a smoothing advantage.
+  ema_decay: 0.0
+
+sampling:
+  length: 256
+  batch_size: 64
+  strategy: sample
+  temperature: 1.0
+  top_k: null
+  top_p: null
+  top_p_include_boundary: true
+  seed: 12345
+  num_steps: 64
+  steps_per_block: null
+  first_hitting: false
+  sampling_epsilon: 1.0e-5
+  noise_removal: true
+  cache_denoiser_outputs: true
+  use_kv_cache: true
+  start_token_id: 50257
+
+evaluation:
+  # Same 1,600 packed sequences as online/CFM validation, independent of the
+  # evaluator's chosen micro-batch size.
+  likelihood_sample_count: 1600
+  sample_count: 64
+  sample_seed: 12345
+  diffusion_steps: [16, 32, 64, 128, 256]
+  steps_per_block: [1, 2, 4, 8, 16, 32]
+
+# Gen-PPL and MAUVE, measured at every validation and again in the final offline
+# evaluation. The Gen-PPL judge is GPT-2 Large under the same masking rule the
+# CFM reference uses, so the two methods' numbers are directly comparable.
+# num_steps / steps_per_block apply to validation only: they hold every model to
+# the same ~64 network evaluations per sample, while `sampling` above keeps the
+# full budget for the final evaluation. Setting them to null validates at the
+# full budget too, which is far slower for MDLM (5000 steps) and BD3-LM.
+generative_evaluation:
+  enabled: true
+  sample_count: 256
+  sampling_batch_size: 64
+  seed: 12345
+  num_steps: 64
+  steps_per_block: 4
+  # Online curves use the fixed-grid ancestral sampler. The paper sampler
+  # reveals one token per step and cannot run below block_size steps/block.
+  # Offline evaluation still uses sampling.first_hitting=true at full quality.
+  first_hitting: false
+  ppl_model: gpt2-large
+  ppl_batch_size: 32
+  ppl_context_size: null
+  mauve_model: gpt2-large
+  mauve_reference_count: null
+  mauve_scaling_factor: 5.0
+  mauve_seed: 12345
+  mauve_batch_size: 16
+  reference_split: validation

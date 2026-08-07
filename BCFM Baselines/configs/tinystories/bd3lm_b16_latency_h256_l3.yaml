@@ -1,0 +1,36 @@
+inherits: base.yaml
+
+# Latency-matched BD3-LM candidate for comparison with the optimized CFM.
+# Measured parameter count: 28,792,914 parameters.
+model:
+  type: bd3lm
+  data_vocab_size: 50257
+  mask_token_id: 50257
+  block_size: 16
+  backbone:
+    vocab_size: 50258
+    max_sequence_length: 256
+    num_layers: 3
+    hidden_size: 256
+    num_attention_heads: 4
+    intermediate_size: 1024
+    time_condition_size: 128
+    dropout: 0.1
+    rotary_base: 10000.0
+
+training:
+  # Paper-style BD3-LM starts from a same-shape MDLM EMA checkpoint.
+  require_pretrained: true
+  require_pretrained_ema: true
+  ema_decay: 0.9999
+
+sampling:
+  start_token_id: 50256
+  steps_per_block: 5000
+  first_hitting: true
+  top_p: 0.9
+  top_p_include_boundary: false
+
+generative_evaluation:
+  # Sixteen blocks x four ancestral steps = 64 NFEs for online validation.
+  steps_per_block: 4

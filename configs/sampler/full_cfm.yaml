@@ -1,3 +1,0 @@
-# M1 baseline: full-sequence CFM few-step sampling.
-name: full_cfm
-steps: 1          # flow-map jumps over the whole sequence; sweep {1,2,4,8,16}

@@ -1,0 +1,30 @@
+inherits: base.yaml
+
+# Shape-compatible MDLM prerequisite for the latency-matched BD3-LM.  BD3-LM
+# initialization is strict, so the pretrained MDLM must use this exact backbone.
+model:
+  type: mdlm
+  backbone:
+    vocab_size: 50258
+    max_sequence_length: 256
+    num_layers: 3
+    hidden_size: 256
+    num_attention_heads: 4
+    intermediate_size: 1024
+    time_condition_size: 128
+    dropout: 0.1
+    rotary_base: 10000.0
+
+training:
+  # MDLM has no doubled [noisy, clean] training sequence.  Preserve global
+  # batch 128 while using the established safe micro-batch split.
+  batch_size: 32
+  gradient_accumulation_steps: 4
+  ema_decay: 0.9999
+
+sampling:
+  start_token_id: 50256
+  num_steps: 5000
+  top_p: 0.9
+  top_p_include_boundary: false
+  use_kv_cache: false
