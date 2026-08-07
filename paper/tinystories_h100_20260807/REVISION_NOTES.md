@@ -37,6 +37,14 @@ TinyStories study. The original uploaded archive was left unchanged.
   figure from that CSV (requires pandas and matplotlib).
 - `images/tinystories_quality_latency.pdf`: vector figure used by `main.tex`.
 - `images/tinystories_quality_latency.png`: raster preview/fallback.
+- `supplementary/H100_RESULTS.md`: concise matched-H100 protocol and result
+  summary.
+- `supplementary/baseline_h100_latency.csv`: all MDLM/BD3-LM H100 latency
+  points, including percentiles and checkpoint hashes.
+- `supplementary/a100_vs_h100_baseline_latency.csv`: pointwise hardware
+  comparison used to audit the replacement.
+- `supplementary/quality_vs_latency_all_models_argmax.png`: large dashboard
+  preview containing all six model curves.
 
 Example regeneration command:
 
