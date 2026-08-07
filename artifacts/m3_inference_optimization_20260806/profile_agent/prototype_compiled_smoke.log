@@ -1,0 +1,71 @@
+[config] checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 device=cuda dtype=fp32 seed=0 arch={'vocab_size': 50257, 'hidden_size': 384, 'length': 256, 'n_heads': 6, 'n_blocks': 6, 'cond_dim': 128, 'embed_type': 'rms', 'block_size': 16, '_path': PosixPath('/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt')} out=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent
+[stage=benchmark] nfe=1 current
+[stage=benchmark] nfe=1 incremental
+V0807 00:02:42.835000 2122012 site-packages/torch/_dynamo/guards.py:3006] [2/1] [__recompiles] Recompiling function block_forward in /home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py:50
+V0807 00:02:42.835000 2122012 site-packages/torch/_dynamo/guards.py:3006] [2/1] [__recompiles]     triggered by the following guard failure(s):
+V0807 00:02:42.835000 2122012 site-packages/torch/_dynamo/guards.py:3006] [2/1] [__recompiles]     - 2/0: lo == 0                                                
+Traceback (most recent call last):
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 164, in <module>
+    if __name__=="__main__": main()
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 156, in main
+    incr,inc_times=med_ms(lambda:incremental_sample(module,nfe,compiled=args.compiled),repeats=args.repeats)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 134, in med_ms
+    for _ in range(warmup): fn()
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 156, in <lambda>
+    incr,inc_times=med_ms(lambda:incremental_sample(module,nfe,compiled=args.compiled),repeats=args.repeats)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 114, in incremental_sample
+    logits=(compiled_noisy_forward(net,z,s,t,lo,clean_k,clean_v) if compiled
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 82, in compiled_noisy_forward
+    return COMPILED_NOISY(net,x_block,s,t,lo,clean_k,clean_v)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 655, in _fn
+    return fn(*args, **kwargs)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 50, in block_forward
+    def block_forward(net, x_block, s, t, lo, clean_k, clean_v, *, return_kv=False):
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 838, in _fn
+    return fn(*args, **kwargs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1209, in forward
+    return compiled_fn(full_args)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 328, in runtime_wrapper
+    all_outs = call_func_at_runtime_with_args(
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+    out = normalize_as_list(f(args))
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 689, in inner_fn
+    outs = compiled_fn(args)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 495, in wrapper
+    return compiled_fn(runtime_args)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/output_code.py", line 460, in __call__
+    return self.current_callable(inputs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1372, in run
+    return compiled_fn(new_inputs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 387, in deferred_cudagraphify
+    fn, out = cudagraphify(model, inputs, new_static_input_idxs, *args, **kwargs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 448, in cudagraphify
+    return manager.add_function(
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2308, in add_function
+    return fn, fn(inputs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 1997, in run
+    out = self._run(new_inputs, function_id)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2104, in _run
+    out = self.run_eager(new_inputs, function_id)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2269, in run_eager
+    return node.run(new_inputs)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 653, in run
+    non_cudagraph_inps_storages = get_non_cudagraph_inps()
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 645, in get_non_cudagraph_inps
+    non_cudagraph_inps = [
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 649, in <listcomp>
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 86, in clean_forward_only
+    return block_forward(net,x_block,s,t,lo,clean_k,clean_v,return_kv=True)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 61, in block_forward
+    q,k,v = qkv_block(net, layer, h_norm, rotary, lo, lo+h.shape[1])
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 38, in qkv_block
+    return apply_rotary_block(qkv, rotary_cos_sin, lo, hi)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_incremental.py", line 31, in apply_rotary_block
+    return split_and_apply_rotary_pos_emb(qkv, sliced)
+  File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/semicat/net/duo.py", line 53, in split_and_apply_rotary_pos_emb
+    k = flash_attn.layers.rotary.apply_rotary_emb_torch(k.squeeze(dim=2), cos, sin)
+  File "/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/flash_attn/layers/rotary.py", line 33, in apply_rotary_emb_torch
+    [x[..., :ro_dim] * cos + rotate_half(x[..., :ro_dim], interleaved) * sin, x[..., ro_dim:]],. To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.

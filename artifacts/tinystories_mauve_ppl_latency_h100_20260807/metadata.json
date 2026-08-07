@@ -1,0 +1,78 @@
+{
+  "rows": 35,
+  "models": [
+    "BD3-LM",
+    "CFM M1 (100k target; best@68k)",
+    "CFM M1 (200k)",
+    "CFM M2",
+    "CFM M3 / BCFM (fast)",
+    "MDLM"
+  ],
+  "nfe_by_model": {
+    "BD3-LM": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "CFM M1 (100k target; best@68k)": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "CFM M1 (200k)": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "CFM M2": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "CFM M3 / BCFM (fast)": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "MDLM": [
+      16,
+      32,
+      64,
+      128,
+      256
+    ]
+  },
+  "quality_n_samples": 512,
+  "latency_batch_size": 1,
+  "latency_repeats": 30,
+  "latency_hardware": "NVIDIA H100 NVL for every plotted model",
+  "latency_protocol": "batch=1, length=256, FP32, warmup=5, repeats=30, median with p10-p90",
+  "bd3lm_selection": "BD3LM_best_sweep / bd3lm_ancestral only; first-hitting NFE256 is excluded because it changes the sampler rather than extending the same curve.",
+  "cfm_decoding": "argmax only; CFM sample-decoding rows are excluded",
+  "baseline_decoding": "canonical BD3-LM/MDLM sampling rows; no argmax rows are available in the stored baseline bundle",
+  "m3_selection": "M3-step100000-fast argmax with its separately rescored quality grid",
+  "m2_selection": "M2-source-fast argmax with the same cached/compiled backend as M3",
+  "outputs": {
+    "combined_dashboard": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/quality_vs_latency_all_models_argmax.png",
+    "mauve_by_family": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/mauve_vs_latency_by_nfe_h100_by_family.png",
+    "gen_ppl_by_family": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/genppl_vs_latency_by_nfe_h100_by_family.png",
+    "mauve_all_models": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/mauve_vs_latency_by_nfe_h100_all_models.png",
+    "gen_ppl_all_models": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/genppl_vs_latency_by_nfe_h100_all_models.png"
+  },
+  "data": "/home/coder/project/artifacts/tinystories_mauve_ppl_latency_h100_20260807/tinystories_quality_latency_by_nfe.csv"
+}

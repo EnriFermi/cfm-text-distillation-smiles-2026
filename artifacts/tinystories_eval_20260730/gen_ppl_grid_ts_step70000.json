@@ -1,0 +1,173 @@
+{
+  "mode": "bcfm_block_causal",
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0070000.ckpt",
+  "checkpoint_step": 70000,
+  "block_size": 16,
+  "n_samples": 512,
+  "length": 256,
+  "seed": 0,
+  "judge_model": "EleutherAI/gpt-j-6B",
+  "judge_tokenizer": "gpt2-large",
+  "results": [
+    {
+      "discretize": "argmax",
+      "nfe": 1,
+      "forwards_per_sequence": 16,
+      "gen_ppl": 51.866851806640625,
+      "nll": 3.9486799240112305,
+      "token_entropy": 4.364595413208008,
+      "sample_s": 18.1,
+      "judge_s": 44.3
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 2,
+      "forwards_per_sequence": 32,
+      "gen_ppl": 52.133358001708984,
+      "nll": 3.9538049697875977,
+      "token_entropy": 4.572262287139893,
+      "sample_s": 25.7,
+      "judge_s": 45.7
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 4,
+      "forwards_per_sequence": 64,
+      "gen_ppl": 46.79776382446289,
+      "nll": 3.8458354473114014,
+      "token_entropy": 4.96384859085083,
+      "sample_s": 50.7,
+      "judge_s": 45.2
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 8,
+      "forwards_per_sequence": 128,
+      "gen_ppl": 47.85759735107422,
+      "nll": 3.868229866027832,
+      "token_entropy": 5.5077738761901855,
+      "sample_s": 100.5,
+      "judge_s": 45.0
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 16,
+      "forwards_per_sequence": 256,
+      "gen_ppl": 54.507015228271484,
+      "nll": 3.9983294010162354,
+      "token_entropy": 5.911935806274414,
+      "sample_s": 200.7,
+      "judge_s": 45.5
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 32,
+      "forwards_per_sequence": 512,
+      "gen_ppl": 58.015899658203125,
+      "nll": 4.0607171058654785,
+      "token_entropy": 6.079432010650635,
+      "sample_s": 397.8,
+      "judge_s": 44.4
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 64,
+      "forwards_per_sequence": 1024,
+      "gen_ppl": 57.723594665527344,
+      "nll": 4.055665969848633,
+      "token_entropy": 6.099700450897217,
+      "sample_s": 801.9,
+      "judge_s": 44.0
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 128,
+      "forwards_per_sequence": 2048,
+      "gen_ppl": 55.42884063720703,
+      "nll": 4.015100002288818,
+      "token_entropy": 6.067410945892334,
+      "sample_s": 1598.0,
+      "judge_s": 45.3
+    },
+    {
+      "discretize": "sample",
+      "nfe": 1,
+      "forwards_per_sequence": 16,
+      "gen_ppl": 60.45637512207031,
+      "nll": 4.101922035217285,
+      "token_entropy": 4.469317436218262,
+      "sample_s": 13.6,
+      "judge_s": 46.6
+    },
+    {
+      "discretize": "sample",
+      "nfe": 2,
+      "forwards_per_sequence": 32,
+      "gen_ppl": 63.2529296875,
+      "nll": 4.147141456604004,
+      "token_entropy": 4.711695194244385,
+      "sample_s": 29.0,
+      "judge_s": 55.9
+    },
+    {
+      "discretize": "sample",
+      "nfe": 4,
+      "forwards_per_sequence": 64,
+      "gen_ppl": 53.76918411254883,
+      "nll": 3.9847004413604736,
+      "token_entropy": 5.063632965087891,
+      "sample_s": 64.5,
+      "judge_s": 52.4
+    },
+    {
+      "discretize": "sample",
+      "nfe": 8,
+      "forwards_per_sequence": 128,
+      "gen_ppl": 56.52606201171875,
+      "nll": 4.034701824188232,
+      "token_entropy": 5.598790645599365,
+      "sample_s": 100.8,
+      "judge_s": 43.7
+    },
+    {
+      "discretize": "sample",
+      "nfe": 16,
+      "forwards_per_sequence": 256,
+      "gen_ppl": 67.5986328125,
+      "nll": 4.213587760925293,
+      "token_entropy": 6.004282474517822,
+      "sample_s": 201.1,
+      "judge_s": 44.1
+    },
+    {
+      "discretize": "sample",
+      "nfe": 32,
+      "forwards_per_sequence": 512,
+      "gen_ppl": 71.59513092041016,
+      "nll": 4.271027088165283,
+      "token_entropy": 6.1530609130859375,
+      "sample_s": 399.8,
+      "judge_s": 45.0
+    },
+    {
+      "discretize": "sample",
+      "nfe": 64,
+      "forwards_per_sequence": 1024,
+      "gen_ppl": 66.33998107910156,
+      "nll": 4.194792747497559,
+      "token_entropy": 6.140786647796631,
+      "sample_s": 796.2,
+      "judge_s": 44.8
+    },
+    {
+      "discretize": "sample",
+      "nfe": 128,
+      "forwards_per_sequence": 2048,
+      "gen_ppl": 59.97980499267578,
+      "nll": 4.094007968902588,
+      "token_entropy": 6.092350959777832,
+      "sample_s": 1600.7,
+      "judge_s": 47.5
+    }
+  ]
+}

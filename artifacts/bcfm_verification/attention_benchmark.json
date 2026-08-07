@@ -1,0 +1,49 @@
+{
+  "batch_size": 32,
+  "block_size": 16,
+  "device": "NVIDIA H100 NVL",
+  "doubled_tokens": 512,
+  "dtype": "torch.bfloat16",
+  "fastest_flex_tile": "flex_tile_64",
+  "head_dim": 64,
+  "heads": 12,
+  "length": 256,
+  "repeats": 6,
+  "results": {
+    "dense_sdpa": {
+      "max_step_ms": 1.9175039529800415,
+      "median_step_ms": 1.6480319499969482,
+      "min_step_ms": 1.6380159854888916,
+      "peak_allocated_mib": 337.5322265625,
+      "status": "pass"
+    },
+    "flex_tile_128": {
+      "max_step_ms": 1.741312026977539,
+      "median_step_ms": 0.9541600048542023,
+      "min_step_ms": 0.928928017616272,
+      "peak_allocated_mib": 336.7822265625,
+      "status": "pass"
+    },
+    "flex_tile_16": {
+      "error": "LoweringException: NoValidChoicesError: No choices to select, please consider adding ATEN into max_autotune_gemm_backends config (defined in torch/_inductor/config.py) to allow at least one choice. ",
+      "error_type": "InductorError",
+      "status": "unsupported"
+    },
+    "flex_tile_32": {
+      "error": "LoweringException: NoValidChoicesError: No choices to select, please consider adding ATEN into max_autotune_gemm_backends config (defined in torch/_inductor/config.py) to allow at least one choice. ",
+      "error_type": "InductorError",
+      "status": "unsupported"
+    },
+    "flex_tile_64": {
+      "max_step_ms": 1.7891520261764526,
+      "median_step_ms": 0.9015519917011261,
+      "min_step_ms": 0.8702719807624817,
+      "peak_allocated_mib": 336.7783203125,
+      "status": "pass"
+    }
+  },
+  "selected_tile_128_vs_math_max_abs": 0.0078125,
+  "selected_tile_128_vs_math_mean_abs": 0.00016779084398876876,
+  "torch_version": "2.7.1+cu126",
+  "warmup": 2
+}

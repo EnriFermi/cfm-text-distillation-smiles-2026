@@ -161,6 +161,15 @@ def sample_point(module, kind, arch, nfe, discretize, n_samples, batch_size):
             ids = block_causal_sample(module, block_size=arch["block_size"],
                                       steps_per_block=nfe, batch_size=size,
                                       discretize=discretize)
+        elif kind == "block_causal_fast":
+            ids = block_causal_sample(
+                module,
+                block_size=arch["block_size"],
+                steps_per_block=nfe,
+                batch_size=size,
+                discretize=discretize,
+                inference_backend="compiled_cached",
+            )
         elif kind == "blockwise_infer":
             ids = blockwise_sample(module, block_size=arch["_infer_block_size"],
                                    steps_per_block=nfe, batch_size=size,
@@ -205,9 +214,10 @@ def main() -> None:
     source.add_argument("--gold", choices=["text8", "tinystories"],
                         help="dump real held-out data instead of model samples")
     parser.add_argument("--sampler", default="auto",
-                        choices=["auto", "full_cfm", "block_causal", "blockwise_infer"])
+                        choices=["auto", "full_cfm", "block_causal",
+                                 "block_causal_fast", "blockwise_infer"])
     parser.add_argument("--infer-block-size", type=int, default=16,
-                        help="block size for blockwise_infer (M2) on a full-seq model")
+                        help="block size for M2 samplers on a full-sequence checkpoint")
     parser.add_argument("--nfe", nargs="+", type=int, default=[1, 2, 4, 8, 16])
     parser.add_argument("--discretize", nargs="+", default=["argmax"],
                         choices=["argmax", "sample"])
@@ -223,6 +233,14 @@ def main() -> None:
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_mode = "torch_compile" if args.sampler == "block_causal_fast" else "none"
+    print(
+        f"[config] device={args.device} dtype=float32 seed={args.seed} "
+        f"sampler={args.sampler} nfe={args.nfe} discretize={args.discretize} "
+        f"n_samples={args.n_samples} batch_size={args.batch_size} "
+        f"cache_mode={cache_mode} output={out_path.resolve()}",
+        flush=True,
+    )
     points, token_arrays = [], {}
 
     if args.gold:
@@ -249,7 +267,7 @@ def main() -> None:
         kind = args.sampler
         if kind == "auto":
             kind = "block_causal" if arch["block_size"] else "full_cfm"
-        if kind == "block_causal" and not arch["block_size"]:
+        if kind in {"block_causal", "block_causal_fast"} and not arch["block_size"]:
             # This is M2 as the paper defines it (main.tex 139/141): the training-free
             # variant "reuses a pretrained full-sequence CFM as the head ... running the
             # same blockwise sampler", and "both variants share one loop". So a

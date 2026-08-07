@@ -1,0 +1,8 @@
+[config] checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 device=cuda dtype=fp32 seed=0 arch={'vocab_size': 50257, 'hidden_size': 384, 'length': 256, 'n_heads': 6, 'n_blocks': 6, 'cond_dim': 128, 'embed_type': 'rms', 'block_size': 16, '_path': PosixPath('/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt')} out=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent
+[stage=benchmark] nfe=16 current
+[stage=benchmark] nfe=16 incremental
+[metric] {"nfe": 16, "current_median_ms": 1763.1624755859375, "incremental_median_ms": 181.86639404296875, "speedup": 9.6948228663365, "compiled": true, "current_times_ms": [1756.847900390625, 1763.1624755859375, 1781.2147216796875, 1761.2943115234375, 1768.9195556640625], "incremental_times_ms": [181.97442626953125, 181.81642150878906, 181.8173828125, 181.86639404296875, 181.90296936035156]}
+[stage=benchmark] nfe=32 current
+[stage=benchmark] nfe=32 incremental
+[metric] {"nfe": 32, "current_median_ms": 3675.9912109375, "incremental_median_ms": 353.5648498535156, "speedup": 10.396936269146915, "compiled": true, "current_times_ms": [3675.9912109375, 3661.75634765625, 3677.84228515625, 3733.291259765625, 3663.331787109375], "incremental_times_ms": [353.494384765625, 353.5702819824219, 353.5648498535156, 353.5846252441406, 353.42950439453125]}
+[done] artifact=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m3_inference_optimization_20260806/profile_agent/prototype_benchmark.json

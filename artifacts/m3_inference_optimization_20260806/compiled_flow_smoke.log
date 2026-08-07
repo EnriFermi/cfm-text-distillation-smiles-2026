@@ -1,0 +1,20 @@
+/home/coder/.conda/envs/semicat/lib/python3.10/site-packages/torch/_inductor/lowering.py:7007: UserWarning: 
+Online softmax is disabled on the fly since Inductor decides to
+split the reduction. Cut an issue to PyTorch if this is an
+important use case and you want to speed it up with online
+softmax.
+
+  warnings.warn(
+skipping cudagraphs due to mutated inputs (12 instances). Found from : 
+   File "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/block/fast_inference.py", line 187, in forward
+    clean_keys[layer_index].index_copy_(1, positions, key)
+
+warm 0 12.113
+warm 1 0.033
+warm 2 0.034
+nfe 1 wall 32.84243692178279 event 32.80486297607422 raw [32.84243692178279, 34.53197900671512, 32.61589293833822, 32.42410300299525, 33.257844974286854] deterministic True checksum 412770
+nfe 2 wall 39.70094199758023 event 39.67443084716797 raw [42.665368993766606, 40.08836194407195, 39.683718932792544, 39.70094199758023, 39.6528800483793] deterministic True checksum 551181
+nfe 4 wall 66.74294406548142 event 66.6993637084961 raw [66.50157296098769, 67.56804697215557, 66.74294406548142, 67.22922995686531, 66.58937700558454] deterministic True checksum 504585
+nfe 8 wall 120.36585703026503 event 120.32259368896484 raw [120.30005699489266, 120.36585703026503, 120.47991098370403, 120.54150889161974, 120.28310599271208] deterministic True checksum 708607
+nfe 16 wall 227.77942998800427 event 227.74502563476562 raw [227.76907100342214, 227.77942998800427, 227.7057949686423, 227.7894769795239, 228.01653807982802] deterministic True checksum 1076304
+nfe 32 wall 442.67300399951637 event 442.6224060058594 raw [442.67300399951637, 442.81345198396593, 442.9182590683922, 442.6626970525831, 442.2466929536313] deterministic True checksum 720188

@@ -1,0 +1,18 @@
+{
+  "attention_backend": "flex",
+  "batch_size": 4,
+  "checkpoint_step": 390000,
+  "device": "NVIDIA H100 NVL",
+  "dtype": "bf16-mixed simulation",
+  "elapsed_seconds_including_compile": 76.80638708500192,
+  "finite_gradients": true,
+  "finite_loss": true,
+  "jvp_attention_backend": "auto",
+  "loss_type": "lag",
+  "parameter_tensors_with_nonzero_gradient": 160,
+  "peak_allocated_mib": 2650.11865234375,
+  "sd_loss": 0.022240357473492622,
+  "status": "pass",
+  "total_loss": 3.057441234588623,
+  "vf_loss": 3.035200834274292
+}

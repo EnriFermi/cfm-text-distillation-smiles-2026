@@ -1,0 +1,9 @@
+{
+  "split": "test",
+  "split_units": "sequences",
+  "n_samples": 512,
+  "length": 256,
+  "judge": "EleutherAI/gpt-j-6B",
+  "gold_gen_ppl": 75.63720703125,
+  "gold_char_entropy": 2.8554913997650146
+}

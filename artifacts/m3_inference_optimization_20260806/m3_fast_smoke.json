@@ -1,0 +1,43 @@
+{
+ "schema": "bcfm-textdump/v1",
+ "label": "m3_fast_smoke",
+ "created_utc": "2026-08-07T00:20:43+00:00",
+ "git_commit": "07ffd55",
+ "model": {
+  "kind": "checkpoint",
+  "checkpoint": "logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt",
+  "checkpoint_step": 100000,
+  "checkpoint_sha256_head": "1a69c085a780f9d3af00e1e3a923611c7c6b65ccb85c7eac6cff36be51cdc7f5",
+  "dataset": "tinystories",
+  "tokenizer": "gpt2",
+  "arch": {
+   "vocab_size": 50257,
+   "hidden_size": 384,
+   "length": 256,
+   "n_heads": 6,
+   "n_blocks": 6,
+   "cond_dim": 128,
+   "embed_type": "rms",
+   "block_size": 16
+  }
+ },
+ "sampler": {
+  "kind": "block_causal_fast",
+  "block_size": 16,
+  "length": 256,
+  "seed": 0
+ },
+ "points": [
+  {
+   "id": "argmax_nfe1",
+   "nfe": 1,
+   "discretize": "argmax",
+   "forwards_per_sequence": 16,
+   "n_samples": 1,
+   "sampling_seconds": 13.2,
+   "texts": [
+    " did and saw a to by playing with. Timmy was, but said, \" They one! the't more?\"\n\nLily,, \"Yes, we's. the You to some friends.\"\n\nMom saw the boy and said, \"I very nice. Tim and said that some it together..\" They all make up we and the and time.\"\n\nL. was so to and the boy and he was to the boy were going to his toy. The they were excited and about his friends said him and asked, \"What we that too?\"\n\n\n boy was and and the boy hugged and said, \"I't love you him, to play to playing that his friends.\"\n\nThe boy day was from it was a,. She him to go and and him and the boy to the., so him. The boy had to of the boy and friends again. Lily and him and said, \"I with a boy, Tim boy.\"\n, a little boy and his boy went and went to a and boy.. They was a happy boy. He was playing and's, and had to with the boy He said that and's the good. Tim. his boy had a was boy. He knew he"
+   ]
+  }
+ ]
+}

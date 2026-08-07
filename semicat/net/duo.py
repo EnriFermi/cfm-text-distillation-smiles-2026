@@ -307,10 +307,19 @@ class DIT(nn.Module):
         dropout: float,
         length: int,
         embed_type: Literal["naive", "rms"] = "naive",
+        jvp_attention_backend: Literal["auto", "triton"] = "triton",
     ):
         super().__init__()
+        if jvp_attention_backend not in {"auto", "triton"}:
+            raise ValueError(
+                "Full-sequence DIT supports the fused JVP attention backend only; "
+                f"got {jvp_attention_backend!r}"
+            )
         self.adaLN = True
         self.vocab_size = vocab_size
+        # ``auto`` is retained as an auditable config value; on the CUDA-only
+        # training path it resolves to the same fused Triton implementation.
+        self.jvp_attention_backend = jvp_attention_backend
         if embed_type == "naive":
             self.vocab_embed = EmbeddingLayer(hidden_size, vocab_size)
         elif embed_type == "rms":

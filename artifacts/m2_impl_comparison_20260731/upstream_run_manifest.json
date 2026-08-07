@@ -1,0 +1,32 @@
+{
+  "implementation": "upstream_clean_prefix_kv",
+  "source_root": "/home/coder/tmp/cfm-m2-upstream-2e21c57",
+  "source_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+  "source_dirty": false,
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt",
+  "checkpoint_sha256": "a7a85b5626c9bd2c743a8773827b1ea1f24de831186490b934ceecab4a41ba6f",
+  "device": "cuda",
+  "seed": 0,
+  "length": 256,
+  "block_size": 16,
+  "nfe": 4,
+  "schedule": "uniform",
+  "discretize": "argmax",
+  "n_samples": 512,
+  "batch_size": 64,
+  "output": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m2_impl_comparison_20260731/upstream_m2_nfe4.json",
+  "source_files": {
+    "block/sampling.py": "9a69baea1ffebec61e7d7eac81d66373dda9214275a0637cf18b15812dd2f817",
+    "semicat/net/duo.py": "2a808a1d987b50e8587ce44d9e3f120e4c18c488285352de1fdb631e98ff4c7e",
+    "eval/generate.py": "c64dcc1a46304d304727424a9227c907c36a9f0d5ac7720e4f7d9b9521c4ff6f",
+    "eval/run_tinystories_cfm_eval.py": "a26cb1ceab8b86a312f781abe245ab15727b66f77af11c0a9862622826bce2ef"
+  },
+  "imported_sources": {
+    "sample_tokens": "/home/coder/tmp/cfm-m2-upstream-2e21c57/eval/generate.py",
+    "blockwise_sample": "/home/coder/tmp/cfm-m2-upstream-2e21c57/block/sampling.py",
+    "net_class": "/home/coder/tmp/cfm-m2-upstream-2e21c57/semicat/net/duo.py"
+  },
+  "dtype": "torch.float32",
+  "module_class": "TextSemicatModule",
+  "net_class": "DIT"
+}

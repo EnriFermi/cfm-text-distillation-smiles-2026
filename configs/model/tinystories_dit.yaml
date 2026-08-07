@@ -1,0 +1,48 @@
+defaults:
+  - base_text_semicat
+
+in_shape:
+  - ${data.max_length}
+  - 50257
+
+prior_type: gaussian
+sd_type: lag
+sd_prop: 0.25
+label_smoothing: 0.0
+compile: false
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 1.0e-4
+  weight_decay: 0.1
+  fused: false
+  foreach: true
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.LinearLR
+  _partial_: true
+  start_factor: 0.001
+  total_iters: 500
+scheduler_interval: step
+
+calc_nll: false
+nll_steps: [1]
+nll_samples: 4
+nll_model_batch_size: 128
+nll_sampling_batch_size: 4
+
+net:
+  _target_: semicat.net.duo.DIT
+  vocab_size: 50257
+  hidden_size: 384
+  cond_dim: 128
+  n_blocks: 6
+  n_heads: 6
+  dropout: 0.1
+  length: ${data.max_length}
+  embed_type: rms
+  # The lag self-distillation branch calls torch.func.jvp with
+  # jvp_attention=True. On CUDA this selects SemiCat's fused Triton JVP
+  # forward plus custom flash/JVP backward kernels.
+  jvp_attention_backend: triton

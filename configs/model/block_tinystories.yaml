@@ -1,0 +1,34 @@
+# M3 (TinyStories) — checkpoint-compatible block CFM model.
+# Same block machinery as block_text8; the net matches the TinyStories A100
+# checkpoint's architecture (GPT-2 vocab 50257, hidden 384, 6 blocks, 6 heads,
+# rms embedding), which is what makes the strict net-only init from that
+# checkpoint load cleanly.
+_target_: block.block_semicat.BlockSemicatModule
+
+in_shape:
+  - ${data.max_length}
+  - 50257
+
+prior_type: gaussian
+scheduler: null
+sd_type: lag           # upstream CFM/Lagrangian loss; override with ecld
+sd_prop: 0.25          # exact upstream VFM/self-distillation batch split
+block_size: 16
+time_eps: 0.0          # torch.rand semantics, identical to upstream SemiCat
+init_from_cfm_ckpt: null
+expected_source_sd_type: null
+
+net:
+  _target_: block.block_dit.BlockDIT
+  vocab_size: 50257
+  hidden_size: 384
+  cond_dim: 128
+  n_blocks: 6
+  n_heads: 6
+  dropout: 0.1
+  length: ${data.max_length}
+  block_size: ${model.block_size}
+  embed_type: rms
+  attention_backend: flex
+  jvp_attention_backend: auto
+  flex_kernel_block_size: 64

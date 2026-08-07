@@ -1,0 +1,86 @@
+{
+  "mode": "bcfm_block_causal",
+  "sampler": "block/sampling.py::block_causal_sample",
+  "source_ckpt": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt",
+  "finetuned_ckpt": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0040000.ckpt",
+  "block_size": 16,
+  "n_samples": 1024,
+  "length": 256,
+  "seed": 0,
+  "judge_model": "EleutherAI/gpt-j-6B",
+  "judge_tokenizer": "gpt2-large",
+  "results": [
+    {
+      "model": "source",
+      "checkpoint_step": 68001,
+      "block_size": 16,
+      "steps_per_block": 1,
+      "forwards_per_sequence": 16,
+      "gen_ppl": 49.64111328125,
+      "nll": 3.9048194885253906,
+      "token_entropy": 3.5195817947387695,
+      "sample_s": 31.4,
+      "judge_s": 152.5
+    },
+    {
+      "model": "source",
+      "checkpoint_step": 68001,
+      "block_size": 16,
+      "steps_per_block": 2,
+      "forwards_per_sequence": 32,
+      "gen_ppl": 60.11223602294922,
+      "nll": 4.096213340759277,
+      "token_entropy": 3.9703333377838135,
+      "sample_s": 51.6,
+      "judge_s": 70.1
+    },
+    {
+      "model": "source",
+      "checkpoint_step": 68001,
+      "block_size": 16,
+      "steps_per_block": 4,
+      "forwards_per_sequence": 64,
+      "gen_ppl": 154.54537963867188,
+      "nll": 5.040487766265869,
+      "token_entropy": 4.796021938323975,
+      "sample_s": 102.5,
+      "judge_s": 68.7
+    },
+    {
+      "model": "finetuned",
+      "checkpoint_step": 40000,
+      "block_size": 16,
+      "steps_per_block": 1,
+      "forwards_per_sequence": 16,
+      "gen_ppl": 53.85096740722656,
+      "nll": 3.986220359802246,
+      "token_entropy": 4.492310523986816,
+      "sample_s": 27.4,
+      "judge_s": 68.3
+    },
+    {
+      "model": "finetuned",
+      "checkpoint_step": 40000,
+      "block_size": 16,
+      "steps_per_block": 2,
+      "forwards_per_sequence": 32,
+      "gen_ppl": 52.42500686645508,
+      "nll": 3.959383726119995,
+      "token_entropy": 4.6432085037231445,
+      "sample_s": 51.6,
+      "judge_s": 68.9
+    },
+    {
+      "model": "finetuned",
+      "checkpoint_step": 40000,
+      "block_size": 16,
+      "steps_per_block": 4,
+      "forwards_per_sequence": 64,
+      "gen_ppl": 49.28351593017578,
+      "nll": 3.897589683532715,
+      "token_entropy": 5.068921089172363,
+      "sample_s": 102.9,
+      "judge_s": 69.9
+    }
+  ]
+}

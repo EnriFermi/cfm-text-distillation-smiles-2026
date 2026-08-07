@@ -1,0 +1,434 @@
+{
+  "source_nfe8": [
+    {
+      "sample_index": 1982,
+      "longest_seen_match": 44,
+      "generated": "he is noivhly sheses hegves ho hin br ton and one wo reth ve the thot tis iatshhe zovealthiz the whiterle he wo t zero igane pen ial on hznve tiothoer othen hagaet wreze ze whe ro zero zero zero zero zero zero zero gallons ohath iro oneco oer zerotzera otu",
+      "generated_match": " zero zero zero zero zero zero zero gallons ",
+      "seen_train_match": " zero zero zero zero zero zero zero gallons "
+    },
+    {
+      "sample_index": 1024,
+      "longest_seen_match": 38,
+      "generated": "thns dova vs iete  arher zove zero zero qheriam fieili woh latd zoro zacaizera zero zero zero tiveoss fthe nivelnine zero zero zero zero zero zero zero zero zeto tm ohe ththacntahitnvhoeho nthi cthen ishs ghten nauthes  bea sed  avertisal wis  ran i holohe",
+      "generated_match": "ne zero zero zero zero zero zero zero ",
+      "seen_train_match": "ne zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 1892,
+      "longest_seen_match": 36,
+      "generated": " anerel sinotion for objectiviom ze seracng ve t objectivism are less well known oute de north america llthough there are rrreets ofearithet she europe  rea uutalea ainal aio there rnsert ohodd a be artcul a riniite and  ion aitanning the one dive the d re",
+      "generated_match": " objectivism are less well known out",
+      "seen_train_match": " objectivism are less well known out"
+    },
+    {
+      "sample_index": 1575,
+      "longest_seen_match": 31,
+      "generated": "ehes os at histehid hor be hther hed and hhe whenohthee rio nez three he he  het his zeve zevi es zero zeroeas to on to ah zero givertho  ihe iom thodens the he hzero zero ze zezmdh ze mazfromgallons zero zero zero zero zero zero to ive hol wor timotheo ze",
+      "generated_match": " zero zero zero zero zero zero ",
+      "seen_train_match": " zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 32,
+      "longest_seen_match": 28,
+      "generated": "zerro jideand the line one eight ono five jhe he vhe twe zire  rreozeroncerh zero tme zeee zerthzerenzervove one orthe foth three zero zero zero zero zive zeroezero th three zero one zhro zthe zero zero to tharrosthee tarong coilihe wnd tioe orr theacshan ",
+      "generated_match": " three zero zero zero zero z",
+      "seen_train_match": " three zero zero zero zero z"
+    },
+    {
+      "sample_index": 1665,
+      "longest_seen_match": 28,
+      "generated": "ve zelh ze h ziveszero zero zero gall ns three three zero zero zero zero mmto govehith laniont t of witttin hnn fev led brm on thh sthth ever hteens hale h teominoi n ot cone thto hiveeniin the minare zove zero znds zela tirfiin tod ioet thler sians aue to",
+      "generated_match": " three three zero zero zero ",
+      "seen_train_match": " three three zero zero zero "
+    },
+    {
+      "sample_index": 31,
+      "longest_seen_match": 27,
+      "generated": "al woration biree the lover in ezerzere zere on ons leres in the her zrrh zfralom zell ondhhthat ectery in stath sone five zeroowixe ne zen as on zero zero zero zero zero qr oozere zero thoen orothhion zho miretil zore are thlis r eo trm thr oriritn y to a",
+      "generated_match": "n zero zero zero zero zero ",
+      "seen_train_match": "n zero zero zero zero zero "
+    },
+    {
+      "sample_index": 198,
+      "longest_seen_match": 27,
+      "generated": "es coug thcia toon of cernland wheldleven the lorears to thero zero m the phareers and hevezzero nhaa zehe nine zmoh a  aitone boe he e zero zero zero zero zero gme ted one f ve thcery io asthin tisohather cin hive trialtheawe an ghbuavono ex nge fred zian",
+      "generated_match": "e zero zero zero zero zero ",
+      "seen_train_match": "e zero zero zero zero zero "
+    },
+    {
+      "sample_index": 259,
+      "longest_seen_match": 27,
+      "generated": "he of the lottarnd the ore zero zero hen si vi ine the niti ar hoest the hhd whr thrved blz co azero il  the zero z on zano thah zero zarotzer tgallons threwave  onthare ohzeo  zero tm zero zove zero ze o zero zero zero zero gallo d fectho thane the thrn a",
+      "generated_match": "o zero zero zero zero gallo",
+      "seen_train_match": "o zero zero zero zero gallo"
+    },
+    {
+      "sample_index": 138,
+      "longest_seen_match": 26,
+      "generated": "roy the hin was srathe toza col  ze doadvedite so the zere child aonid zegh s one s on deand ioitin zero w ro zero zeto zerotzeoo gallors fovr zero zero zero zero zeros m the on oimltt htveshatwhhte vhtherhhr hts reoindtin alve hisrehto gapzery zery zero z",
+      "generated_match": "r zero zero zero zero zero",
+      "seen_train_match": "r zero zero zero zero zero"
+    }
+  ],
+  "source_nfe16": [
+    {
+      "sample_index": 1258,
+      "longest_seen_match": 42,
+      "generated": " algeries retabic the ritiolca rhvil stz tee zeao a zera zero zero zervom ofozero gallons five one six zero zero zero m fishing fishing fiot flourishing bn ome oot fresthy fish n rh bh h oinhhrowores arr noce bone neum zerhan hands n fish thisry boll the t",
+      "generated_match": " one six zero zero zero m fishing fishing ",
+      "seen_train_match": " one six zero zero zero m fishing fishing "
+    },
+    {
+      "sample_index": 41,
+      "longest_seen_match": 40,
+      "generated": "tr zirective on volice tor tha atenoh or ald the loover aeothe he zero zeio mmot zalo zis wravehzer foue zero zrio zheo one ano z chro then co zive zero zero zero zero zero zero gallons tther ivhel ge zero zoro zero wim thetivhs hithrhitgio en the ide tiat",
+      "generated_match": " zero zero zero zero zero zero gallons t",
+      "seen_train_match": " zero zero zero zero zero zero gallons t"
+    },
+    {
+      "sample_index": 1024,
+      "longest_seen_match": 38,
+      "generated": "thns dova vs iete  ather wove zero zero mheroam of cli loh watd zoro zachizh a zero zero zero tiveoss fthe oivelnine zero zero zero zero zero zero zero zero zeto tm ohe ththacntahitnvhoeho nthi  hhen ishs ghten nauthes  bea sed  avertisal sis  han i s lohe",
+      "generated_match": "ne zero zero zero zero zero zero zero ",
+      "seen_train_match": "ne zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 833,
+      "longest_seen_match": 37,
+      "generated": "n herted states v whedwan livion mivei ovis vn weer two two three zero se three zero zero zero zero zero zero zero zmro m ah  rte vecnted to ch re ahe is hho zro  sthongh taghini hising hry he the wesmone theso rhhh hiniet tercove ite ahhora bro frenwhin o",
+      "generated_match": "e zero zero zero zero zero zero zero ",
+      "seen_train_match": "e zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 1006,
+      "longest_seen_match": 37,
+      "generated": "dos on the lahile tobrestio zeno oie a  oies te the capital a ds o zero zero zero zero zero zero zero zevover one niver znhtho ero zero zero zmeo zero zero zero zero and threeshe onethina ths hase zoreecare aahehnted bs the hear coheseaceions terinaofs hiv",
+      "generated_match": "o zero zero zero zero zero zero zero ",
+      "seen_train_match": "o zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 1788,
+      "longest_seen_match": 37,
+      "generated": "l zh o z to zery zero zero zero gallons three three tzero zero zero zero mit  ze ohtg its iving tlor  obog oino oing with thehs ey othaotedurether the tand covd th tet  ts and shint ana is lirh peaserea ots the torato dosran rictory wevo in ton madth afseh",
+      "generated_match": " zero zero zero gallons three three t",
+      "seen_train_match": " zero zero zero gallons three three t"
+    },
+    {
+      "sample_index": 1132,
+      "longest_seen_match": 36,
+      "generated": " two five vid se a longerd on o vigvthee which ghe trientwe zeve five zero zero zero zero zero zero gived to three tia s thzerohzero zerhaz to himhizs ons oove o zero zer and n gh tze iives nts rath aod hi then zean that ad ohe ret ting brouived and ro rai",
+      "generated_match": " five zero zero zero zero zero zero ",
+      "seen_train_match": " five zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 1892,
+      "longest_seen_match": 36,
+      "generated": " aneral sinotion for objectivist he seraing he t objectivism are less well known oute de north america llthough there are rhrrees of arithet she europe  rea butalea ainal aio there areart ohod  a be artcul a rintite and whon aitanning the one dive the d re",
+      "generated_match": " objectivism are less well known out",
+      "seen_train_match": " objectivism are less well known out"
+    },
+    {
+      "sample_index": 1665,
+      "longest_seen_match": 35,
+      "generated": "ze zelh zerh ziveszero zero zero gallons three three zero zero zero zero mmto govehith caniont t of witttin hnn fev led brm on the sthth ever et ens hale h teominni n ot cone theo fiveeniin the mitace zove zero znds zela tirf in tod ioet thler vians aue to",
+      "generated_match": "zero zero zero gallons three three ",
+      "seen_train_match": "zero zero zero gallons three three "
+    },
+    {
+      "sample_index": 504,
+      "longest_seen_match": 34,
+      "generated": "erone one zoro jeeothig the cart the capital a d code oive hare zero  zero f c re zero zero z co zero zero zero zero ter zero zero zero ero zero zero zero zero zero zero zoro tho zero zern zero zero zero zero zero tho zeh rereo zero zero th thit forh iaiht",
+      "generated_match": "ero zero zero zero zero zero zero ",
+      "seen_train_match": "ero zero zero zero zero zero zero "
+    }
+  ],
+  "source_nfe32": [
+    {
+      "sample_index": 1471,
+      "longest_seen_match": 52,
+      "generated": "the saneraltion whe two zero miv one worr to rher movial an re td one zeng to hhe artenmand tial whand roes the he  and aove ze o zerorze thzero mi aizire zero gallons four one six zero zero zero m fishing zishing tstm fthicothng vit fnenor and ctly fisthl",
+      "generated_match": " zero gallons four one six zero zero zero m fishing ",
+      "seen_train_match": " zero gallons four one six zero zero zero m fishing "
+    },
+    {
+      "sample_index": 912,
+      "longest_seen_match": 44,
+      "generated": " noves zero righile to ghole hive ovt in ved ta zaro z re tihatom to ded raa ladglattht and anron laiver brem vn one zero five wmoo thelens covl one zero weo oheot oes zerothere zero zero zero zero zero zero gallons five one zero zero zero zero zut ze o ze",
+      "generated_match": " zero zero zero zero zero zero gallons five ",
+      "seen_train_match": " zero zero zero zero zero zero gallons five "
+    },
+    {
+      "sample_index": 319,
+      "longest_seen_match": 40,
+      "generated": "o ine zhald an his hale and who grtaz thzero zero z rvez to zic  im one zero zero zero zero zero zero zero zero gm them hive zero  te anthen invhich nurh fon bight thea thghr egos soral hornrsis hay ane d on hht et hre thh crist hine rance ware baihs ar as",
+      "generated_match": " one zero zero zero zero zero zero zero ",
+      "seen_train_match": " one zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 281,
+      "longest_seen_match": 38,
+      "generated": "thrle wive zero zero z to kmrfa m fos eight zove zero ore hid ro lovo chiohee rea zero zero zero zero zero zero zero ga five five five noter dithathere hinalhe s and havetheo h one nine ven tin hive dove the who ghyea urr  the thte of tg or servertenw thes",
+      "generated_match": " zero zero zero zero zero zero zero ga",
+      "seen_train_match": " zero zero zero zero zero zero zero ga"
+    },
+    {
+      "sample_index": 1024,
+      "longest_seen_match": 38,
+      "generated": "thns drva vs ietet aiver nive zero zero zeer am fveiliviph zath zero zacaizera zero zero zero tiveos vothe oivhizene zero zero zero zero zero zero zero zero ze o em ohe ththach ahitnvhzeho nthi  they ishi ghthn nauthts tbea sed ig ertihal wis  ran ias lo e",
+      "generated_match": "ne zero zero zero zero zero zero zero ",
+      "seen_train_match": "ne zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 83,
+      "longest_seen_match": 37,
+      "generated": " s illagelaor renhonce thes in the zerarzeoodzive d the cali th woe zerwozere heeo zero zero zero zero zero zero zero zero hiloend zoeo one aithive in the hith grehhnishtionhedhon n ve ter al n thing nrde hy train  sh thin oeshh hive so nathe brovleis can ",
+      "generated_match": "o zero zero zero zero zero zero zero ",
+      "seen_train_match": "o zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 502,
+      "longest_seen_match": 37,
+      "generated": "thand afcels the then and buld se ze oiven zero zeve mod om oo abd three tharoh one zero zerobmere zero zare zeto gallons three zero zero zero zero zero zero zero wivh mha three aonothooet he zert zmrohm foveinn ane thre hathe cor the trades oo le fincerth",
+      "generated_match": "e zero zero zero zero zero zero zero ",
+      "seen_train_match": "e zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 504,
+      "longest_seen_match": 37,
+      "generated": "erone one zoro jneothig the cart the capital a j code oive hare zero  zero f crre zero zero zero zero zero zero zero two zero zero zero zro zero zero zero zero zero zere zero zero zero e n zero zero zeroz bl thhho tho zeh rareo zeao zero th this fora iapht",
+      "generated_match": "e zero zero zero zero zero zero zero ",
+      "seen_train_match": "e zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 690,
+      "longest_seen_match": 37,
+      "generated": "was to dawhe zaris from which whra zeros in the leta whote is th zeightrs thea toe zero zore zero me t zero zmvo zero zero zeloons five zevo zero zero zero zero zero zero zero zero zero wheight ozed th ondnthoe ai h hicanh thhhat hhazemo drohtigre thrhe bo",
+      "generated_match": "o zero zero zero zero zero zero zero ",
+      "seen_train_match": "o zero zero zero zero zero zero zero "
+    },
+    {
+      "sample_index": 918,
+      "longest_seen_match": 37,
+      "generated": "tions such as withend nootving be ar ine cher zes the sveive wive five zero tm a im the litaerel wo thre zero zero zero zero zero zero zero ze l ged zero zeo zero zehr zero ocdo zeto hive zerh thiozerfive hent onessivhe fight tr eight ote ne ha be hibolh r",
+      "generated_match": "e zero zero zero zero zero zero zero ",
+      "seen_train_match": "e zero zero zero zero zero zero zero "
+    }
+  ],
+  "step90k_nfe8": [
+    {
+      "sample_index": 60,
+      "longest_seen_match": 256,
+      "generated": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl",
+      "generated_match": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl",
+      "seen_train_match": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl"
+    },
+    {
+      "sample_index": 86,
+      "longest_seen_match": 256,
+      "generated": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "generated_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "seen_train_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n"
+    },
+    {
+      "sample_index": 316,
+      "longest_seen_match": 256,
+      "generated": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "generated_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "seen_train_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di"
+    },
+    {
+      "sample_index": 350,
+      "longest_seen_match": 256,
+      "generated": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "generated_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "seen_train_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser"
+    },
+    {
+      "sample_index": 404,
+      "longest_seen_match": 256,
+      "generated": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "generated_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "seen_train_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t"
+    },
+    {
+      "sample_index": 412,
+      "longest_seen_match": 256,
+      "generated": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "generated_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "seen_train_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr"
+    },
+    {
+      "sample_index": 481,
+      "longest_seen_match": 256,
+      "generated": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "generated_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "seen_train_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late "
+    },
+    {
+      "sample_index": 663,
+      "longest_seen_match": 256,
+      "generated": "ne two one four a eudemian ethics or ethica eudemia one two four nine a virtues and vices or de virtutibus et vitiis libellus libellus de virtutibus one two five two a politics or politica one three four three a economics or oeconomica aesthetic writings o",
+      "generated_match": "ne two one four a eudemian ethics or ethica eudemia one two four nine a virtues and vices or de virtutibus et vitiis libellus libellus de virtutibus one two five two a politics or politica one three four three a economics or oeconomica aesthetic writings o",
+      "seen_train_match": "ne two one four a eudemian ethics or ethica eudemia one two four nine a virtues and vices or de virtutibus et vitiis libellus libellus de virtutibus one two five two a politics or politica one three four three a economics or oeconomica aesthetic writings o"
+    },
+    {
+      "sample_index": 669,
+      "longest_seen_match": 256,
+      "generated": "o of abraham lincoln one eight nine nine by john t morse the every day life of abraham lincoln one nine one three by francis fisher browne abraham lincoln the people s leader in the struggle for national existence one nine zero nine by george haven putnam ",
+      "generated_match": "o of abraham lincoln one eight nine nine by john t morse the every day life of abraham lincoln one nine one three by francis fisher browne abraham lincoln the people s leader in the struggle for national existence one nine zero nine by george haven putnam ",
+      "seen_train_match": "o of abraham lincoln one eight nine nine by john t morse the every day life of abraham lincoln one nine one three by francis fisher browne abraham lincoln the people s leader in the struggle for national existence one nine zero nine by george haven putnam "
+    },
+    {
+      "sample_index": 693,
+      "longest_seen_match": 256,
+      "generated": "of the libertarian communists was supported by some communist anarchists though opposed by many others the platform continues to inspire some contemporary anarchist groups who believe in an anarchist movement organised around its principles of theoretical ",
+      "generated_match": "of the libertarian communists was supported by some communist anarchists though opposed by many others the platform continues to inspire some contemporary anarchist groups who believe in an anarchist movement organised around its principles of theoretical ",
+      "seen_train_match": "of the libertarian communists was supported by some communist anarchists though opposed by many others the platform continues to inspire some contemporary anarchist groups who believe in an anarchist movement organised around its principles of theoretical "
+    }
+  ],
+  "step90k_nfe16": [
+    {
+      "sample_index": 10,
+      "longest_seen_match": 256,
+      "generated": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br",
+      "generated_match": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br",
+      "seen_train_match": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br"
+    },
+    {
+      "sample_index": 60,
+      "longest_seen_match": 256,
+      "generated": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl",
+      "generated_match": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl",
+      "seen_train_match": " since one eight six seven french goods except sugar have been admitted into algeria without payment of duty since one eight three five after the increase in one eight nine two of the french minimum tariff which applied to algeria also foreign trade greatl"
+    },
+    {
+      "sample_index": 86,
+      "longest_seen_match": 256,
+      "generated": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "generated_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "seen_train_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n"
+    },
+    {
+      "sample_index": 143,
+      "longest_seen_match": 256,
+      "generated": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio",
+      "generated_match": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio",
+      "seen_train_match": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio"
+    },
+    {
+      "sample_index": 316,
+      "longest_seen_match": 256,
+      "generated": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "generated_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "seen_train_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di"
+    },
+    {
+      "sample_index": 350,
+      "longest_seen_match": 256,
+      "generated": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "generated_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "seen_train_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser"
+    },
+    {
+      "sample_index": 404,
+      "longest_seen_match": 256,
+      "generated": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "generated_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "seen_train_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t"
+    },
+    {
+      "sample_index": 412,
+      "longest_seen_match": 256,
+      "generated": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "generated_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "seen_train_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr"
+    },
+    {
+      "sample_index": 469,
+      "longest_seen_match": 256,
+      "generated": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the",
+      "generated_match": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the",
+      "seen_train_match": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the"
+    },
+    {
+      "sample_index": 481,
+      "longest_seen_match": 256,
+      "generated": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "generated_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "seen_train_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late "
+    }
+  ],
+  "step90k_nfe32": [
+    {
+      "sample_index": 10,
+      "longest_seen_match": 256,
+      "generated": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br",
+      "generated_match": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br",
+      "seen_train_match": "movement in the english speaking world analytic philosophy rand s work has been mostly ignored no leading research university in this tradition considers rand or objectivism to be an important philosophical specialty or research area as is documented by br"
+    },
+    {
+      "sample_index": 86,
+      "longest_seen_match": 256,
+      "generated": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "generated_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n",
+      "seen_train_match": "ine nine two zero zero zero and the government s tight fiscal policy as well as a large increase in the trade surplus and the near tripling of foreign exchange reserves has helped the country s finances however an ongoing drought the after effects of the n"
+    },
+    {
+      "sample_index": 143,
+      "longest_seen_match": 256,
+      "generated": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio",
+      "generated_match": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio",
+      "seen_train_match": "t to present best supporting actor one nine three six to present best supporting actress one nine three six to present best animated feature two zero zero one to present best art direction one nine two eight to present also called interior or set decoratio"
+    },
+    {
+      "sample_index": 316,
+      "longest_seen_match": 256,
+      "generated": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "generated_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di",
+      "seen_train_match": " effect is generally to cool the planet the indirect effect the particles act as ccns and thereby change cloud properties is less certain black carbon another albedo related effect on the climate is from black carbon particles the size of this effect is di"
+    },
+    {
+      "sample_index": 350,
+      "longest_seen_match": 256,
+      "generated": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "generated_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser",
+      "seen_train_match": "altruism french altruisme from autrui other people derived from latin alter other was coined by auguste comte the french founder of positivism in order to describe the ethical doctrine he supported he believed that individuals had a moral obligation to ser"
+    },
+    {
+      "sample_index": 404,
+      "longest_seen_match": 256,
+      "generated": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "generated_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t",
+      "seen_train_match": " of the constitution the union of these states is perpetual perpetuity is implied if not expressed in the fundamental law of all national governments arguing further that the purpose of the united states constitution was to form a more perfect union than t"
+    },
+    {
+      "sample_index": 412,
+      "longest_seen_match": 256,
+      "generated": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "generated_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr",
+      "seen_train_match": " of representatives from illinois murder victims people from kentucky presidents of the united states republican party united states presidential nominees united states army officers united states senate candidates welsh americans aristotle aristotel s thr"
+    },
+    {
+      "sample_index": 469,
+      "longest_seen_match": 256,
+      "generated": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the",
+      "generated_match": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the",
+      "seen_train_match": " one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late into the"
+    },
+    {
+      "sample_index": 481,
+      "longest_seen_match": 256,
+      "generated": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "generated_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late ",
+      "seen_train_match": " one one one four one three one one three two one four three one four four one five two and one six one and is mentioned in sections one four six and one four eight john galt the question who is john galt is asked repeatedly throughout atlas shrugged late "
+    },
+    {
+      "sample_index": 629,
+      "longest_seen_match": 256,
+      "generated": "century the issue of ethnicity and language is sensitive after many years of government marginalization of berber or amazigh as some prefer culture today the arab berber issue is often a case of self identification or identification through language and cu",
+      "generated_match": "century the issue of ethnicity and language is sensitive after many years of government marginalization of berber or amazigh as some prefer culture today the arab berber issue is often a case of self identification or identification through language and cu",
+      "seen_train_match": "century the issue of ethnicity and language is sensitive after many years of government marginalization of berber or amazigh as some prefer culture today the arab berber issue is often a case of self identification or identification through language and cu"
+    }
+  ]
+}

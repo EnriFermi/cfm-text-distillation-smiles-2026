@@ -1,0 +1,111 @@
+[config] {
+  "experiment": "tinystories_quality_grid_batch1_latency",
+  "device": "cuda",
+  "gpu_name": "NVIDIA H100 NVL",
+  "dtype": "float32",
+  "seed": 0,
+  "length": 256,
+  "batch_size": 1,
+  "warmup_runs": 5,
+  "repeats": 30,
+  "cache_mode": "none",
+  "output_dir": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806",
+  "current_commit": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+  "upstream_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+  "upstream_timing_source": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/upstream_run_eval_2e21c57.py",
+  "upstream_timing_source_sha256": "120e2e53826dc540d1c7372049c1582c8bd9af679c4412489021b0ebdd3bce71",
+  "timing_functions": [
+    "_sync",
+    "_measure_sequence_latency_ms"
+  ],
+  "timing_code_execution": "AST nodes loaded directly from upstream source",
+  "quality_sources": [
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M1_M2_M3_scores.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M1_step200000_full_scores.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M3_step100000_fast_cached_scores.json"
+  ]
+}
+[cache] resume hit: /home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.json (48 completed points)
+[stage=model_build] model=M1-100k-source (1/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt step=68001 sampler=full_cfm block_size=None
+[stage=model_ready] model=M1-100k-source dtype=torch.float32
+[cache] point hit: model=M1-100k-source point=argmax_nfe1
+[cache] point hit: model=M1-100k-source point=argmax_nfe2
+[cache] point hit: model=M1-100k-source point=argmax_nfe4
+[cache] point hit: model=M1-100k-source point=argmax_nfe8
+[cache] point hit: model=M1-100k-source point=argmax_nfe16
+[cache] point hit: model=M1-100k-source point=argmax_nfe32
+[cache] point hit: model=M1-100k-source point=sample_nfe1
+[cache] point hit: model=M1-100k-source point=sample_nfe2
+[cache] point hit: model=M1-100k-source point=sample_nfe4
+[cache] point hit: model=M1-100k-source point=sample_nfe8
+[cache] point hit: model=M1-100k-source point=sample_nfe16
+[cache] point hit: model=M1-100k-source point=sample_nfe32
+[stage=model_build] model=M2-source-blockcausal (2/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt step=68001 sampler=block_causal block_size=16
+[stage=model_ready] model=M2-source-blockcausal dtype=torch.float32
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe1
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe2
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe4
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe8
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe16
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe32
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe1
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe2
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe4
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe8
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe16
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe32
+[stage=model_build] model=M3-step100000 (3/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 sampler=block_causal block_size=16
+[stage=model_ready] model=M3-step100000 dtype=torch.float32
+[cache] point hit: model=M3-step100000 point=argmax_nfe1
+[cache] point hit: model=M3-step100000 point=argmax_nfe2
+[cache] point hit: model=M3-step100000 point=argmax_nfe4
+[cache] point hit: model=M3-step100000 point=argmax_nfe8
+[cache] point hit: model=M3-step100000 point=argmax_nfe16
+[cache] point hit: model=M3-step100000 point=argmax_nfe32
+[cache] point hit: model=M3-step100000 point=sample_nfe1
+[cache] point hit: model=M3-step100000 point=sample_nfe2
+[cache] point hit: model=M3-step100000 point=sample_nfe4
+[cache] point hit: model=M3-step100000 point=sample_nfe8
+[cache] point hit: model=M3-step100000 point=sample_nfe16
+[cache] point hit: model=M3-step100000 point=sample_nfe32
+[stage=model_build] model=M3-step100000-fast (4/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 sampler=block_causal_fast block_size=16
+[stage=model_ready] model=M3-step100000-fast dtype=torch.float32
+[stage=latency] point=49/60 model=M3-step100000-fast mode=argmax nfe=1 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=1 latency_median_ms=22.531 p10=22.352 p90=22.916 mauve=0.008085 gen_ppl=49.3886 elapsed=22.2s
+[stage=latency] point=50/60 model=M3-step100000-fast mode=argmax nfe=2 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=2 latency_median_ms=33.610 p10=33.555 p90=33.686 mauve=0.010403 gen_ppl=49.9950 elapsed=1.2s
+[stage=latency] point=51/60 model=M3-step100000-fast mode=argmax nfe=4 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=4 latency_median_ms=56.013 p10=55.942 p90=56.109 mauve=0.033407 gen_ppl=46.1118 elapsed=2.0s
+[stage=latency] point=52/60 model=M3-step100000-fast mode=argmax nfe=8 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=8 latency_median_ms=100.713 p10=100.649 p90=100.798 mauve=0.282057 gen_ppl=50.5651 elapsed=3.5s
+[stage=latency] point=53/60 model=M3-step100000-fast mode=argmax nfe=16 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=16 latency_median_ms=190.093 p10=190.028 p90=190.189 mauve=0.754968 gen_ppl=58.1278 elapsed=6.7s
+[stage=latency] point=54/60 model=M3-step100000-fast mode=argmax nfe=32 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=argmax nfe=32 latency_median_ms=368.817 p10=368.724 p90=368.944 mauve=0.644325 gen_ppl=61.8396 elapsed=12.9s
+[stage=latency] point=55/60 model=M3-step100000-fast mode=sample nfe=1 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=1 latency_median_ms=23.708 p10=23.541 p90=24.362 mauve=0.008271 gen_ppl=54.9200 elapsed=0.9s
+[stage=latency] point=56/60 model=M3-step100000-fast mode=sample nfe=2 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=2 latency_median_ms=34.672 p10=34.617 p90=43.708 mauve=0.008877 gen_ppl=56.2508 elapsed=1.3s
+[stage=latency] point=57/60 model=M3-step100000-fast mode=sample nfe=4 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=4 latency_median_ms=57.008 p10=56.976 p90=57.073 mauve=0.025290 gen_ppl=51.7871 elapsed=2.0s
+[stage=latency] point=58/60 model=M3-step100000-fast mode=sample nfe=8 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=8 latency_median_ms=101.705 p10=101.655 p90=103.268 mauve=0.347280 gen_ppl=61.2708 elapsed=3.6s
+[stage=latency] point=59/60 model=M3-step100000-fast mode=sample nfe=16 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=16 latency_median_ms=191.188 p10=191.112 p90=191.338 mauve=0.501877 gen_ppl=70.7438 elapsed=6.7s
+[stage=latency] point=60/60 model=M3-step100000-fast mode=sample nfe=32 warmup=5 repeats=30
+[metric] model=M3-step100000-fast mode=sample nfe=32 latency_median_ms=369.845 p10=369.784 p90=369.929 mauve=0.646113 gen_ppl=75.2778 elapsed=12.9s
+[stage=model_build] model=M1-step200000 (5/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/tinystories_cfm_resume144001_to200000_nfe32_20260806/checkpoints/final/step_00200000_full_state.ckpt step=200000 sampler=full_cfm block_size=None
+[stage=model_ready] model=M1-step200000 dtype=torch.float32
+[cache] point hit: model=M1-step200000 point=argmax_nfe1
+[cache] point hit: model=M1-step200000 point=argmax_nfe2
+[cache] point hit: model=M1-step200000 point=argmax_nfe4
+[cache] point hit: model=M1-step200000 point=argmax_nfe8
+[cache] point hit: model=M1-step200000 point=argmax_nfe16
+[cache] point hit: model=M1-step200000 point=argmax_nfe32
+[cache] point hit: model=M1-step200000 point=sample_nfe1
+[cache] point hit: model=M1-step200000 point=sample_nfe2
+[cache] point hit: model=M1-step200000 point=sample_nfe4
+[cache] point hit: model=M1-step200000 point=sample_nfe8
+[cache] point hit: model=M1-step200000 point=sample_nfe16
+[cache] point hit: model=M1-step200000 point=sample_nfe32
+[done] rows=60 elapsed=81.5s json=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.json csv=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.csv plots=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/mauve_vs_latency.png,/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/genppl_vs_latency.png

@@ -1,0 +1,10 @@
+_target_: semicat.data.tinystories.TinyStoriesDataModule
+
+cache_dir: ${paths.data_dir}/tinystories
+batch_size: 64
+max_length: 256
+tokenizer_name: gpt2
+dataset_name: roneneldan/TinyStories
+num_workers: 4
+num_proc: null
+pin_memory: true

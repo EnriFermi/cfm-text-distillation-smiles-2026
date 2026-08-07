@@ -1,0 +1,35 @@
+[
+  {
+    "nfe_steps_per_block": 8,
+    "delta_nll_90k_minus_source": -0.15378127351531568,
+    "paired_bootstrap_mean": -0.1538748330178671,
+    "paired_bootstrap_std": 0.013322972876863069,
+    "paired_bootstrap_95_low": -0.1797360097399962,
+    "paired_bootstrap_95_high": -0.12796826391210725,
+    "bootstrap_probability_delta_ge_zero": 0.0,
+    "bootstrap_replicates": 20000,
+    "bootstrap_seed": 20260727
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "delta_nll_90k_minus_source": -0.17738851694300806,
+    "paired_bootstrap_mean": -0.17745898455030534,
+    "paired_bootstrap_std": 0.014612557309386738,
+    "paired_bootstrap_95_low": -0.20633452149186365,
+    "paired_bootstrap_95_high": -0.14897204279590906,
+    "bootstrap_probability_delta_ge_zero": 0.0,
+    "bootstrap_replicates": 20000,
+    "bootstrap_seed": 20260735
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "delta_nll_90k_minus_source": -0.19231558383709224,
+    "paired_bootstrap_mean": -0.1922947375693459,
+    "paired_bootstrap_std": 0.015167626506324465,
+    "paired_bootstrap_95_low": -0.22227827047334925,
+    "paired_bootstrap_95_high": -0.16268141646595186,
+    "bootstrap_probability_delta_ge_zero": 0.0,
+    "bootstrap_replicates": 20000,
+    "bootstrap_seed": 20260751
+  }
+]

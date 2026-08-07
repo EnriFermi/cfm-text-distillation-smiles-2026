@@ -1,0 +1,193 @@
+checkpoint step 70000 | block_size 16 | seed 0 | n=3
+
+##############################################################################
+### discretize = argmax
+##############################################################################
+
+==============================================================================
+NFE=4 (fwd/seq=64)  entropy=4.5652  4.6s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play together, but they didn't want to take a very big. One day, they went play together to take a toy fun. They found his friends about just they didn't want to play together.
+
+Suddenly, it was too outside to find him to play with his toy. Tim was very sad, but he that if his things didn't come from can't he back toy a while. So, he took his toy and shared it with his friends. They friends loved so much, but then him because they lost his the toy park.
+
+Timmy felt off, he didn't find it all. He were his friend Tim. Then, he saw outside to go home with friends at the toy. Timmy asked toy he what she did and his mom toy some told him when that it was very fun. Timmy smiled at his sister for his toy.
+
+His mom was surprised that the toy was very him asked. Timmy was happy to she went to a toy time if and went playing with his toy toys if he went with him. They they all day and Timmy's the toy was toy and they always said toy and he loved his new toy.Once upon a
+
+[1]  hugged the mom and smiled. Sam said. Sam
+ it was sad and excited. He tried to get it.
+
+Sam thought he will her. He took the butterfly from ran on it.
+
+M was sad.
+
+ again, she heard a. "Sam, this is too much and the butterfly is very special."
+
+Sam looked at his mom. He smiled and p at the butterfly.
+
+"I no, mom," said again.
+
+Mom was still a little.
+
+"What's okay?" said Sam.
+
+Mom smiled. "It at a butterfly. It you want to keep your. But it will to get one."
+
+Sam said, "M!, Mom."
+
+Mom want to help.
+
+He took a to. He's his flew to the door and the sun, but it didn't good to the garden. Mom got a and opened it. The garden were again.Once there was a small hole in the all was the family of them. would come so nice.
+
+One day was Sam was scared. He saw something came and very the time to be it on the sun.
+
+Sam saw Sam to an idea. He sat down and took
+
+[2]  had water. The car is again and ran until the sun's house.
+
+"Thank,,. car not in. You. Max!" Lily said.
+
+They ran out. Mommy. He was not happy find the car. He told them about the car.
+
+" a with. Sam car,". car was very. It is other. did not know and came.."
+
+" let's go. One.. did not want to take a. Can we come more?" Mommy said.
+
+The car nodded and a car car. He saw the car had and it. He was not car and his family home.
+
+"L. if you want to do your like the car one. Mom you can be get it and that's be good with you. What is be?" Mom asked.
+
+"He is toys. play took car for one. He have car too. It is a car.
+
+Lily took a good day and took out. She did not want them for a big box. She he liked on the and Ben's playing. She gave it go.
+
+"I me your me. It was my car on me car. I put your red house?"
+
+==============================================================================
+NFE=256 (fwd/seq=4096)  entropy=4.9535  31.6s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy introduced Timmy to Mr bunny. The hedge was very big and strong and messy and would bounce together all day long.
+
+One day, Timmy was hopping alone in the forest when he heard a loud noise. He was a shadow to help him. The hedge was scared, Timmy saw a big nosy big bear brown behind the trees.
+
+The hairy bear didn't listen and he knew he wanted to eat carrots. Timmy was frightened. The bunny tried to fight, but the bunny got closer and stronger.
+
+Finally, the Timmy hopped off the hedge wasn't eat it behind. There were very nosy. Then, the bear began to spring! His friends at the bunny bunny and the big carrot. Timmy thanked the bunny. He laughed and ran away that the sun was alone again.Once upon a time, there was a big crocod parile named Hippy. Hipp was very bossy. Everyone in the jungle lived in the jungle, but Hipp was very angry. Hipp Hippy marched around the river, not like mud up all his and other trees homes, which was wise and important.
+
+
+One day, a little crocodile marched near a
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and alone. He began to stay on his cozy brother, so he promised to be more with the.
+
+Tom watched his brother close and begged but he stopped crying. His parents moved just until his mom told him when that Jack touched the cactus lightly.
+
+
+Tom understood why his brother was, but he should always stayed forward. One day after showed his brother playing with his toy.
+
+Tom was more about to let himself get older it's important to those things without bump into any more. Tom looked at his brother.
+
+Tom thought that he was unfair and his cactus may not be able to get bitten. One morning, his brother came outside to want to help.
+
+He slowly got to a brother's friend and handed the kidactus friend yes, he had to attach good to the c. Her brother listened and removed it from onto the sharpactus.Once there was a bunny who wanted to measure all the cool things on. He hopped felt in perfect straight circles the garden until everything was so quiet. 
+
+He asked the measure to be heard on the stair in. But didn't want to go higher. He sat down and began
+
+[2]  had enough. The muffener quickly and licked the lady's tentacles. The jelly was a sweet treat and the mufffish was empty. The taste swam quickly and dropped into the air. The lady's son was so happy! She told him back to the mufffish!Once upon a time there was a stubborn boy. He was very quiet. All other she did not know why nicely so still.
+
+One day, heard a voice whistle to his mom. She said, "Listen here, so he found an axe. Joe was really stubborn and admiring it. Joe was happy sound of his noise. He knew Joe had brought his family home.
+
+But his mom said, "No, you won't for today. Now you can't get it and that's why he needs you."
+Little boy was very sad so he had to trust his mom. He took the axe axe. He walked to his mom instead of being hot.
+
+His mom took a deep breath and started to dig a strong - he soon became a big axe. When he heard his mom whistle, he yelled as he turned it around.
+
+Everyone finally he showed his mom to all the food of his axe. She said, "Well must
+
+##############################################################################
+### discretize = sample
+##############################################################################
+
+==============================================================================
+NFE=4 (fwd/seq=64)  entropy=4.6704  0.6s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play together, but they all loved them to play. One day, she had an incredible blanket in the park with her other. Tim was very excited, a, that she had better from before and he played her his friends would play it in her friends, but she felt special't like it all. They were very eager to give up, so Tim went on the slide.
+
+But ran playing, her her friends all a watch. Tim was scared and asked. Tim was not angry to she, up. They up her arm and opened the!, toy was red and even a ball. Tim and Timmy about her the park and laughed. They asked that the have was very happy and back a little could in her toy.
+
+After that day on no, was sad, old her. She said " toy time ever, when! and, if Timmy so toy. But I have I didn't take you,my and sad. Tim learned that when we saw what, you can help other happy. Then, the way to toy they got more of help,, happy that, they decided to make new adventures together and. TheOnce upon a time, there was a little boy
+
+[1]  hugged the mom and smiled his Mom said. She knew it was sad and Tom's friend.
+
+"I time, I will a like. It was me very special."
+
+Tom blew like his mom. Tom smiled and hugged away.
+
+"Mom, I get my in the sun?" said Tom.
+
+Mom mom said: " did not a best much get It was a bed. It's still go to the window and the toys, but they were safe.Once there was a small hole in the all in the ground. The was very happy and very the Benny to be it outside the sun.
+
+One day, a very up in the me. around his. Hemy was very sad and all his dad hard. He knew up to the sky.
+
+He stood up, he went to up on and not let Ben a smile. The he his and Tim to work.
+
+The his dad found all his car to the ground, but it was too for outside. She he up it and it into the sky. Timmy picked up and cried.
+
+Then his dad felt who had on to ground. He saw the dark and he was very with. She knew he could get it him off
+
+[2]  had water. The sun is again and ran until the sun's feet. 
+
+Lily ran and ran backmy. She was so happy! She made sure until day was playing. 
+
+my did not know and he was just. Lily asked his mom and he found an axe. Lily was so happy to bring his to home. 
+
+Her mom said, "I, he did you. the is again?"?" Lily's eyes, to always liked her.
+
+Lily took a good day and upon a time on her face. She knew it to be better. She put him on his back, coat and made they all her off in the garden. was upon a time, bear named Jack had a fun. They smiled and. they were so happy.
+
+One day Jack saw a tree over to eat, so he asked the small is. They saw that day. He wanted meed, so they decided to do a great, an by himself.
+
+So was some of a tree and the tree was hard. Then he did good. Then, he started the hang up. He smiled for again. He took over to to the tree.
+
+The was so happy. very. that felt
+
+==============================================================================
+NFE=256 (fwd/seq=4096)  entropy=4.8969  31.0s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy introduced Timmy to the squirrel and radery. He told his friends about the squirrel lived in the forest. One day, Timmy saw a big nosy that smelled hard before. He thought to know what was inside. The squirrel tried to explain, but Timmy didn't like it. Timmy wanted to eat steak. So, he decided to pinch the squirrel and supply some radishes with sauce. The squirrel was surprised and Timmy was very nosable. Timmy was very happy because he had helped those up.Once upon a time, there was a baby named Timmy. Timmy liked to jog in the park with his sister, sister. They would run very happy and sing a little jog in Timmy.
+
+One day, Timmy's sister sister started to cry. She asked Timmy what was wrong when she whisted. Timmy felt ashamed. But then sister told her he was lost his sister and sad. Timmy felt bad for decided to her and they help him.
+
+On the way to the park, Timmy saw a squirrel spring up. She decided to ask for him finding it. The squirrel asked if to hold his ball. They were so
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and angry. He put the blanket on Sam his little pillow and frowned but he refused to have it. He glared at the tight where his pillow was, but he did not�! He tried to pull away get older and hurt pillow.
+
+"Tom, cheating!" his brother sister did not answer! Dad grabbed him and drove away. He threw his pillow on the pillow and the blanket, but he did not.Once there was a baby who wanted to all all the animals. He was very impatient and very lucky; to be them all the way.
+
+One day he took the fox, the clown animal he could. The clown was very sad and all his classmates cried. He told Baby to the zoo and they can cheer him up. They started to feeling frustrated and not wake up a good order to sleep! 
+
+The baby wanted to have his chance, but he wanted to make them, but it was too crowded outside. So he snpped and jumped into the zoo, and saw alligator and cheering clapping. He gave Baby all who were on ferari, smiling while the animals raced around the zoo. 
+
+Soon they were lots of laughter
+
+[2]  had enough. The muffener quickly and licked the lady's tentacles. 
+
+The jellyfish was delighted and soon - she was so pleased! She made the mufffish was delicious. 
+
+M did jellyfish and the big jelly was really extremely happy, and he found an end. Joe was so excited to leave his family home. He and her tiny even until it was time to go home soon.Once upon a time, there was a bird who was very high. His father was high in the tree and tried to reach him high, but he still kept flying.
+
+One day he asked his father, "Can you reach?" His father wasn't sure. He was puzzled.
+
+He asked looking for a sausage. Dad smiled and thanked it. He flew closer and found that was very tasty.
+
+The bird gave himself with a big smile and he was happy that day. He lay the birds in their feathers and ate safully higher, content by his dreams.Once upon a time, there was a brave girl who belonged to the other monsters. Every day she she would wake up in the sun for hours. 
+
+One day, her dream and saw a box in the woods as she was sad

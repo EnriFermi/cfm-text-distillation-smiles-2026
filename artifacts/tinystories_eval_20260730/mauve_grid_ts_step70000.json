@@ -1,0 +1,152 @@
+{
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0070000.ckpt",
+  "checkpoint_step": 70000,
+  "block_size": 16,
+  "n_samples": 512,
+  "seed": 0,
+  "featurize_model": "gpt2-large",
+  "reference": "TinyStories validation",
+  "reference_entropy": 5.9346923828125,
+  "results": [
+    {
+      "discretize": "argmax",
+      "nfe": 1,
+      "forwards_per_sequence": 16,
+      "mauve": 0.009054357566219084,
+      "frontier_integral": 0.8735027581590152,
+      "token_entropy": 4.364595413208008,
+      "sample_s": 16.7,
+      "mauve_s": 37.5
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 2,
+      "forwards_per_sequence": 32,
+      "mauve": 0.00878167966719354,
+      "frontier_integral": 0.8785841686142986,
+      "token_entropy": 4.572262287139893,
+      "sample_s": 25.7,
+      "mauve_s": 44.0
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 4,
+      "forwards_per_sequence": 64,
+      "mauve": 0.033850493106860016,
+      "frontier_integral": 0.6585735311748893,
+      "token_entropy": 4.96384859085083,
+      "sample_s": 50.3,
+      "mauve_s": 33.1
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 8,
+      "forwards_per_sequence": 128,
+      "mauve": 0.1786316816846904,
+      "frontier_integral": 0.3845633962103807,
+      "token_entropy": 5.5077738761901855,
+      "sample_s": 100.4,
+      "mauve_s": 39.6
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 16,
+      "forwards_per_sequence": 256,
+      "mauve": 0.7386458625019107,
+      "frontier_integral": 0.11458996502320241,
+      "token_entropy": 5.911935806274414,
+      "sample_s": 200.1,
+      "mauve_s": 38.7
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 32,
+      "forwards_per_sequence": 512,
+      "mauve": 0.6466093235304136,
+      "frontier_integral": 0.14586232030904184,
+      "token_entropy": 6.079432010650635,
+      "sample_s": 398.3,
+      "mauve_s": 34.2
+    },
+    {
+      "discretize": "argmax",
+      "nfe": 64,
+      "forwards_per_sequence": 1024,
+      "mauve": 0.6658417496539425,
+      "frontier_integral": 0.13992822705094338,
+      "token_entropy": 6.099700450897217,
+      "sample_s": 1299.8,
+      "mauve_s": 128.5
+    },
+    {
+      "discretize": "sample",
+      "nfe": 1,
+      "forwards_per_sequence": 16,
+      "mauve": 0.008285058240491836,
+      "frontier_integral": 0.8866258380670721,
+      "token_entropy": 4.469317436218262,
+      "sample_s": 23.3,
+      "mauve_s": 134.0
+    },
+    {
+      "discretize": "sample",
+      "nfe": 2,
+      "forwards_per_sequence": 32,
+      "mauve": 0.012032575316648128,
+      "frontier_integral": 0.8259781826434021,
+      "token_entropy": 4.711695194244385,
+      "sample_s": 45.5,
+      "mauve_s": 54.9
+    },
+    {
+      "discretize": "sample",
+      "nfe": 4,
+      "forwards_per_sequence": 64,
+      "mauve": 0.05710974617328372,
+      "frontier_integral": 0.5748486298825736,
+      "token_entropy": 5.063632965087891,
+      "sample_s": 50.7,
+      "mauve_s": 53.4
+    },
+    {
+      "discretize": "sample",
+      "nfe": 8,
+      "forwards_per_sequence": 128,
+      "mauve": 0.4264067974368104,
+      "frontier_integral": 0.22989141667816015,
+      "token_entropy": 5.598790645599365,
+      "sample_s": 129.4,
+      "mauve_s": 102.4
+    },
+    {
+      "discretize": "sample",
+      "nfe": 16,
+      "forwards_per_sequence": 256,
+      "mauve": 0.605525882666576,
+      "frontier_integral": 0.1600357243177766,
+      "token_entropy": 6.004282474517822,
+      "sample_s": 281.8,
+      "mauve_s": 29.0
+    },
+    {
+      "discretize": "sample",
+      "nfe": 32,
+      "forwards_per_sequence": 512,
+      "mauve": 0.6151342289547491,
+      "frontier_integral": 0.1565266537991961,
+      "token_entropy": 6.1530609130859375,
+      "sample_s": 400.9,
+      "mauve_s": 37.3
+    },
+    {
+      "discretize": "sample",
+      "nfe": 64,
+      "forwards_per_sequence": 1024,
+      "mauve": 0.7472021560854432,
+      "frontier_integral": 0.11260859047150873,
+      "token_entropy": 6.140786647796631,
+      "sample_s": 800.4,
+      "mauve_s": 27.4
+    }
+  ]
+}

@@ -1,0 +1,293 @@
+{
+  "schema": "bcfm-m2-implementation-equivalence/v1",
+  "created_utc": "2026-07-31T20:09:12.970216+00:00",
+  "description": "Same TinyStories M1 state: current full masked-2L M2 versus remote clean-prefix KV-cached M2",
+  "generated_by": "artifacts/m2_impl_comparison_20260731/run_same_state_probe.py",
+  "generated_by_sha256": "7fd5914bf9f1794534a0c923ccb0234d82c37696e04d8ea812e748bd39f10be9",
+  "repository": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026",
+  "revisions": {
+    "current_expected_commit": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+    "current_actual_head": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+    "current_branch": "bcfm_finetuning",
+    "current_source_paths_clean": true,
+    "remote_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+    "remote_branch_alias": "origin/feature/m2-infer-experiments",
+    "remote_branch_alias_target_at_run": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+    "merge_base": "b3e5ac2620e0d0630e2cfaf0c837aee8dc3b1c1a"
+  },
+  "sources": {
+    "current": [
+      {
+        "revision": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+        "path": "block/block_dit.py",
+        "git_blob": "b38c93ef6bcbec7fa84dd025ac93274ed0f516d9",
+        "sha256": "cefbaac45730f4679e9796c25aa49e5f889bf2dada27f473bac5803cc8cd5db8",
+        "bytes": 19587
+      },
+      {
+        "revision": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+        "path": "block/sampling.py",
+        "git_blob": "97db624e80b01b17468008db6607fb12590d991b",
+        "sha256": "e0bbfcf377f994ea9b5e6b6915c894920a86bd94f07851e9623a659168203366",
+        "bytes": 8339
+      },
+      {
+        "revision": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+        "path": "block/mask.py",
+        "git_blob": "dc3d1b7160464f597276471b467ac988d875cd05",
+        "sha256": "0f5f4d3eb32e3e6bcc00c39cdcbc4d04127727090e70c471f9c085166acd3e27",
+        "bytes": 5223
+      },
+      {
+        "revision": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+        "path": "semicat/net/duo.py",
+        "git_blob": "5f0d75ec5affed706b4c613951c485fd7904bb2e",
+        "sha256": "b830eeeec56b798ad9ebcca4b18d834c5e9d52a15edcd2b14eec8dd85a13a9ff",
+        "bytes": 12249
+      }
+    ],
+    "remote": [
+      {
+        "revision": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+        "path": "semicat/net/duo.py",
+        "git_blob": "59b9b586e6c32c48bd474c5eb3b1c79b485dbfd3",
+        "sha256": "2a808a1d987b50e8587ce44d9e3f120e4c18c488285352de1fdb631e98ff4c7e",
+        "bytes": 18950
+      },
+      {
+        "revision": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+        "path": "block/sampling.py",
+        "git_blob": "bc524f97386eb0654f665ffd8f3848e6ed06194b",
+        "sha256": "9a69baea1ffebec61e7d7eac81d66373dda9214275a0637cf18b15812dd2f817",
+        "bytes": 8938
+      }
+    ]
+  },
+  "checkpoint": {
+    "path": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt",
+    "sha256": "a7a85b5626c9bd2c743a8773827b1ea1f24de831186490b934ceecab4a41ba6f",
+    "expected_sha256": "a7a85b5626c9bd2c743a8773827b1ea1f24de831186490b934ceecab4a41ba6f",
+    "sha256_matches_expected": true,
+    "global_step": 68001,
+    "network_state_tensors": 101,
+    "network_state_dtypes": [
+      "torch.float32"
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-5.15.0-186-generic-x86_64-with-glibc2.31",
+    "torch": "2.7.1+cu126",
+    "torch_cuda": "12.6",
+    "cudnn": 90501,
+    "flash_attn": "2.8.3",
+    "transformers": "4.45.2",
+    "device_argument": "cuda:0",
+    "gpu_name": "NVIDIA H100 NVL",
+    "gpu_total_memory_bytes": 99861594112,
+    "gpu_compute_capability": [
+      9,
+      0
+    ],
+    "cuda_visible_devices": null,
+    "tensor_dtype": "torch.float32",
+    "autocast_enabled": false,
+    "float32_matmul_precision": "high",
+    "cuda_matmul_allow_tf32": true,
+    "cudnn_allow_tf32": true,
+    "deterministic_algorithms_enabled": false
+  },
+  "model": {
+    "vocab_size": 50257,
+    "hidden_size": 384,
+    "cond_dim": 128,
+    "n_blocks": 6,
+    "n_heads": 6,
+    "dropout": 0.1,
+    "length": 256,
+    "embed_type": "rms",
+    "block_size": 16,
+    "prior_type": "gaussian",
+    "eval_mode": true,
+    "current_state_namespace_equals_remote": true,
+    "current_strict_load_missing_keys": [],
+    "current_strict_load_unexpected_keys": [],
+    "remote_strict_load_missing_keys": [],
+    "remote_strict_load_unexpected_keys": []
+  },
+  "logit_probe": {
+    "purpose": "isolate sampler semantics with SDPA on both arms",
+    "current_execution": "BlockDIT full masked [clean; noisy] 2L",
+    "current_attention_backend": "sdpa",
+    "remote_execution": "DuoDIT.forward_block against clean-prefix KV cache",
+    "remote_attention_backend": "sdpa",
+    "batch_size": 1,
+    "seed": 173,
+    "length": 256,
+    "block_size": 16,
+    "s": 0.25,
+    "t": 0.75,
+    "blocks": [
+      0,
+      1,
+      8,
+      15
+    ],
+    "clean_tokens": "torch.randint after seed reset",
+    "noisy_blocks": "sequential torch.randn draw for every block",
+    "results": [
+      {
+        "block_index": 0,
+        "positions": [
+          0,
+          15
+        ],
+        "remote_cache_length": 0,
+        "logits_max_abs_diff": 0.0037508010864257812,
+        "logits_mean_abs_diff": 0.0007249535992741585,
+        "probabilities_max_abs_diff": 0.00035099685192108154,
+        "probabilities_mean_abs_diff": 9.931913069749498e-09,
+        "argmax_disagreements": 0,
+        "argmax_total": 16
+      },
+      {
+        "block_index": 1,
+        "positions": [
+          16,
+          31
+        ],
+        "remote_cache_length": 16,
+        "logits_max_abs_diff": 0.0037813186645507812,
+        "logits_mean_abs_diff": 0.0006825929158367217,
+        "probabilities_max_abs_diff": 0.00048704445362091064,
+        "probabilities_mean_abs_diff": 1.1676002387162043e-08,
+        "argmax_disagreements": 0,
+        "argmax_total": 16
+      },
+      {
+        "block_index": 8,
+        "positions": [
+          128,
+          143
+        ],
+        "remote_cache_length": 128,
+        "logits_max_abs_diff": 0.004091024398803711,
+        "logits_mean_abs_diff": 0.0008053628262132406,
+        "probabilities_max_abs_diff": 0.00020065903663635254,
+        "probabilities_mean_abs_diff": 1.1982550951472604e-08,
+        "argmax_disagreements": 0,
+        "argmax_total": 16
+      },
+      {
+        "block_index": 15,
+        "positions": [
+          240,
+          255
+        ],
+        "remote_cache_length": 240,
+        "logits_max_abs_diff": 0.0035953521728515625,
+        "logits_mean_abs_diff": 0.0007210045587271452,
+        "probabilities_max_abs_diff": 0.0002333521842956543,
+        "probabilities_mean_abs_diff": 1.0672570383007951e-08,
+        "argmax_disagreements": 0,
+        "argmax_total": 16
+      }
+    ],
+    "aggregate": {
+      "max_logits_abs_diff": 0.004091024398803711,
+      "argmax_disagreements": 0,
+      "argmax_total": 64
+    }
+  },
+  "e2e_probe": {
+    "purpose": "compare final tokens through the two actual execution backends",
+    "current_execution": "block_causal_sample + BlockDIT full masked 2L",
+    "current_attention_backend": "compiled FlexAttention",
+    "remote_execution": "immutable remote blockwise_sample + DuoDIT KV cache",
+    "remote_attention_backend": "SDPA",
+    "length": 256,
+    "block_size": 16,
+    "batch_size": 2,
+    "nfe_per_block": [
+      1,
+      2
+    ],
+    "discretize": [
+      "argmax",
+      "sample"
+    ],
+    "seed_rule": "9000 + nfe_per_block, reset identically before each arm",
+    "results": [
+      {
+        "nfe_per_block": 1,
+        "discretize": "argmax",
+        "seed": 9001,
+        "batch_size": 2,
+        "length": 256,
+        "mismatch_tokens": 0,
+        "total_tokens": 512,
+        "mismatch_rate": 0.0,
+        "exact_match": true,
+        "flow_forwards_per_sequence_each_arm": 16,
+        "remote_cache_encode_forwards_per_sequence": 15
+      },
+      {
+        "nfe_per_block": 2,
+        "discretize": "argmax",
+        "seed": 9002,
+        "batch_size": 2,
+        "length": 256,
+        "mismatch_tokens": 0,
+        "total_tokens": 512,
+        "mismatch_rate": 0.0,
+        "exact_match": true,
+        "flow_forwards_per_sequence_each_arm": 32,
+        "remote_cache_encode_forwards_per_sequence": 15
+      },
+      {
+        "nfe_per_block": 1,
+        "discretize": "sample",
+        "seed": 9001,
+        "batch_size": 2,
+        "length": 256,
+        "mismatch_tokens": 0,
+        "total_tokens": 512,
+        "mismatch_rate": 0.0,
+        "exact_match": true,
+        "flow_forwards_per_sequence_each_arm": 16,
+        "remote_cache_encode_forwards_per_sequence": 15
+      },
+      {
+        "nfe_per_block": 2,
+        "discretize": "sample",
+        "seed": 9002,
+        "batch_size": 2,
+        "length": 256,
+        "mismatch_tokens": 0,
+        "total_tokens": 512,
+        "mismatch_rate": 0.0,
+        "exact_match": true,
+        "flow_forwards_per_sequence_each_arm": 32,
+        "remote_cache_encode_forwards_per_sequence": 15
+      }
+    ],
+    "aggregate": {
+      "mismatch_tokens": 0,
+      "total_tokens": 2048,
+      "mismatch_rate": 0.0,
+      "all_exact_match": true
+    }
+  },
+  "conclusion": {
+    "supported": true,
+    "statement": "Within the recorded fp32 probes, remote cached M2 is numerically consistent with the current masked-2L M2 execution of the same state."
+  },
+  "caveats": [
+    "This finite probe is not a proof for every input, NFE, batch size, or dtype.",
+    "The end-to-end arms intentionally use different attention backends (current FlexAttention, remote SDPA), so tiny floating-point differences are expected.",
+    "Float32 matmul precision was explicitly pinned to 'high'. SemicatModule.__init__ selects 'high' (TF32-capable), so production comparisons should use the corresponding artifact.",
+    "The end-to-end probe covers NFE 1/2 and batch size 2 only; a fair quality experiment still needs 512 paired samples over the full requested NFE grid.",
+    "No latency conclusion is drawn: compiler warmup, throughput, and synchronized batch-1 latency require a separate benchmark protocol.",
+    "The remote sampler's internal import is satisfied by process-local helper bindings; no repository module or production file is modified."
+  ]
+}

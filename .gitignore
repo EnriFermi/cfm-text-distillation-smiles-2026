@@ -9,6 +9,25 @@
 *.ckpt
 *.bin
 
+# Uploaded/local checkpoint bundles are referenced by path + SHA-256 in the
+# committed evaluation reports, but exceed GitHub's regular-blob limit.
+/baseline/*.pt
+/baseline/NEW.zip
+/baseline/tinystories/**/checkpoints/
+/baseline/tinystories/**/tensorboard/
+
+# Keep aggregate evidence and plots, not regenerable caches or raw tensor
+# sample payloads.
+/artifacts/cache/
+/artifacts/**/*.pt
+/artifacts/**/*.npz
+/results/**/*_tokens.pt
+/results/**/*_samples.txt
+*.pid
+
+# Local conversation handoff used during the experiment, not a result.
+/2026-07-31-192328-local-command-caveatcaveat-the-messages-below.txt
+
 # --- experiment trackers ---
 .env
 wandb/

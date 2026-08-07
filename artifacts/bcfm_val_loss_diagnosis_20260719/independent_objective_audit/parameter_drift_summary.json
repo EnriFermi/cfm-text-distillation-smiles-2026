@@ -1,0 +1,29 @@
+[
+  {
+    "checkpoint": "step10000",
+    "bucket": "ALL",
+    "n": 92590107,
+    "delta_l2": 114.14360436185943,
+    "base_l2": 582.4786412045048,
+    "relative_delta": 0.1959618710238412,
+    "base_dot_target": 334430.64896421134
+  },
+  {
+    "checkpoint": "step30000",
+    "bucket": "ALL",
+    "n": 92590107,
+    "delta_l2": 182.59129773991518,
+    "base_l2": 582.4786412045048,
+    "relative_delta": 0.3134729496043589,
+    "base_dot_target": 327973.4052902758
+  },
+  {
+    "checkpoint": "step90000",
+    "bucket": "ALL",
+    "n": 92590107,
+    "delta_l2": 276.7929017271315,
+    "base_l2": 582.4786412045048,
+    "relative_delta": 0.4751983714883567,
+    "base_dot_target": 316116.667391479
+  }
+]

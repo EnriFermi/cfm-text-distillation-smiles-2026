@@ -133,16 +133,34 @@ def block_causal_sample(
     length: int | None = None,
     schedule: list[tuple[float, float]] | None = None,
     discretize: Literal["argmax", "sample"] = "argmax",
+    inference_backend: Literal["full", "cached", "compiled_cached"] = "full",
 ) -> Tensor:
     """Sampler for the trained block-causal model (M3).
 
-    Generates block by block through the doubled-sequence masked forward
-    (``module.net`` is a ``BlockDIT``). For block ``b`` we run the flow-map jumps on a
-    fresh prior block while feeding the finalized clean prefix; the block-causal mask
-    guarantees block ``b``'s output depends only on clean blocks ``< b`` and its own
-    noisy block, so the (junk) content of not-yet-generated positions is irrelevant and
-    a single full-length forward per jump is correct. Returns ``(batch, length)`` ids.
+    ``inference_backend='full'`` preserves the training-style doubled-sequence path.
+    ``'cached'`` evaluates only the current block with an incremental clean-prefix KV
+    cache, and ``'compiled_cached'`` additionally compiles the block flow step and
+    clean encoder for maximum steady-state speed.  The cached graph is algebraically
+    identical to the mask but may differ numerically on CUDA because it uses dense
+    SDPA rather than FlexAttention's reduction order.
     """
+    if inference_backend != "full":
+        if inference_backend not in {"cached", "compiled_cached"}:
+            raise ValueError(f"unknown inference_backend={inference_backend!r}")
+        from block.fast_inference import block_causal_sample_cached
+
+        return block_causal_sample_cached(
+            module,
+            block_size,
+            steps_per_block,
+            batch_size=batch_size,
+            length=length,
+            schedule=schedule,
+            discretize=discretize,
+            compile_noisy=inference_backend == "compiled_cached",
+            compile_strategy="dynamic",
+        )
+
     L = length or module.in_shape[0]
     K = module.in_shape[-1]
     if L % block_size != 0:

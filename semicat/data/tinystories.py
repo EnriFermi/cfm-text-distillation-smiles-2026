@@ -33,6 +33,8 @@ class TinyStoriesDataModule(LightningDataModule):
         num_proc: int | None = None,
         pin_memory: bool = True,
         max_samples: int | None = None,
+        persistent_workers: bool = True,
+        prefetch_factor: int = 4,
     ):
         super().__init__()
         self.save_hyperparameters(logger=False)
@@ -132,10 +134,25 @@ class TinyStoriesDataModule(LightningDataModule):
         return dataset
 
     def setup(self, stage: str | None = None):
+        print(
+            "[TinyStories] stage=data_setup "
+            f"stage_arg={stage} cache_dir={self.hparams.cache_dir} "
+            f"tokenizer={self.hparams.tokenizer_name} max_length={self.hparams.max_length}",
+            flush=True,
+        )
         self._load_tokenizer()
         self.train_dataset = self._load_dataset("train")
         self.val_dataset = self._load_dataset("validation")
         self.test_dataset = self.val_dataset
+        print(
+            "[TinyStories] stage=data_ready "
+            f"train_sequences={len(self.train_dataset)} "
+            f"validation_sequences={len(self.val_dataset)} "
+            f"batch_size={self.hparams.batch_size} workers={self.hparams.num_workers} "
+            f"persistent_workers={self.hparams.persistent_workers} "
+            f"prefetch_factor={self.hparams.prefetch_factor}",
+            flush=True,
+        )
 
     # --------------------------------------------------------------------- detok
     def tensor_to_strings(self, batch: torch.Tensor) -> list[str]:
@@ -154,6 +171,12 @@ class TinyStoriesDataModule(LightningDataModule):
         }
 
     def _loader(self, dataset, shuffle):
+        loader_kwargs = {}
+        if self.hparams.num_workers > 0:
+            loader_kwargs.update(
+                persistent_workers=self.hparams.persistent_workers,
+                prefetch_factor=self.hparams.prefetch_factor,
+            )
         return DataLoader(
             dataset,
             batch_size=self.hparams.batch_size,
@@ -161,6 +184,7 @@ class TinyStoriesDataModule(LightningDataModule):
             pin_memory=self.hparams.pin_memory,
             shuffle=shuffle,
             collate_fn=self._collate,
+            **loader_kwargs,
         )
 
     def train_dataloader(self) -> DataLoader:

@@ -1,0 +1,40 @@
+inherits: ../tinystories/base.yaml
+dataset:
+  data_dir: data/tinystories-smoke
+  sequence_length: 8
+  reference_split: false
+model:
+  schedule_search_widths: [0.5]
+  schedule_search_delta: 0.5
+  schedule_search_batches: 1
+  backbone:
+    vocab_size: 257
+    max_sequence_length: 8
+    num_layers: 2
+    hidden_size: 32
+    num_attention_heads: 4
+    intermediate_size: 128
+    time_condition_size: 16
+    dropout: 0.0
+training:
+  seed: 7
+  device: cpu
+  precision: float32
+  batch_size: 2
+  gradient_accumulation_steps: 1
+  max_steps: 1
+  learning_rate: 0.001
+  weight_decay: 0.0
+  warmup_steps: 0
+  validation_every: 1
+  validation_batches: 1
+  evaluation_batch_size: 2
+  checkpoint_every: 1
+  log_every: 1
+  ema_decay: 0.9
+sampling:
+  length: 8
+  batch_size: 2
+  seed: 7
+  num_steps: 2
+  steps_per_block: null

@@ -1,0 +1,38 @@
+{
+  "attention_backend": "flex",
+  "batch_size": 128,
+  "checkpoint_step": 390000,
+  "device": "NVIDIA H100 NVL",
+  "dtype": "bf16-mixed simulation",
+  "flex_kernel_block_size": 64,
+  "jvp_attention_backend_resolved": "triton (auto on CUDA)",
+  "loss_type": "lag",
+  "optimizer_steps_performed": 0,
+  "sd_batch_size": 32,
+  "status": "pass",
+  "steady_second_step_seconds": 1.200473951175809,
+  "steps": [
+    {
+      "elapsed_seconds": 12.717336010187864,
+      "finite_loss_and_gradients": true,
+      "iteration": 1,
+      "peak_allocated_mib": 51306.884765625,
+      "peak_reserved_mib": 52610.0,
+      "sd_loss": 0.03139759600162506,
+      "total_loss": 3.0008749961853027,
+      "vf_loss": 2.969477415084839
+    },
+    {
+      "elapsed_seconds": 1.200473951175809,
+      "finite_loss_and_gradients": true,
+      "iteration": 2,
+      "peak_allocated_mib": 51328.505859375,
+      "peak_reserved_mib": 52358.0,
+      "sd_loss": 0.031402647495269775,
+      "total_loss": 3.063955068588257,
+      "vf_loss": 3.032552480697632
+    }
+  ],
+  "torch_version": "2.7.1+cu126",
+  "vf_batch_size": 96
+}

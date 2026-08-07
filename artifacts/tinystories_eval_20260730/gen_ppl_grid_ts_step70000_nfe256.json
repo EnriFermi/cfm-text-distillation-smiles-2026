@@ -1,0 +1,33 @@
+{
+  "mode": "bcfm_block_causal",
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0070000.ckpt",
+  "checkpoint_step": 70000,
+  "block_size": 16,
+  "n_samples": 512,
+  "length": 256,
+  "seed": 0,
+  "judge_model": "EleutherAI/gpt-j-6B",
+  "judge_tokenizer": "gpt2-large",
+  "results": [
+    {
+      "discretize": "argmax",
+      "nfe": 256,
+      "forwards_per_sequence": 4096,
+      "gen_ppl": 52.504886627197266,
+      "nll": 3.9609062671661377,
+      "token_entropy": 6.062551498413086,
+      "sample_s": 3204.1,
+      "judge_s": 48.0
+    },
+    {
+      "discretize": "sample",
+      "nfe": 256,
+      "forwards_per_sequence": 4096,
+      "gen_ppl": 52.7925910949707,
+      "nll": 3.9663708209991455,
+      "token_entropy": 6.060396194458008,
+      "sample_s": 3261.3,
+      "judge_s": 45.4
+    }
+  ]
+}

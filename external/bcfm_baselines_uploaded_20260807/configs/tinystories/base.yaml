@@ -1,0 +1,85 @@
+dataset:
+  name: tinystories
+  data_dir: data/tinystories
+  tokenizer: byte
+  vocabulary_size: 256
+  sequence_length: 256
+  reference_split: false
+
+model:
+  type: null
+  data_vocab_size: 256
+  mask_token_id: 256
+  bos_token_id: 256
+  min_time: 0.001
+  antithetic_time_sampling: true
+  time_conditioning: false
+  mask_rate_min: 0.001
+  mask_rate_max: 1.0
+  schedule_search: true
+  schedule_search_widths: [0.5, 0.6, 0.7, 0.8, 0.9]
+  schedule_search_delta: 0.05
+  schedule_search_batches: 100
+  resample_masked_fraction: true
+  backbone:
+    vocab_size: 257
+    max_sequence_length: 256
+    num_layers: 12
+    hidden_size: 768
+    num_attention_heads: 12
+    intermediate_size: 3072
+    time_condition_size: 128
+    dropout: 0.1
+    rotary_base: 10000.0
+
+training:
+  seed: 12345
+  # Set for BD3-LM to a compatible checkpoint produced by this repository's
+  # TinyStories MDLM config. BD3_PRETRAIN_CHECKPOINT can override this on Slurm.
+  from_pretrained: null
+  require_pretrained: false
+  device: cuda
+  precision: bf16
+  # Global batch stays 256 across all models; only the micro-batch/accumulation
+  # split differs so each run fills ~50GB of an 80GB GPU. This base value targets
+  # BD3-LM, which concatenates [noisy, clean] and uses ~2x the memory; ar.yaml and
+  # mdlm.yaml override to 256x1. Tune live with BATCH_SIZE / GRAD_ACCUM on Slurm.
+  batch_size: 128
+  gradient_accumulation_steps: 2
+  max_steps: 100000
+  learning_rate: 0.0001
+  weight_decay: 0.1
+  betas: [0.9, 0.95]
+  epsilon: 1.0e-8
+  warmup_steps: 500
+  gradient_clip_norm: 1.0
+  log_every: 10
+  validation_every: 10000
+  validation_batches: 100
+  evaluation_batch_size: 64
+  checkpoint_every: 10000
+  ema_decay: 0.9999
+
+sampling:
+  length: 256
+  batch_size: 128
+  strategy: sample
+  temperature: 1.0
+  top_k: null
+  top_p: null
+  top_p_include_boundary: true
+  seed: 12345
+  num_steps: 64
+  steps_per_block: null
+  first_hitting: false
+  sampling_epsilon: 1.0e-5
+  noise_removal: true
+  cache_denoiser_outputs: true
+  use_kv_cache: true
+  start_token_id: 256
+
+evaluation:
+  sample_count: 128
+  sample_seed: 12345
+  diffusion_steps: [16, 32, 64, 128, 256]
+  steps_per_block: [1, 2, 4, 8, 16, 32]

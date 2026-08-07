@@ -1,0 +1,9 @@
+{
+  "dataset": "roneneldan/TinyStories",
+  "split": "validation",
+  "n_samples": 512,
+  "length": 256,
+  "judge": "EleutherAI/gpt-j-6B",
+  "gold_gen_ppl": 6.395577907562256,
+  "gold_token_entropy": 5.902366638183594
+}

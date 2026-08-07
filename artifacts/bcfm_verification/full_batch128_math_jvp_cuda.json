@@ -1,0 +1,8 @@
+{
+  "elapsed_seconds": 8.791639585979283,
+  "error": "expected input and grad types to match, or input to be at::Half and grad to be at::Float",
+  "error_type": "RuntimeError",
+  "peak_allocated_mib": 57159.322265625,
+  "peak_reserved_mib": 58008.0,
+  "status": "error"
+}

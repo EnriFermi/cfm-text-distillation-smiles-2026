@@ -1,0 +1,67 @@
+{
+  "batches_per_epoch": 2745,
+  "equivalent_disjoint_windows": 1373,
+  "exposure_by_step": {
+    "10000": {
+      "dataset_epochs": 3.6429872495446265,
+      "mean_presentations_per_unique_raw_char": 932.0662299502508,
+      "sequence_token_presentations": 327680000
+    },
+    "100000": {
+      "dataset_epochs": 36.42987249544627,
+      "mean_presentations_per_unique_raw_char": 9320.662299502508,
+      "sequence_token_presentations": 3276800000
+    },
+    "20000": {
+      "dataset_epochs": 7.285974499089253,
+      "mean_presentations_per_unique_raw_char": 1864.1324599005015,
+      "sequence_token_presentations": 655360000
+    },
+    "30000": {
+      "dataset_epochs": 10.92896174863388,
+      "mean_presentations_per_unique_raw_char": 2796.198689850752,
+      "sequence_token_presentations": 983040000
+    },
+    "40000": {
+      "dataset_epochs": 14.571948998178506,
+      "mean_presentations_per_unique_raw_char": 3728.264919801003,
+      "sequence_token_presentations": 1310720000
+    },
+    "50000": {
+      "dataset_epochs": 18.214936247723134,
+      "mean_presentations_per_unique_raw_char": 4660.331149751254,
+      "sequence_token_presentations": 1638400000
+    },
+    "60000": {
+      "dataset_epochs": 21.85792349726776,
+      "mean_presentations_per_unique_raw_char": 5592.397379701504,
+      "sequence_token_presentations": 1966080000
+    },
+    "70000": {
+      "dataset_epochs": 25.500910746812387,
+      "mean_presentations_per_unique_raw_char": 6524.463609651755,
+      "sequence_token_presentations": 2293760000
+    },
+    "80000": {
+      "dataset_epochs": 29.143897996357012,
+      "mean_presentations_per_unique_raw_char": 7456.529839602006,
+      "sequence_token_presentations": 2621440000
+    },
+    "90000": {
+      "dataset_epochs": 32.78688524590164,
+      "mean_presentations_per_unique_raw_char": 8388.596069552257,
+      "sequence_token_presentations": 2949120000
+    }
+  },
+  "fraction_used": 0.0039062555555555555,
+  "parameters": 92491547,
+  "parameters_per_unique_train_char": 263.08669285448127,
+  "raw_train_tokens_available": 90000000,
+  "raw_train_tokens_used": 351563,
+  "stride": 1,
+  "train_windows": 351308,
+  "validation_batches": 155,
+  "validation_raw_tokens_used": 20000,
+  "validation_windows": 19745,
+  "window_length": 256
+}

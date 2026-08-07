@@ -1,0 +1,11 @@
+{
+  "batch_size": 2,
+  "block_size": 256,
+  "checkpoint_step": 390000,
+  "interpretation": "B=L BlockDIT noisy stream recovers untouched Duo.DIT",
+  "max_abs": 1.8596649169921875e-05,
+  "mean_abs": 1.4244252497519483e-06,
+  "state_dict_keys_equal": true,
+  "state_dict_tensor_count": 164,
+  "status": "pass"
+}

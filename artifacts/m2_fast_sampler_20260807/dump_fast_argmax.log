@@ -1,0 +1,9 @@
+[config] device=cuda dtype=float32 seed=0 sampler=block_causal_fast nfe=[1, 2, 4, 8, 16, 32] discretize=['argmax'] n_samples=512 batch_size=64 cache_mode=torch_compile output=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/dumps/ts_M2_source_fast_cached_argmax.json
+[model] best.ckpt step=68001 tinystories block_causal_fast arch=384x6 vocab=50257 block_size=16
+  [argmax_nfe1] 512 texts in 22s (16 fwd/seq)
+  [argmax_nfe2] 512 texts in 1s (32 fwd/seq)
+  [argmax_nfe4] 512 texts in 2s (64 fwd/seq)
+  [argmax_nfe8] 512 texts in 3s (128 fwd/seq)
+  [argmax_nfe16] 512 texts in 6s (256 fwd/seq)
+  [argmax_nfe32] 512 texts in 12s (512 fwd/seq)
+[done] dumps/ts_M2_source_fast_cached_argmax.json (3.2 MB) + ts_M2_source_fast_cached_argmax.tokens.npz

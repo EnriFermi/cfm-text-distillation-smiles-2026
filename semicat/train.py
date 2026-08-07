@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import hydra
@@ -48,6 +49,45 @@ log = RankedLogger(__name__, rank_zero_only=True)
 OmegaConf.register_new_resolver("slurm_id", lambda: os.environ.get("SLURM_JOB_ID", "local"))
 
 
+def validate_resume_checkpoint(
+    ckpt_path: Optional[str], expected_global_step: Optional[int]
+) -> None:
+    """Fail before startup when a resume checkpoint is not the requested step."""
+    if expected_global_step is None:
+        return
+    if not ckpt_path:
+        raise ValueError(
+            "expected_resume_global_step is set but ckpt_path is empty"
+        )
+
+    path = Path(ckpt_path).expanduser().resolve()
+    if not path.is_file():
+        raise FileNotFoundError(f"Resume checkpoint does not exist: {path}")
+
+    checkpoint = torch.load(
+        path,
+        map_location="cpu",
+        weights_only=False,
+        mmap=True,
+    )
+    actual_global_step = checkpoint.get("global_step")
+    if actual_global_step is None:
+        raise RuntimeError(f"Resume checkpoint has no global_step: {path}")
+    actual_global_step = int(actual_global_step)
+    expected_global_step = int(expected_global_step)
+    if actual_global_step != expected_global_step:
+        raise RuntimeError(
+            "Refusing stale or wrong resume checkpoint: "
+            f"expected global_step={expected_global_step}, "
+            f"found global_step={actual_global_step}, path={path}"
+        )
+
+    log.info(
+        "Resume checkpoint preflight passed: "
+        f"global_step={actual_global_step}, path={path}"
+    )
+
+
 @task_wrapper
 def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
@@ -62,6 +102,10 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     # set seed for random number generators in pytorch, numpy and python.random
     if cfg.get("seed"):
         L.seed_everything(cfg.seed, workers=True)
+
+    validate_resume_checkpoint(
+        cfg.get("ckpt_path"), cfg.get("expected_resume_global_step")
+    )
 
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)

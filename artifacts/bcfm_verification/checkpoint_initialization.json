@@ -1,0 +1,26 @@
+{
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/s_baseline.ckpt",
+  "epoch": 142,
+  "global_step": 390000,
+  "loaded_parameters": 92491547,
+  "loaded_tensors": 164,
+  "source_datamodule_hparams": {
+    "batch_size": 128,
+    "data_dir": "data/text8",
+    "k": 256,
+    "num_workers": 4,
+    "pin_memory": true,
+    "prefetch_factor": 4,
+    "small_run": false,
+    "train_val_test_split": [
+      351563,
+      20000,
+      19063
+    ]
+  },
+  "source_in_shape": [
+    256,
+    27
+  ],
+  "source_sd_type": "lag"
+}

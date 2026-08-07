@@ -1,0 +1,24 @@
+[
+  {
+    "formulation": "blockwise_cfm",
+    "nfe": 1,
+    "nfe_semantics": "steps_per_block",
+    "block_size": 16,
+    "total_model_forwards_per_sequence": 16,
+    "nfe_per_token": 0.0625,
+    "checkpoint_step": 390000,
+    "n_samples": 1,
+    "length": 256,
+    "seed": 0,
+    "sampling_seconds": 0.21115683298557997,
+    "sampling_tokens_per_second": 1212.3690073410146,
+    "pooled_entropy_nats": 2.5282833576202393,
+    "mean_per_sample_generation_block_entropy_nats": 2.055865377187729,
+    "report_block_size": 16,
+    "pooled_report_block_entropy_mean_nats": 2.055865377187729,
+    "mean_per_sample_report_block_entropy_nats": 2.055865377187729,
+    "mean_nll": null,
+    "gen_ppl": null,
+    "effective_judge_tokens": null
+  }
+]

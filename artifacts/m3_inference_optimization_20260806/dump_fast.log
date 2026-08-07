@@ -1,0 +1,15 @@
+[config] device=cuda dtype=float32 seed=0 sampler=block_causal_fast nfe=[1, 2, 4, 8, 16, 32] discretize=['argmax', 'sample'] n_samples=512 batch_size=64 cache_mode=torch_compile output=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/dumps/ts_M3_step100000_fast_cached.json
+[model] step_0100000.ckpt step=100000 tinystories block_causal_fast arch=384x6 vocab=50257 block_size=16
+  [argmax_nfe1] 512 texts in 43s (16 fwd/seq)
+  [argmax_nfe2] 512 texts in 1s (32 fwd/seq)
+  [argmax_nfe4] 512 texts in 2s (64 fwd/seq)
+  [argmax_nfe8] 512 texts in 3s (128 fwd/seq)
+  [argmax_nfe16] 512 texts in 6s (256 fwd/seq)
+  [argmax_nfe32] 512 texts in 12s (512 fwd/seq)
+  [sample_nfe1] 512 texts in 1s (16 fwd/seq)
+  [sample_nfe2] 512 texts in 1s (32 fwd/seq)
+  [sample_nfe4] 512 texts in 2s (64 fwd/seq)
+  [sample_nfe8] 512 texts in 3s (128 fwd/seq)
+  [sample_nfe16] 512 texts in 6s (256 fwd/seq)
+  [sample_nfe32] 512 texts in 12s (512 fwd/seq)
+[done] dumps/ts_M3_step100000_fast_cached.json (6.1 MB) + ts_M3_step100000_fast_cached.tokens.npz

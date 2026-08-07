@@ -1,0 +1,81 @@
+{
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-18_10-46-57_12345_local/checkpoints/step_0030000.ckpt",
+  "checkpoint_sha256": "fa7dc9859c595584e73f88a5464108af897cc1cce4ae835e3741d77583df3c7d",
+  "checkpoint_step": 30000,
+  "checkpoint_epoch": 10,
+  "formulations": [
+    "full_cfm",
+    "blockwise_cfm"
+  ],
+  "nfe": [
+    1
+  ],
+  "n_samples": 8,
+  "sample_batch_size": 8,
+  "judge_batch_size": 4,
+  "judge_model": "EleutherAI/gpt-j-6B",
+  "judge_tokenizer": "gpt2-large",
+  "length": 256,
+  "block_size": 16,
+  "seed": 0,
+  "device": "cuda",
+  "torch": "2.7.1+cu126",
+  "cuda": "12.6",
+  "gpu": "NVIDIA H100 NVL",
+  "sampling_parameter_dtype": "torch.float32",
+  "discretize": "argmax",
+  "cpu_transfer_non_blocking": false,
+  "git_commit": "57e941b",
+  "full_model_config": {
+    "optimizer": null,
+    "net": {
+      "length": 256,
+      "embed_type": "naive",
+      "dropout": 0.1,
+      "_target_": "semicat.net.duo.DIT",
+      "hidden_size": 768,
+      "n_heads": 12,
+      "cond_dim": 128,
+      "n_blocks": 12,
+      "vocab_size": 27
+    },
+    "_target_": "semicat.models.textsemicat.TextSemicatModule",
+    "prior_type": "gaussian",
+    "scheduler": null,
+    "in_shape": [
+      256,
+      27
+    ]
+  },
+  "block_model_config": {
+    "optimizer": null,
+    "net": {
+      "length": 256,
+      "embed_type": "naive",
+      "dropout": 0.1,
+      "_target_": "block.block_dit.BlockDIT",
+      "vocab_size": 27,
+      "hidden_size": 768,
+      "cond_dim": 128,
+      "n_blocks": 12,
+      "n_heads": 12,
+      "block_size": 16,
+      "attention_backend": "flex",
+      "jvp_attention_backend": "auto",
+      "flex_kernel_block_size": 64
+    },
+    "_target_": "block.block_semicat.BlockSemicatModule",
+    "in_shape": [
+      256,
+      27
+    ],
+    "prior_type": "gaussian",
+    "scheduler": null,
+    "sd_type": "lag",
+    "sd_prop": 0.25,
+    "block_size": 16,
+    "time_eps": 0.0,
+    "init_from_cfm_ckpt": null,
+    "expected_source_sd_type": null
+  }
+}

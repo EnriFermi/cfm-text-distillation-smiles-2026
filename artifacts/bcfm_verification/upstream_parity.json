@@ -1,0 +1,20 @@
+{
+  "allowed_infrastructure_differences": [
+    ".gitignore",
+    "environment.yaml"
+  ],
+  "byte_exact_files": 84,
+  "critical_sha256": {
+    "semicat/data/text8.py": "12ac54e1f1b7695126188ae7fab843c2afbc95bcdffc555b25550bfb43910a5e",
+    "semicat/metric/text_dist.py": "ea5cf60bf3b01c69e30594a957cbcb0d7f16cffca22d6c51fc5919cb0483caec",
+    "semicat/models/semicat.py": "82f4bf2cab2fcfa78ccfc59d9094e6c3132f5c2933c1cd7e61ff0b644ac71425",
+    "semicat/models/textsemicat.py": "6cfb051b22fd10b27764df3f9058d0ec85ef00af206b6aac8753afd1571ff2c0",
+    "semicat/net/duo.py": "b830eeeec56b798ad9ebcca4b18d834c5e9d52a15edcd2b14eec8dd85a13a9ff"
+  },
+  "missing_files": [],
+  "status": "pass",
+  "tracked_files": 86,
+  "unexpected_mismatches": [],
+  "upstream_checkout": "/home/coder/project/external/semicat_clean_20260709",
+  "upstream_commit": "558602a0fa722514e4a6012f5c46a8ae178b3068"
+}

@@ -1,0 +1,14 @@
+[model] step_00200000_full_state.ckpt step=200000 tinystories full_cfm arch=384x6 vocab=50257 block_size=None
+  [argmax_nfe1] 512 texts in 0s (1 fwd/seq)
+  [argmax_nfe2] 512 texts in 1s (2 fwd/seq)
+  [argmax_nfe4] 512 texts in 1s (4 fwd/seq)
+  [argmax_nfe8] 512 texts in 2s (8 fwd/seq)
+  [argmax_nfe16] 512 texts in 5s (16 fwd/seq)
+  [argmax_nfe32] 512 texts in 10s (32 fwd/seq)
+  [sample_nfe1] 512 texts in 0s (1 fwd/seq)
+  [sample_nfe2] 512 texts in 1s (2 fwd/seq)
+  [sample_nfe4] 512 texts in 1s (4 fwd/seq)
+  [sample_nfe8] 512 texts in 2s (8 fwd/seq)
+  [sample_nfe16] 512 texts in 5s (16 fwd/seq)
+  [sample_nfe32] 512 texts in 10s (32 fwd/seq)
+[done] dumps/ts_M1_step200000_full.json (6.4 MB) + ts_M1_step200000_full.tokens.npz

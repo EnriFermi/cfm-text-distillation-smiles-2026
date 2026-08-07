@@ -1,0 +1,102 @@
+[config] {
+  "experiment": "tinystories_quality_grid_batch1_latency",
+  "device": "cuda",
+  "gpu_name": "NVIDIA H100 NVL",
+  "dtype": "float32",
+  "seed": 0,
+  "length": 256,
+  "batch_size": 1,
+  "warmup_runs": 5,
+  "repeats": 30,
+  "cache_mode": {
+    "default": "none",
+    "M3-step100000-fast": "incremental_clean_prefix_kv+torch_compile"
+  },
+  "output_dir": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806",
+  "current_commit": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+  "upstream_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+  "upstream_timing_source": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/upstream_run_eval_2e21c57.py",
+  "upstream_timing_source_sha256": "120e2e53826dc540d1c7372049c1582c8bd9af679c4412489021b0ebdd3bce71",
+  "timing_functions": [
+    "_sync",
+    "_measure_sequence_latency_ms"
+  ],
+  "timing_code_execution": "AST nodes loaded directly from upstream source",
+  "quality_sources": [
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M1_M2_M3_scores.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M1_step200000_full_scores.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/results/ts_M3_step100000_fast_cached_scores.json"
+  ]
+}
+[cache] resume hit: /home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.json (60 completed points)
+[stage=model_build] model=M1-100k-source (1/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt step=68001 sampler=full_cfm block_size=None
+[stage=model_ready] model=M1-100k-source dtype=torch.float32
+[cache] point hit: model=M1-100k-source point=argmax_nfe1
+[cache] point hit: model=M1-100k-source point=argmax_nfe2
+[cache] point hit: model=M1-100k-source point=argmax_nfe4
+[cache] point hit: model=M1-100k-source point=argmax_nfe8
+[cache] point hit: model=M1-100k-source point=argmax_nfe16
+[cache] point hit: model=M1-100k-source point=argmax_nfe32
+[cache] point hit: model=M1-100k-source point=sample_nfe1
+[cache] point hit: model=M1-100k-source point=sample_nfe2
+[cache] point hit: model=M1-100k-source point=sample_nfe4
+[cache] point hit: model=M1-100k-source point=sample_nfe8
+[cache] point hit: model=M1-100k-source point=sample_nfe16
+[cache] point hit: model=M1-100k-source point=sample_nfe32
+[stage=model_build] model=M2-source-blockcausal (2/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt step=68001 sampler=block_causal block_size=16
+[stage=model_ready] model=M2-source-blockcausal dtype=torch.float32
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe1
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe2
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe4
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe8
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe16
+[cache] point hit: model=M2-source-blockcausal point=argmax_nfe32
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe1
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe2
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe4
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe8
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe16
+[cache] point hit: model=M2-source-blockcausal point=sample_nfe32
+[stage=model_build] model=M3-step100000 (3/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 sampler=block_causal block_size=16
+[stage=model_ready] model=M3-step100000 dtype=torch.float32
+[cache] point hit: model=M3-step100000 point=argmax_nfe1
+[cache] point hit: model=M3-step100000 point=argmax_nfe2
+[cache] point hit: model=M3-step100000 point=argmax_nfe4
+[cache] point hit: model=M3-step100000 point=argmax_nfe8
+[cache] point hit: model=M3-step100000 point=argmax_nfe16
+[cache] point hit: model=M3-step100000 point=argmax_nfe32
+[cache] point hit: model=M3-step100000 point=sample_nfe1
+[cache] point hit: model=M3-step100000 point=sample_nfe2
+[cache] point hit: model=M3-step100000 point=sample_nfe4
+[cache] point hit: model=M3-step100000 point=sample_nfe8
+[cache] point hit: model=M3-step100000 point=sample_nfe16
+[cache] point hit: model=M3-step100000 point=sample_nfe32
+[stage=model_build] model=M3-step100000-fast (4/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt step=100000 sampler=block_causal_fast block_size=16
+[stage=model_ready] model=M3-step100000-fast dtype=torch.float32
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe1
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe2
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe4
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe8
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe16
+[cache] point hit: model=M3-step100000-fast point=argmax_nfe32
+[cache] point hit: model=M3-step100000-fast point=sample_nfe1
+[cache] point hit: model=M3-step100000-fast point=sample_nfe2
+[cache] point hit: model=M3-step100000-fast point=sample_nfe4
+[cache] point hit: model=M3-step100000-fast point=sample_nfe8
+[cache] point hit: model=M3-step100000-fast point=sample_nfe16
+[cache] point hit: model=M3-step100000-fast point=sample_nfe32
+[stage=model_build] model=M1-step200000 (5/5) checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/tinystories_cfm_resume144001_to200000_nfe32_20260806/checkpoints/final/step_00200000_full_state.ckpt step=200000 sampler=full_cfm block_size=None
+[stage=model_ready] model=M1-step200000 dtype=torch.float32
+[cache] point hit: model=M1-step200000 point=argmax_nfe1
+[cache] point hit: model=M1-step200000 point=argmax_nfe2
+[cache] point hit: model=M1-step200000 point=argmax_nfe4
+[cache] point hit: model=M1-step200000 point=argmax_nfe8
+[cache] point hit: model=M1-step200000 point=argmax_nfe16
+[cache] point hit: model=M1-step200000 point=argmax_nfe32
+[cache] point hit: model=M1-step200000 point=sample_nfe1
+[cache] point hit: model=M1-step200000 point=sample_nfe2
+[cache] point hit: model=M1-step200000 point=sample_nfe4
+[cache] point hit: model=M1-step200000 point=sample_nfe8
+[cache] point hit: model=M1-step200000 point=sample_nfe16
+[cache] point hit: model=M1-step200000 point=sample_nfe32
+[done] rows=60 elapsed=6.6s json=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.json csv=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/latency_quality_grid.csv plots=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/mauve_vs_latency.png,/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_latency_quality_grid_20260806/genppl_vs_latency.png

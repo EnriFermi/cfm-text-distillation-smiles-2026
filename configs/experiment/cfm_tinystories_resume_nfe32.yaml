@@ -1,0 +1,117 @@
+# @package _global_
+# Resume the full-sequence TinyStories CFM from the recovered full-state step
+# 75001 checkpoint and train to total global_step=200000.
+defaults:
+  - override /data: tinystories
+  - override /model: tinystories_dit
+  - override /trainer: gpu
+
+task_name: train
+seed: 12345
+train: true
+test: false
+ckpt_path: ${paths.root_dir}/baseline/tinystories/last (2).ckpt
+expected_resume_global_step: 75001
+
+data:
+  # Same effective batch 128 as the source run, packed into one H100
+  # microbatch when memory permits. The launch smoke test validates this path.
+  batch_size: 128
+  num_workers: 8
+  persistent_workers: true
+  prefetch_factor: 4
+
+trainer:
+  max_steps: 200000
+  check_val_every_n_epoch: null
+  # At batch=128 and accumulation=1, 1000 train batches are 1000 optimizer
+  # steps, matching the source run's 4000 batches at accumulation=4.
+  val_check_interval: 1000
+  limit_val_batches: 50
+  precision: bf16-mixed
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+  log_every_n_steps: 10
+  num_sanity_val_steps: 0
+  deterministic: false
+
+callbacks:
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints/best
+    filename: best
+    monitor: val/loss
+    verbose: true
+    save_last: false
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: false
+    every_n_train_steps: null
+    enable_version_counter: false
+  # Independent rolling full state. It is not gated by val/loss improvement,
+  # and ReliableModelCheckpoint always writes the exact off-cadence final step.
+  rolling_checkpoint:
+    _target_: semicat.callbacks.reliable_model_checkpoint.ReliableModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints/rolling
+    filename: "step_{step:08d}"
+    monitor: null
+    verbose: true
+    save_last: true
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: false
+    every_n_train_steps: 10000
+    enable_version_counter: false
+  learning_rate_monitor:
+    _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: step
+    log_momentum: false
+    log_weight_decay: true
+  runtime_diagnostics:
+    _target_: semicat.callbacks.runtime_diagnostics.RuntimeDiagnostics
+    run_label: tinystories-cfm-resume75k-to200k
+    output_dir: ${paths.output_dir}
+    seed: ${seed}
+    force_foreach_adamw: true
+  generation_metrics:
+    _target_: semicat.callbacks.generation_metrics.GenerationMetricsCallback
+    output_dir: ${paths.output_dir}/generation_metrics
+    project_root: ${paths.root_dir}
+    reference_dump: ${paths.root_dir}/dumps/gold_tinystories.json
+    reference_feature_cache: ${paths.root_dir}/artifacts/cache/mauve/gold_tinystories_gpt2-large_ctx256.npz
+    resume_checkpoint: ${ckpt_path}
+    nfe: 32
+    n_samples: 512
+    sampling_batch_size: 64
+    seed: 0
+    every_n_train_steps: 10000
+    judge: EleutherAI/gpt-j-6B
+    judge_batch_size: 8
+    judge_dtype: float32
+    featurize_model: gpt2-large
+    context_size: 256
+    run_on_first_validation: true
+    run_on_train_end: true
+    # A transient external-judge failure must not throw away days of training;
+    # the next validation retries because only successful steps advance cadence.
+    failure_policy: warn
+
+tags:
+  - M1
+  - cfm
+  - tinystories
+  - resume-step75001
+  - target-step200000
+  - lag
+  - triton-jvp
+  - nfe32-validation
+  - mauve
+  - gptj6b-genppl

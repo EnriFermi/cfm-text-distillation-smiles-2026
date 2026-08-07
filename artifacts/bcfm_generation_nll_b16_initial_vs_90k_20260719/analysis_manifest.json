@@ -1,0 +1,179 @@
+{
+  "source_protocol": {
+    "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/s_baseline.ckpt",
+    "checkpoint_sha256": "38ad1af5aba40ce1086a345d652a004ba627d5eff6e6a522fb66e0adc6ae2147",
+    "checkpoint_step": 390000,
+    "checkpoint_epoch": 142,
+    "formulations": [
+      "blockwise_cfm"
+    ],
+    "nfe": [
+      8,
+      16,
+      32
+    ],
+    "n_samples": 2048,
+    "sample_batch_size": 128,
+    "judge_batch_size": 4,
+    "judge_model": "EleutherAI/gpt-j-6B",
+    "judge_tokenizer": "gpt2-large",
+    "length": 256,
+    "block_size": 16,
+    "report_block_size": 16,
+    "seed": 0,
+    "device": "cuda",
+    "torch": "2.7.1+cu126",
+    "cuda": "12.6",
+    "gpu": "NVIDIA H100 NVL",
+    "sampling_parameter_dtype": "torch.float32",
+    "discretize": "argmax",
+    "cpu_transfer_non_blocking": false,
+    "git_commit": "57e941b",
+    "full_model_config": {
+      "optimizer": null,
+      "net": {
+        "length": 256,
+        "embed_type": "naive",
+        "dropout": 0.1,
+        "_target_": "semicat.net.duo.DIT",
+        "hidden_size": 768,
+        "n_heads": 12,
+        "cond_dim": 128,
+        "n_blocks": 12,
+        "vocab_size": 27
+      },
+      "_target_": "semicat.models.textsemicat.TextSemicatModule",
+      "prior_type": "gaussian",
+      "scheduler": null,
+      "in_shape": [
+        256,
+        27
+      ]
+    },
+    "block_model_config": {
+      "optimizer": null,
+      "net": {
+        "length": 256,
+        "embed_type": "naive",
+        "dropout": 0.1,
+        "_target_": "block.block_dit.BlockDIT",
+        "vocab_size": 27,
+        "hidden_size": 768,
+        "cond_dim": 128,
+        "n_blocks": 12,
+        "n_heads": 12,
+        "block_size": 16,
+        "attention_backend": "flex",
+        "jvp_attention_backend": "auto",
+        "flex_kernel_block_size": 64
+      },
+      "_target_": "block.block_semicat.BlockSemicatModule",
+      "in_shape": [
+        256,
+        27
+      ],
+      "prior_type": "gaussian",
+      "scheduler": null,
+      "sd_type": "lag",
+      "sd_prop": 0.25,
+      "block_size": 16,
+      "time_eps": 0.0,
+      "init_from_cfm_ckpt": null,
+      "expected_source_sd_type": null
+    }
+  },
+  "step90k_protocol": {
+    "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-18_10-46-57_12345_local/checkpoints/step_0090000.ckpt",
+    "checkpoint_sha256": "e1cf4e4cbd794267965c96583e4b789610598c848812b871cb61a3a6040ef79f",
+    "checkpoint_step": 90000,
+    "checkpoint_epoch": 32,
+    "formulations": [
+      "blockwise_cfm"
+    ],
+    "nfe": [
+      8,
+      16,
+      32
+    ],
+    "n_samples": 2048,
+    "sample_batch_size": 128,
+    "judge_batch_size": 4,
+    "judge_model": "EleutherAI/gpt-j-6B",
+    "judge_tokenizer": "gpt2-large",
+    "length": 256,
+    "block_size": 16,
+    "report_block_size": 16,
+    "seed": 0,
+    "device": "cuda",
+    "torch": "2.7.1+cu126",
+    "cuda": "12.6",
+    "gpu": "NVIDIA H100 NVL",
+    "sampling_parameter_dtype": "torch.float32",
+    "discretize": "argmax",
+    "cpu_transfer_non_blocking": false,
+    "git_commit": "57e941b",
+    "full_model_config": {
+      "optimizer": null,
+      "net": {
+        "length": 256,
+        "embed_type": "naive",
+        "dropout": 0.1,
+        "_target_": "semicat.net.duo.DIT",
+        "hidden_size": 768,
+        "n_heads": 12,
+        "cond_dim": 128,
+        "n_blocks": 12,
+        "vocab_size": 27
+      },
+      "_target_": "semicat.models.textsemicat.TextSemicatModule",
+      "prior_type": "gaussian",
+      "scheduler": null,
+      "in_shape": [
+        256,
+        27
+      ]
+    },
+    "block_model_config": {
+      "optimizer": null,
+      "net": {
+        "length": 256,
+        "embed_type": "naive",
+        "dropout": 0.1,
+        "_target_": "block.block_dit.BlockDIT",
+        "vocab_size": 27,
+        "hidden_size": 768,
+        "cond_dim": 128,
+        "n_blocks": 12,
+        "n_heads": 12,
+        "block_size": 16,
+        "attention_backend": "flex",
+        "jvp_attention_backend": "auto",
+        "flex_kernel_block_size": 64
+      },
+      "_target_": "block.block_semicat.BlockSemicatModule",
+      "in_shape": [
+        256,
+        27
+      ],
+      "prior_type": "gaussian",
+      "scheduler": null,
+      "sd_type": "lag",
+      "sd_prop": 0.25,
+      "block_size": 16,
+      "time_eps": 0.0,
+      "init_from_cfm_ckpt": null,
+      "expected_source_sd_type": null
+    }
+  },
+  "suffix_automaton_states": 530255,
+  "train_prefix_tokens": 351563,
+  "written": [
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/comparison.csv",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/comparison.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/memorization_audit.csv",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/memorization_audit.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/top_seen_train_matches.json",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/memorization_per_sample.npz",
+    "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/bcfm_generation_nll_b16_initial_vs_90k_20260719/comparison.png"
+  ]
+}

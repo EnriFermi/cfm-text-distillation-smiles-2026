@@ -1,0 +1,143 @@
+{
+  "source": "/home/coder/project/tinystories_all_measurements_long.csv",
+  "source_rows": 362804,
+  "runs": 10,
+  "models": 10,
+  "measurement_types": 12,
+  "metric_names": 97,
+  "measurements": 327997,
+  "canonical_valid_nonduplicate_rows": 362411,
+  "invalid_nan_rows": 20,
+  "catalog_rows": 320,
+  "tables": {
+    "external_generation_eval": {
+      "rows": 70,
+      "metric_columns": [
+        "cross_sample_overlap_4",
+        "distinct_2",
+        "distinct_3",
+        "distinct_4",
+        "frontier_integral",
+        "gen_ppl",
+        "js_1gram",
+        "js_2gram",
+        "mauve",
+        "scoring_seconds",
+        "seq_rep_2",
+        "seq_rep_3",
+        "seq_rep_4",
+        "token_entropy",
+        "zipf"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/external_generation_eval_wide.csv"
+    },
+    "online_quality_curve": {
+      "rows": 29,
+      "metric_columns": [
+        "frontier_integral",
+        "gen_ppl",
+        "gen_ppl_seconds",
+        "mauve",
+        "mauve_seconds",
+        "sampling_seconds",
+        "token_entropy",
+        "total_seconds",
+        "validation_event"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/online_quality_curve_wide.csv"
+    },
+    "validation_curve": {
+      "rows": 20,
+      "metric_columns": [
+        "val_bits_per_character",
+        "val_bits_per_character_estimate",
+        "val_loss",
+        "val_masked_fraction",
+        "val_nelbo",
+        "val_nll",
+        "val_schedule_candidates",
+        "val_selected_mask_rate_max",
+        "val_selected_mask_rate_min",
+        "val_selected_schedule_nelbo_variance",
+        "val_token_count"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/validation_curve_wide.csv"
+    },
+    "checkpoint_metadata": {
+      "rows": 9,
+      "metric_columns": [
+        "checkpoint_best_metric",
+        "checkpoint_ema_decay",
+        "checkpoint_epoch",
+        "checkpoint_global_step",
+        "checkpoint_loadable",
+        "checkpoint_parameter_count_total",
+        "checkpoint_parameter_count_trainable",
+        "checkpoint_processed_tokens",
+        "checkpoint_step_x",
+        "checkpoint_step_y",
+        "checkpoint_wall_clock_seconds"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/checkpoint_metadata_wide.csv"
+    },
+    "sequence_latency_benchmark": {
+      "rows": 12,
+      "metric_columns": [
+        "sequence_latency_ms",
+        "sequence_latency_p10_ms",
+        "sequence_latency_p90_ms",
+        "sequence_latency_repeats"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/sequence_latency_benchmark_wide.csv"
+    },
+    "internal_checkpoint_eval": {
+      "rows": 2,
+      "metric_columns": [
+        "likelihood_is_strict_upper_bound",
+        "likelihood_time_min",
+        "processed_training_tokens",
+        "sample_adjacent_repetition_rate",
+        "sample_distinct_1",
+        "sample_distinct_2",
+        "sample_unigram_entropy_nats",
+        "sample_vocabulary_coverage",
+        "sampling_seconds",
+        "sampling_tokens_per_second",
+        "test_bits_per_character",
+        "test_bits_per_character_estimate",
+        "test_epsilon_truncated_nelbo_perplexity_estimate",
+        "test_loss",
+        "test_masked_fraction",
+        "test_nelbo",
+        "test_nll",
+        "test_perplexity",
+        "test_token_count"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/internal_checkpoint_eval_wide.csv"
+    },
+    "sanity_eval_duplicate": {
+      "rows": 0,
+      "metric_columns": [],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/sanity_eval_duplicate_wide.csv"
+    },
+    "generation_benchmark": {
+      "rows": 2,
+      "metric_columns": [
+        "generation_seconds"
+      ],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/generation_benchmark_wide.csv"
+    },
+    "model_inventory": {
+      "rows": 0,
+      "metric_columns": [],
+      "path": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/model_inventory_wide.csv"
+    }
+  },
+  "artifacts": {
+    "run_inventory": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/run_inventory.csv",
+    "all_metric_summary": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/all_runs_all_metrics_summary.csv",
+    "canonical_evaluation_wide": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/canonical_evaluation_metrics_wide.csv",
+    "best_mauve_points": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/best_mauve_point_per_model_variant.csv",
+    "complete_markdown": "/home/coder/project/artifacts/tinystories_all_measurements_summary_20260807/ALL_METRICS.md"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "batch_size": 128,
+  "comet_experiment_key": "cef17582c0174d4a99bdb558a304f890",
+  "comet_name": "kind_angler_5940",
+  "comet_url": "https://www.comet.com/mike-5531/bcfm/cef17582c0174d4a99bdb558a304f890",
+  "corr_step_val_loss": 0.764417150673388,
+  "corr_train_val_loss": -0.9749383478865091,
+  "n_metric_rows": 10015,
+  "steps_current": 95999,
+  "train_loss_slope_per_10k": -0.007978643476963044,
+  "train_raw_tokens": 351563,
+  "train_windows": 351308,
+  "val_loss_slope_per_10k": 0.15357084274292004,
+  "val_raw_tokens": 20000,
+  "val_windows": 19745,
+  "validation_batches_each": [
+    155
+  ],
+  "validation_evaluations": 9
+}

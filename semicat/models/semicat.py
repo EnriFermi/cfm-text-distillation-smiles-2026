@@ -34,9 +34,15 @@ class SemicatModule(L.LightningModule):
         sd_type: Literal["lag", "ecld", "semi"] = "lag",
         label_smoothing: float = 0.0,
         compile: bool = False,
+        scheduler_interval: Literal["step", "epoch"] = "step",
         ecld: bool = False,  # unused, but left for retro-compatibility of checkpoints
     ):
         assert not ecld, "deprecated, do not use"
+        if scheduler_interval not in {"step", "epoch"}:
+            raise ValueError(
+                "scheduler_interval must be either 'step' or 'epoch', got "
+                f"{scheduler_interval!r}"
+            )
         super().__init__()
         torch.set_float32_matmul_precision("high")
         self.save_hyperparameters(logger=False, ignore=["net"])
@@ -331,7 +337,7 @@ class SemicatModule(L.LightningModule):
                 "lr_scheduler": {
                     "scheduler": scheduler,
                     "monitor": "val/loss",
-                    "interval": "epoch",
+                    "interval": self.hparams.scheduler_interval,
                     "frequency": 1,
                 },
             }

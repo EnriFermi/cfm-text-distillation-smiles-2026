@@ -1,0 +1,73 @@
+[config] {
+  "experiment": "tinystories_mdlm_bd3lm_latency_h100_matched",
+  "device": "cuda",
+  "gpu_name": "NVIDIA H100 NVL",
+  "dtype": "float32",
+  "seed": 0,
+  "length": 256,
+  "batch_size": 1,
+  "warmup_runs": 5,
+  "repeats": 30,
+  "sampling": {
+    "length": 256,
+    "batch_size": 1,
+    "strategy": "sample",
+    "temperature": 1.0,
+    "top_k": null,
+    "top_p": 0.9,
+    "top_p_include_boundary": false,
+    "seed": 0,
+    "sampling_epsilon": 1e-05,
+    "noise_removal": true,
+    "cache_denoiser_outputs": true,
+    "start_token_id": 50256
+  },
+  "weights": "ema",
+  "checkpoint_paths": {
+    "MDLM": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/MDLM_best.pt",
+    "BD3-LM": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/BD3LM_best.pt"
+  },
+  "checkpoint_sha256": {
+    "MDLM": "7b5e5cfc69094e7cd17f45aa8b7f2ae911f42bd55563d361814e6efde319ba7d",
+    "BD3-LM": "c6d4ac8e5b265e565bed7819463a57be3058742eadb2696413cf288c0cd4644f"
+  },
+  "baseline_code_root": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/external/bcfm_baselines_uploaded_20260807",
+  "baseline_code_zip_sha256": "3a4d885562461d3c2e7a7be0f2828038186e8075a975ac9a71be8675f99dc3f2",
+  "upstream_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+  "upstream_timing_source": "/tmp/cfm-upstream-m2-latency-2e21c57/eval/run_eval.py",
+  "upstream_timing_source_sha256": "120e2e53826dc540d1c7372049c1582c8bd9af679c4412489021b0ebdd3bce71",
+  "timing_code_execution": "AST nodes loaded directly from upstream source",
+  "float32_matmul_precision": "highest",
+  "cuda_matmul_allow_tf32": false,
+  "cudnn_allow_tf32": true,
+  "output_dir": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_mdlm_bd3lm_latency_h100_20260807"
+}
+[stage=model_load] model=MDLM checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/MDLM_best.pt sha256=7b5e5cfc69094e7cd17f45aa8b7f2ae911f42bd55563d361814e6efde319ba7d
+[stage=model_ready] model=MDLM step=100000 arch=384x6 parameter_dtype=torch.float32 points=5
+[stage=latency] model=MDLM point=sample_nfe16 sampler=mdlm nfe=16 progress=1/5 warmup=5 repeats=30
+[metric] model=MDLM point=sample_nfe16 latency_median_ms=127.974 p10=125.943 p90=132.118 elapsed=5.0s
+[stage=latency] model=MDLM point=sample_nfe32 sampler=mdlm nfe=32 progress=2/5 warmup=5 repeats=30
+[metric] model=MDLM point=sample_nfe32 latency_median_ms=248.958 p10=243.942 p90=253.365 elapsed=8.7s
+[stage=latency] model=MDLM point=sample_nfe64 sampler=mdlm nfe=64 progress=3/5 warmup=5 repeats=30
+[metric] model=MDLM point=sample_nfe64 latency_median_ms=482.932 p10=474.868 p90=490.965 elapsed=16.9s
+[stage=latency] model=MDLM point=sample_nfe128 sampler=mdlm nfe=128 progress=4/5 warmup=5 repeats=30
+[metric] model=MDLM point=sample_nfe128 latency_median_ms=862.341 p10=852.853 p90=890.485 elapsed=30.5s
+[stage=latency] model=MDLM point=sample_nfe256 sampler=mdlm nfe=256 progress=5/5 warmup=5 repeats=30
+[metric] model=MDLM point=sample_nfe256 latency_median_ms=1503.750 p10=1486.307 p90=1528.398 elapsed=53.0s
+[stage=model_load] model=BD3-LM checkpoint=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/BD3LM_best.pt sha256=c6d4ac8e5b265e565bed7819463a57be3058742eadb2696413cf288c0cd4644f
+[stage=model_ready] model=BD3-LM step=100000 arch=384x6 parameter_dtype=torch.float32 points=7
+[stage=latency] model=BD3-LM point=sample_nfe1 sampler=bd3lm_ancestral nfe=1 progress=1/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe1 latency_median_ms=178.641 p10=176.600 p90=181.352 elapsed=6.3s
+[stage=latency] model=BD3-LM point=sample_nfe2 sampler=bd3lm_ancestral nfe=2 progress=2/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe2 latency_median_ms=265.015 p10=261.495 p90=268.257 elapsed=9.3s
+[stage=latency] model=BD3-LM point=sample_nfe4 sampler=bd3lm_ancestral nfe=4 progress=3/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe4 latency_median_ms=448.574 p10=442.851 p90=477.839 elapsed=15.9s
+[stage=latency] model=BD3-LM point=sample_nfe8 sampler=bd3lm_ancestral nfe=8 progress=4/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe8 latency_median_ms=835.227 p10=809.258 p90=881.304 elapsed=29.3s
+[stage=latency] model=BD3-LM point=sample_nfe16 sampler=bd3lm_ancestral nfe=16 progress=5/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe16 latency_median_ms=1508.323 p10=1483.611 p90=1622.228 elapsed=53.8s
+[stage=latency] model=BD3-LM point=sample_nfe32 sampler=bd3lm_ancestral nfe=32 progress=6/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe32 latency_median_ms=3032.758 p10=2947.938 p90=3173.987 elapsed=106.9s
+[stage=latency] model=BD3-LM point=sample_nfe256 sampler=bd3lm_first_hitting nfe=256 progress=7/7 warmup=5 repeats=30
+[metric] model=BD3-LM point=sample_nfe256 latency_median_ms=1551.901 p10=1533.949 p90=1573.882 elapsed=54.4s
+[done] rows=12 elapsed=392.8s json=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_mdlm_bd3lm_latency_h100_20260807/baseline_h100_latency.json csv=/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_mdlm_bd3lm_latency_h100_20260807/baseline_h100_latency.csv

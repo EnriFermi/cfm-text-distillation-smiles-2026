@@ -1,0 +1,119 @@
+# @package _global_
+# Continue the full-sequence TinyStories CFM from the latest recoverable
+# full-state checkpoint (global_step=144001) to global_step=400000.
+defaults:
+  - override /data: tinystories
+  - override /model: tinystories_dit
+  - override /trainer: gpu
+
+task_name: train
+seed: 12345
+train: true
+test: false
+ckpt_path: ${paths.root_dir}/logs/train/tinystories_cfm_resume75k_to200k_nfe32_20260731/checkpoints/last.ckpt
+expected_resume_global_step: 144001
+
+data:
+  batch_size: 128
+  num_workers: 8
+  persistent_workers: true
+  prefetch_factor: 4
+
+trainer:
+  max_steps: 400000
+  check_val_every_n_epoch: null
+  val_check_interval: 1000
+  limit_val_batches: 50
+  precision: bf16-mixed
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+  log_every_n_steps: 10
+  num_sanity_val_steps: 0
+  deterministic: false
+
+callbacks:
+  # Keep the best validation-loss state separately. This callback deliberately
+  # does not own last.ckpt: validation loss can go many hours without a new best.
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints/best
+    filename: best
+    monitor: val/loss
+    verbose: true
+    save_last: false
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: false
+    every_n_train_steps: null
+    enable_version_counter: false
+
+  # Full weights + AdamW + scheduler state. With monitor=null and save_top_k=1,
+  # each 10k snapshot atomically supersedes the prior numbered snapshot while
+  # last.ckpt remains the stable resume path. The target step 400000 is itself
+  # a save boundary, so the exact final optimizer state is persisted.
+  rolling_checkpoint:
+    _target_: semicat.callbacks.reliable_model_checkpoint.ReliableModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints/rolling
+    filename: "step_{step:08d}"
+    monitor: null
+    verbose: true
+    save_last: true
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: false
+    every_n_train_steps: 10000
+    enable_version_counter: false
+
+  learning_rate_monitor:
+    _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: step
+    log_momentum: false
+    log_weight_decay: true
+
+  runtime_diagnostics:
+    _target_: semicat.callbacks.runtime_diagnostics.RuntimeDiagnostics
+    run_label: tinystories-cfm-resume144001-to400000
+    output_dir: ${paths.output_dir}
+    seed: ${seed}
+    force_foreach_adamw: true
+
+  generation_metrics:
+    _target_: semicat.callbacks.generation_metrics.GenerationMetricsCallback
+    output_dir: ${paths.output_dir}/generation_metrics
+    project_root: ${paths.root_dir}
+    reference_dump: ${paths.root_dir}/dumps/gold_tinystories.json
+    reference_feature_cache: ${paths.root_dir}/artifacts/cache/mauve/gold_tinystories_gpt2-large_ctx256.npz
+    resume_checkpoint: ${ckpt_path}
+    nfe: 32
+    n_samples: 512
+    sampling_batch_size: 64
+    seed: 0
+    every_n_train_steps: 10000
+    judge: EleutherAI/gpt-j-6B
+    judge_batch_size: 8
+    judge_dtype: float32
+    featurize_model: gpt2-large
+    context_size: 256
+    run_on_first_validation: true
+    run_on_train_end: true
+    failure_policy: warn
+
+tags:
+  - M1
+  - cfm
+  - tinystories
+  - resume-step144001
+  - target-step400000
+  - lag
+  - triton-jvp
+  - nfe32-validation
+  - mauve
+  - gptj6b-genppl

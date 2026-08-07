@@ -1,0 +1,30 @@
+{
+  "batch_size": 4,
+  "block_size": 16,
+  "device": "NVIDIA H100 NVL",
+  "dtype": "torch.bfloat16",
+  "head_dim": 64,
+  "heads": 12,
+  "length": 256,
+  "primal_max_abs": 0.0078125,
+  "primal_mean_abs": 0.00016222783597186208,
+  "repeats": 4,
+  "results": {
+    "math": {
+      "max_step_ms": 37.556800842285156,
+      "median_step_ms": 32.8221435546875,
+      "min_step_ms": 32.24435043334961,
+      "peak_allocated_mib": 464.0625
+    },
+    "triton": {
+      "max_step_ms": 54.6459846496582,
+      "median_step_ms": 47.58206367492676,
+      "min_step_ms": 46.974369049072266,
+      "peak_allocated_mib": 341.8759765625
+    }
+  },
+  "tangent_max_abs": 0.015625,
+  "tangent_mean_abs": 0.0002488931058906019,
+  "torch_version": "2.7.1+cu126",
+  "triton_speedup_over_math": 0.6898007572543148
+}

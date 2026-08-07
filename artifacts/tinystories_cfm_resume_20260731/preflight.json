@@ -1,0 +1,36 @@
+{
+  "checkpoint": "baseline/tinystories/last (2).ckpt",
+  "checkpoint_global_step": 75001,
+  "target_global_step": 200000,
+  "device": "NVIDIA H100 NVL",
+  "precision": "bf16-mixed",
+  "effective_batch_size": 128,
+  "micro_batch_size": 128,
+  "accumulate_grad_batches": 1,
+  "optimizer_step_smoke": {
+    "start_global_step": 75001,
+    "end_global_step": 75002,
+    "train_loss": 3.9966163635253906,
+    "vf_loss": 3.9737329483032227,
+    "sd_loss": 0.022883450612425804,
+    "peak_observed_gpu_memory_mib": 44119,
+    "optimizer_state_entries": 97,
+    "optimizer_state_step": 75001,
+    "scheduler_last_epoch": 75001,
+    "scheduler_interval": "step"
+  },
+  "jvp_numerical_check": {
+    "shape": [2, 256, 6, 64],
+    "dtype": "bfloat16",
+    "reference": "explicit scaled dot-product softmax attention",
+    "candidate": "semicat.jvp_utils.functional.safe_sdpa_jvp",
+    "primal_relative_l2": 0.00297870603390038,
+    "tangent_relative_l2": 0.0035303973127156496,
+    "maximum_backward_gradient_relative_l2": 0.007139320019632578
+  },
+  "tests": {
+    "command": "/home/coder/.conda/envs/semicat/bin/python -m pytest -q",
+    "passed": 42,
+    "failed": 0
+  }
+}

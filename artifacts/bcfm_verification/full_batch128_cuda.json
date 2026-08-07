@@ -1,0 +1,17 @@
+{
+  "batch_size": 128,
+  "checkpoint_step": 390000,
+  "device": "NVIDIA H100 NVL",
+  "elapsed_seconds_including_shape_compile": 31.52279976895079,
+  "finite_loss_and_gradients": true,
+  "flex_kernel_block_size": 64,
+  "loss_type": "lag",
+  "peak_allocated_mib": 51306.884765625,
+  "peak_reserved_mib": 52610.0,
+  "sd_batch_size": 32,
+  "sd_loss": 0.029098929837346077,
+  "status": "pass",
+  "total_loss": 2.9968488216400146,
+  "vf_batch_size": 96,
+  "vf_loss": 2.967749834060669
+}

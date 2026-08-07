@@ -1,0 +1,28 @@
+{
+ "metrics": [
+  "mauve",
+  "gen_ppl"
+ ],
+ "reference": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/dumps/gold_tinystories.json",
+ "judge": "EleutherAI/gpt-j-6B",
+ "rows": [
+  {
+   "dump": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/checkpoint_eval_archived_rolling_step320000_nfe32_20260802/samples_nfe32.json",
+   "label": "archived_rolling_step320000_full_cfm_nfe32",
+   "dataset": "tinystories",
+   "checkpoint_step": 320000,
+   "sampler": "full_cfm",
+   "block_size": null,
+   "point": "argmax_nfe32",
+   "nfe": 32,
+   "discretize": "argmax",
+   "forwards_per_sequence": 32,
+   "n_samples": 512,
+   "mauve": 0.8041679714790826,
+   "frontier_integral": 0.09454815006376628,
+   "gen_ppl": 77.95147831967003,
+   "judge": "EleutherAI/gpt-j-6B",
+   "scoring_seconds": 78.2
+  }
+ ]
+}

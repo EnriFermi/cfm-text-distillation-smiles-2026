@@ -1,0 +1,33 @@
+{
+  "command": "/home/coder/.conda/envs/semicat/bin/python -m eval.dump_samples --checkpoint baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt --sampler block_causal --infer-block-size 16 --nfe 4 --discretize argmax --n-samples 512 --batch-size 64 --seed 0 --device cuda --label current_m2_blockdit_masked --out artifacts/m2_impl_comparison_20260731/current_m2_nfe4.json",
+  "commit": "07ffd555dbbbd544b22933b5a23e9ab64d633dea",
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt",
+  "checkpoint_sha256": "a7a85b5626c9bd2c743a8773827b1ea1f24de831186490b934ceecab4a41ba6f",
+  "checkpoint_metadata": {
+    "global_step": 68001,
+    "trained_block_size": null,
+    "prior_type": "gaussian",
+    "sd_type": "lag"
+  },
+  "device": "cuda",
+  "dtype": "torch.float32",
+  "seed": 0,
+  "length": 256,
+  "block_size": 16,
+  "nfe": 4,
+  "schedule": "uniform",
+  "discretize": "argmax",
+  "n_samples": 512,
+  "batch_size": 64,
+  "source_files": {
+    "eval/dump_samples.py": "cee7dfea1cfe852d7d9787ff37135fed3fc25270fb6a0d730cef48888f8b20f4",
+    "block/sampling.py": "e0bbfcf377f994ea9b5e6b6915c894920a86bd94f07851e9623a659168203366",
+    "block/block_dit.py": "cefbaac45730f4679e9796c25aa49e5f889bf2dada27f473bac5803cc8cd5db8",
+    "block/block_semicat.py": "542264c0e5caff081b94df2528d7d4835f32d2b630d79526d1dfde4cceff8354",
+    "block/mask.py": "0f5f4d3eb32e3e6bcc00c39cdcbc4d04127727090e70c471f9c085166acd3e27",
+    "semicat/net/duo.py": "b830eeeec56b798ad9ebcca4b18d834c5e9d52a15edcd2b14eec8dd85a13a9ff",
+    "semicat/models/semicat.py": "82f4bf2cab2fcfa78ccfc59d9094e6c3132f5c2933c1cd7e61ff0b644ac71425"
+  },
+  "relevant_sources_match_commit": true,
+  "output": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/m2_impl_comparison_20260731/current_m2_nfe4.json"
+}

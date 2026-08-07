@@ -1,0 +1,2 @@
+formulation,nfe,nfe_semantics,block_size,total_model_forwards_per_sequence,nfe_per_token,checkpoint_step,n_samples,length,seed,sampling_seconds,sampling_tokens_per_second,pooled_entropy_nats,mean_per_sample_generation_block_entropy_nats,report_block_size,pooled_report_block_entropy_mean_nats,mean_per_sample_report_block_entropy_nats,mean_nll,gen_ppl,effective_judge_tokens
+blockwise_cfm,1,steps_per_block,16,16,0.0625,390000,1,256,0,0.21115683298557997,1212.3690073410146,2.5282833576202393,2.055865377187729,16,2.055865377187729,2.055865377187729,,,

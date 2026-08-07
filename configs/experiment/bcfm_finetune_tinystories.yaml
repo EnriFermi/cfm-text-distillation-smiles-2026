@@ -1,0 +1,95 @@
+# @package _global_
+# Fine-tune the trained TinyStories full-sequence CFM as a block-conditional CFM.
+#
+# Same protocol as bcfm_finetune_text8 (the s_baseline.ckpt M3 recipe): strict
+# net-only init from the CFM checkpoint, block_size 16, lag objective, sd_prop
+# 0.25, time_eps 0, AdamW 1e-4 / wd 0.01, no scheduler, bf16, grad-clip 1.0,
+# 100k steps, val every 10k, seed 12345, keep every periodic checkpoint.
+#
+# Only three things change, all dictated by the checkpoint/dataset, not the
+# recipe:
+#   1. dataset: text8 -> TinyStories (GPT-2 tokens, vocab 50257);
+#   2. net architecture: matches the TinyStories checkpoint (hidden 384, 6
+#      blocks, 6 heads, rms embedding) so the strict init loads;
+#   3. micro-batch: 32 x accumulate 4 instead of 128 x 1. The *effective* batch
+#      (128), and therefore the optimization, is identical to M3; the split is
+#      forced by vocab 50257 block-model memory and mirrors the TinyStories
+#      A100 baseline, which trained at 32 x 4 for the same reason. Set
+#      data.batch_size=128 trainer.accumulate_grad_batches=1 to match M3 literally
+#      if memory allows.
+#
+# Launch:
+#   python -m semicat.train experiment=bcfm_finetune_tinystories trainer=gpu logger=comet
+defaults:
+  - override /data: tinystories
+  - override /model: block_tinystories
+  - override /trainer: default
+
+seed: 12345
+test: false
+
+trainer:
+  max_steps: 100000
+  val_check_interval: 10000
+  check_val_every_n_epoch: null
+  precision: bf16-mixed
+  accumulate_grad_batches: 4
+  gradient_clip_val: 1.0
+
+model:
+  init_from_cfm_ckpt: ${paths.root_dir}/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt
+  expected_source_sd_type: lag
+  block_size: 16
+  sd_type: lag
+  sd_prop: 0.25
+  time_eps: 0.0
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 1e-4
+    weight_decay: 0.01
+  scheduler: null
+  compile: false
+  calc_nll: false
+  nll_steps: [1, 2, 4]
+  nll_samples: 1000
+  nll_model_batch_size: 128
+  nll_sampling_batch_size: 128
+  net:
+    vocab_size: 50257
+    hidden_size: 384
+    cond_dim: 128
+    n_blocks: 6
+    n_heads: 6
+    dropout: 0.1
+    length: ${data.max_length}
+    block_size: ${model.block_size}
+    embed_type: rms
+    attention_backend: flex
+    jvp_attention_backend: auto
+    flex_kernel_block_size: 64
+
+data:
+  batch_size: 32
+  max_length: 256
+  tokenizer_name: gpt2
+  dataset_name: roneneldan/TinyStories
+  num_workers: 4
+  pin_memory: true
+  num_proc: null
+
+callbacks:
+  model_checkpoint:
+    filename: step_{step:07d}
+    monitor: val/loss
+    save_last: true
+    save_top_k: -1
+    every_n_train_steps: ${trainer.val_check_interval}
+
+tags:
+  - M3
+  - bcfm
+  - tinystories
+  - finetune
+  - lag
+  - init-step68001

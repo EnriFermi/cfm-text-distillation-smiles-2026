@@ -1,0 +1,19 @@
+{
+  "actual_train_num_workers": 0,
+  "actual_train_pin_memory": false,
+  "batch_device": "cuda:0",
+  "batch_dtype": "torch.int64",
+  "batch_shape": [
+    128,
+    256
+  ],
+  "configured_batch_size": 128,
+  "effective_batch_size": 128,
+  "sampler": "RandomSampler",
+  "source_semantics": "byte-exact untouched SemiCat",
+  "status": "pass",
+  "test_dataset_windows": 18808,
+  "train_dataset_windows": 351308,
+  "val_dataset_windows": 19745,
+  "vocab_size": 27
+}

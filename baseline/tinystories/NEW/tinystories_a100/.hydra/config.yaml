@@ -1,0 +1,116 @@
+task_name: train
+tags:
+- semicat
+- tinystories
+- dit
+train: true
+test: false
+ckpt_path: null
+seed: 12345
+data:
+  _target_: semicat.data.tinystories.TinyStoriesDataModule
+  cache_dir: ${paths.data_dir}/tinystories
+  batch_size: 32
+  max_length: 256
+  tokenizer_name: gpt2
+  dataset_name: roneneldan/TinyStories
+  num_workers: 2
+  num_proc: null
+  pin_memory: true
+model:
+  _target_: semicat.models.textsemicat.TextSemicatModule
+  net:
+    _target_: semicat.net.duo.DIT
+    vocab_size: 50257
+    hidden_size: 384
+    cond_dim: 128
+    n_blocks: 6
+    n_heads: 6
+    dropout: 0.1
+    length: ${data.max_length}
+    embed_type: rms
+    jvp_attention_backend: torch
+  prior_type: gaussian
+  scheduler:
+    _target_: torch.optim.lr_scheduler.LinearLR
+    _partial_: true
+    start_factor: 0.001
+    total_iters: 500
+  in_shape:
+  - ${data.max_length}
+  - 50257
+  sd_prop: 0.25
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 0.0001
+    weight_decay: 0.1
+  scheduler_interval: step
+  calc_nll: false
+  nll_samples: 4
+  nll_steps:
+  - 1
+  nll_sampling_batch_size: 1
+  compile: false
+callbacks:
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints
+    filename: best
+    monitor: val/loss
+    verbose: false
+    save_last: true
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: false
+    every_n_train_steps: null
+    enable_version_counter: false
+  model_summary:
+    _target_: lightning.pytorch.callbacks.RichModelSummary
+    max_depth: -1
+  rich_progress_bar:
+    _target_: lightning.pytorch.callbacks.RichProgressBar
+  learning_rate_monitor:
+    _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: step
+    log_momentum: false
+    log_weight_decay: true
+logger:
+  tensorboard:
+    _target_: lightning.pytorch.loggers.tensorboard.TensorBoardLogger
+    save_dir: ${paths.output_dir}
+    name: tensorboard
+    version: ''
+    log_graph: false
+    default_hp_metric: false
+    prefix: ''
+trainer:
+  _target_: lightning.pytorch.trainer.Trainer
+  default_root_dir: ${paths.output_dir}
+  min_epochs: 0
+  accelerator: gpu
+  devices: 1
+  check_val_every_n_epoch: null
+  deterministic: false
+  num_sanity_val_steps: 0
+  max_steps: 100000
+  val_check_interval: 4000
+  limit_val_batches: 50
+  precision: bf16-mixed
+  accumulate_grad_batches: 4
+  gradient_clip_val: 1.0
+  log_every_n_steps: 10
+paths:
+  root_dir: ${oc.env:PROJECT_ROOT}
+  data_dir: ${paths.root_dir}/data/
+  log_dir: ${paths.root_dir}/logs/
+  output_dir: ${hydra:runtime.output_dir}
+  work_dir: ${hydra:runtime.cwd}
+extras:
+  ignore_warnings: false
+  enforce_tags: true
+  print_config: true

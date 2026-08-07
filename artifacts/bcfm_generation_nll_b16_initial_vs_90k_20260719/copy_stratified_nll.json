@@ -1,0 +1,233 @@
+[
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "all",
+    "n_sequences": 2048,
+    "sequence_fraction": 1.0,
+    "source_nll_same_prior_indices": 6.746892473779904,
+    "step90k_nll": 6.593111200264588,
+    "delta_nll_90k_minus_source": -0.15378127351531568,
+    "step90k_effective_judge_tokens": 183018,
+    "step90k_fraction_of_judge_tokens": 1.0
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_32",
+    "n_sequences": 1758,
+    "sequence_fraction": 0.8583984375,
+    "source_nll_same_prior_indices": 6.750958393775879,
+    "step90k_nll": 6.759997411004129,
+    "delta_nll_90k_minus_source": 0.009039017228249513,
+    "step90k_effective_judge_tokens": 167569,
+    "step90k_fraction_of_judge_tokens": 0.9155875378378083
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_64",
+    "n_sequences": 1763,
+    "sequence_fraction": 0.86083984375,
+    "source_nll_same_prior_indices": 6.750821057779855,
+    "step90k_nll": 6.759900467966499,
+    "delta_nll_90k_minus_source": 0.009079410186644488,
+    "step90k_effective_judge_tokens": 167991,
+    "step90k_fraction_of_judge_tokens": 0.917893321968331
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "match_32_63",
+    "n_sequences": 5,
+    "sequence_fraction": 0.00244140625,
+    "source_nll_same_prior_indices": 6.702217264378325,
+    "step90k_nll": 6.721406041728377,
+    "delta_nll_90k_minus_source": 0.019188777350052533,
+    "step90k_effective_judge_tokens": 422,
+    "step90k_fraction_of_judge_tokens": 0.0023057841305226807
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "match_64_127",
+    "n_sequences": 10,
+    "sequence_fraction": 0.0048828125,
+    "source_nll_same_prior_indices": 6.797877170728601,
+    "step90k_nll": 6.494004777723097,
+    "delta_nll_90k_minus_source": -0.30387239300550384,
+    "step90k_effective_judge_tokens": 762,
+    "step90k_fraction_of_judge_tokens": 0.004163524899190244
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "match_128_255",
+    "n_sequences": 247,
+    "sequence_fraction": 0.12060546875,
+    "source_nll_same_prior_indices": 6.722836416835322,
+    "step90k_nll": 4.679807731518019,
+    "delta_nll_90k_minus_source": -2.043028685317303,
+    "step90k_effective_judge_tokens": 12854,
+    "step90k_fraction_of_judge_tokens": 0.07023352894250838
+  },
+  {
+    "nfe_steps_per_block": 8,
+    "stratum_defined_by_90k_longest_seen_match": "exact_seen_256",
+    "n_sequences": 28,
+    "sequence_fraction": 0.013671875,
+    "source_nll_same_prior_indices": 6.6951953592737485,
+    "step90k_nll": 4.218926941393792,
+    "delta_nll_90k_minus_source": -2.4762684178799566,
+    "step90k_effective_judge_tokens": 1411,
+    "step90k_fraction_of_judge_tokens": 0.007709624189970386
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "all",
+    "n_sequences": 2048,
+    "sequence_fraction": 1.0,
+    "source_nll_same_prior_indices": 6.759533970029678,
+    "step90k_nll": 6.58214545308667,
+    "delta_nll_90k_minus_source": -0.17738851694300806,
+    "step90k_effective_judge_tokens": 179033,
+    "step90k_fraction_of_judge_tokens": 1.0
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_32",
+    "n_sequences": 1704,
+    "sequence_fraction": 0.83203125,
+    "source_nll_same_prior_indices": 6.7633665328182575,
+    "step90k_nll": 6.791552902333779,
+    "delta_nll_90k_minus_source": 0.028186369515521115,
+    "step90k_effective_judge_tokens": 160620,
+    "step90k_fraction_of_judge_tokens": 0.8971530388252446
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_64",
+    "n_sequences": 1707,
+    "sequence_fraction": 0.83349609375,
+    "source_nll_same_prior_indices": 6.763379939518052,
+    "step90k_nll": 6.791304432574204,
+    "delta_nll_90k_minus_source": 0.027924493056151967,
+    "step90k_effective_judge_tokens": 160879,
+    "step90k_fraction_of_judge_tokens": 0.8985996994967408
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "match_32_63",
+    "n_sequences": 3,
+    "sequence_fraction": 0.00146484375,
+    "source_nll_same_prior_indices": 6.770923682865703,
+    "step90k_nll": 6.63721480793014,
+    "delta_nll_90k_minus_source": -0.1337088749355635,
+    "step90k_effective_judge_tokens": 259,
+    "step90k_fraction_of_judge_tokens": 0.0014466606714963162
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "match_64_127",
+    "n_sequences": 11,
+    "sequence_fraction": 0.00537109375,
+    "source_nll_same_prior_indices": 6.646534739264379,
+    "step90k_nll": 6.497075898141572,
+    "delta_nll_90k_minus_source": -0.14945884112280705,
+    "step90k_effective_judge_tokens": 825,
+    "step90k_fraction_of_judge_tokens": 0.004608089011523015
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "match_128_255",
+    "n_sequences": 293,
+    "sequence_fraction": 0.14306640625,
+    "source_nll_same_prior_indices": 6.74718590344845,
+    "step90k_nll": 4.695232481242831,
+    "delta_nll_90k_minus_source": -2.051953422205619,
+    "step90k_effective_judge_tokens": 15448,
+    "step90k_fraction_of_judge_tokens": 0.08628576854546369
+  },
+  {
+    "nfe_steps_per_block": 16,
+    "stratum_defined_by_90k_longest_seen_match": "exact_seen_256",
+    "n_sequences": 37,
+    "sequence_fraction": 0.01806640625,
+    "source_nll_same_prior_indices": 6.714711908397985,
+    "step90k_nll": 4.226976134053321,
+    "delta_nll_90k_minus_source": -2.4877357743446638,
+    "step90k_effective_judge_tokens": 1881,
+    "step90k_fraction_of_judge_tokens": 0.010506442946272475
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "all",
+    "n_sequences": 2048,
+    "sequence_fraction": 1.0,
+    "source_nll_same_prior_indices": 6.7702745170776835,
+    "step90k_nll": 6.577958933240591,
+    "delta_nll_90k_minus_source": -0.19231558383709224,
+    "step90k_effective_judge_tokens": 177790,
+    "step90k_fraction_of_judge_tokens": 1.0
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_32",
+    "n_sequences": 1686,
+    "sequence_fraction": 0.8232421875,
+    "source_nll_same_prior_indices": 6.771456655411768,
+    "step90k_nll": 6.796225059044554,
+    "delta_nll_90k_minus_source": 0.024768403632785763,
+    "step90k_effective_judge_tokens": 158441,
+    "step90k_fraction_of_judge_tokens": 0.8911693571066989
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "match_lt_64",
+    "n_sequences": 1691,
+    "sequence_fraction": 0.82568359375,
+    "source_nll_same_prior_indices": 6.77159817421743,
+    "step90k_nll": 6.796339129953787,
+    "delta_nll_90k_minus_source": 0.02474095573635715,
+    "step90k_effective_judge_tokens": 158866,
+    "step90k_fraction_of_judge_tokens": 0.8935598177625288
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "match_32_63",
+    "n_sequences": 5,
+    "sequence_fraction": 0.00244140625,
+    "source_nll_same_prior_indices": 6.817621357151186,
+    "step90k_nll": 6.838865033318014,
+    "delta_nll_90k_minus_source": 0.02124367616682843,
+    "step90k_effective_judge_tokens": 425,
+    "step90k_fraction_of_judge_tokens": 0.0023904606558299117
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "match_64_127",
+    "n_sequences": 15,
+    "sequence_fraction": 0.00732421875,
+    "source_nll_same_prior_indices": 6.864257721061564,
+    "step90k_nll": 6.612526620630881,
+    "delta_nll_90k_minus_source": -0.2517311004306828,
+    "step90k_effective_judge_tokens": 1076,
+    "step90k_fraction_of_judge_tokens": 0.0060520839192305526
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "match_128_255",
+    "n_sequences": 303,
+    "sequence_fraction": 0.14794921875,
+    "source_nll_same_prior_indices": 6.765546600819502,
+    "step90k_nll": 4.680604110938916,
+    "delta_nll_90k_minus_source": -2.0849424898805866,
+    "step90k_effective_judge_tokens": 15870,
+    "step90k_fraction_of_judge_tokens": 0.08926261319534282
+  },
+  {
+    "nfe_steps_per_block": 32,
+    "stratum_defined_by_90k_longest_seen_match": "exact_seen_256",
+    "n_sequences": 39,
+    "sequence_fraction": 0.01904296875,
+    "source_nll_same_prior_indices": 6.714612625863787,
+    "step90k_nll": 4.2425887953523915,
+    "delta_nll_90k_minus_source": -2.4720238305113957,
+    "step90k_effective_judge_tokens": 1978,
+    "step90k_fraction_of_judge_tokens": 0.0111254851228978
+  }
+]

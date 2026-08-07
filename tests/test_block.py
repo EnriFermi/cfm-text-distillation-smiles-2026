@@ -260,6 +260,25 @@ def test_block_causal_sample():
     assert 0 <= int(toks.min()) and int(toks.max()) < K
 
 
+@pytest.mark.parametrize("steps", [1, 2, 4])
+@pytest.mark.parametrize("discretize", ["argmax", "sample"])
+def test_cached_block_causal_sample_matches_full_on_cpu(steps, discretize):
+    """The KV path preserves the doubled-stream sampler on a deterministic CPU net."""
+    m = _tiny_module().eval()
+    _dezero(m.net)
+    torch.manual_seed(731)
+    expected = block_causal_sample(
+        m, B, steps_per_block=steps, batch_size=3, length=L,
+        discretize=discretize, inference_backend="full",
+    )
+    torch.manual_seed(731)
+    actual = block_causal_sample(
+        m, B, steps_per_block=steps, batch_size=3, length=L,
+        discretize=discretize, inference_backend="cached",
+    )
+    assert torch.equal(actual, expected)
+
+
 def test_sample_flow_map_batch_onehot():
     m = _tiny_module().eval()
     out = m.sample_flow_map_batch(batch_size=2, sampling_steps=1)

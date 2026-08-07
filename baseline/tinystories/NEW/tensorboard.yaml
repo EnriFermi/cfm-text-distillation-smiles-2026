@@ -1,0 +1,9 @@
+tensorboard:
+  _target_: lightning.pytorch.loggers.tensorboard.TensorBoardLogger
+  save_dir: ${paths.output_dir}
+  name: tensorboard
+  # A fixed directory keeps all resumed segments of the same RUN_NAME together.
+  version: ""
+  log_graph: false
+  default_hp_metric: false
+  prefix: ""

@@ -1,0 +1,692 @@
+checkpoint step 70000 | block_size 16 | seed 0 | n=3
+
+##############################################################################
+### discretize = argmax
+##############################################################################
+
+==============================================================================
+NFE=1 (fwd/seq=16)  entropy=4.0993  5.3s
+==============================================================================
+
+[0]  she not have a't was no with friends to play together, but they didn't help to her time very big. one and playing that her toys together was fun and they to to help her friend she
+
+ and was in Lily's house again to help her., it was her,. She tried to make her from her, but her very and her was, that her you better and help. Lily can by her toys in her much and told her for her friend. She can and her toys more. to it in her friend,. The was very, and her the. toys was in the car.Once upon a time, there was a little boy named Lily. Tim loved to, it and outside to. One with all day. One day, the big boy, Tim went on the ground. He was and ran with that. He was so happy. He played at his in the big..
+
+But mom was very,. She was very very asked. Lily was not sad. He wanted to be she time to to play. He a to toys up the went, and., up her. and started the ball. mom was not. She said, " and he her. to be happy. I did a
+
+[1] 
+ the mom and smiled. Mom said to Sam if it was a and a of you. She get it. She said, so he could her. She is the."
+
+ on it.
+
+ and was was. It was not, big..
+ was. and said when that Sam and the mom will would one together. at the bad.. Mom was very smiled and said good would you.
+
+But good. you will the toy. It is very! He wanted to help. get play and the room. Mom said the was and a too. She looked at a Sam.
+
+Tom and at help. He and his. They did not the to Mom. It was a!. They It came outside. It was help.
+
+Tom was a happy. He's the.. the door and the. Sam. They said him good to the toys. Mom got a and Mom it. The room was nice.Once there was a. He wanted the play was. The a Mom. He was so nice.
+
+But went was to was scared. The The Mom did. very the time. He it on the sun.
+
+The. Mom Mom an time. He laughed. He took
+
+[2]  had excited. The so is that it had until the sun's house. The it was for go back and the it and the it. The little with the happy and said into the room. The little something she was.Once upon a time, there was a little girl. It was so a very. day The it said it was very. 
+
+But did not know and a it. She was to find she came it with her her. The little girl was a excited but she was, and he found around.
+
+The little girl her a big it. It was the toy had and it. He was very happy and He to her.
+
+She little girl said it was time, but she the toy one. She gave it all the it and that she it was fun you.
+. The was very happy and told her to go very happy. play took toy for time. He
+ was and very day of! was so to her very very happy.Once upon a time there was a mom who in a big.. day the liked was to excited. outside was. She knew it to.
+
+One day he was his mom to go the see on a He. She said, "I his
+
+==============================================================================
+NFE=2 (fwd/seq=32)  entropy=4.3560  0.2s
+==============================================================================
+
+[0]  upon a time a there was no good friends to play with, but they didn't want to take a very big. one day, they would very together to take and to to. One about.
+
+The they was in a new, who had a them. But it was a bad. She him to stay with and other. He was very excited, He said that if you things and't will from can't he back in a safe.
+
+The took him, and he played her his friends. He was in her sad, but then him not happy. her time. He was in the bad. He off the he special.
+
+But the friends were very very sorry. He, it was time to go! with friends at the he. and the big girl looked around she on the way.
+
+ and ran when she her her friends found him. She smiled at her in the nice home.
+
+But from that day on, she was very very again. His friends was dog. she went to be she time, and she. she upon a time the friends were a., named her. They were the friends, she was red and could. very
+. One day, she were happy. She went a
+
+[1] 
+ the mom and smiled. Sam said.
+
+ it was sad and sad. He wanted to get it.
+
+" thought he will her. He is the my
+," Lily said.
+
+She was nodded.
+
+", Lily. we are the. I He is too. I the boy. very are."
+
+ theily," Lily and. He smiled and ran up the toy.
+
+"I Lily, you are the too. I are Lily! You want to you I get my again," the Lily said.
+
+Theyily too. They looked at a mom. He had too big and too. and and. They playing not the their to. It was a toy, and a car thing. It to to slide. Lily wanted to do it, but she friend not on the car and the to, but she didn't. to the slide. Lily got a and her it from the box.
+
+" one there, a!" Lily said. all was the girl of Lily.
+
+" saw."
+
+!" Lily was!" was scared. She saw the box and saw the car. She it on the slide.
+
+". It to an idea. She cried. She took
+
+[2]  had water. The so is that and had until the sun's house.
+
+ was he go back and his it in the water. The playing with the ball and he into the garden. Themy's he was so happy! hemy, he went about the time happy in the special. He was excited to it until he was playing. 
+
+my did not home and he told his mommy to find all ran. He her. to his mommy and said, "I,, so he found an find.
+ was a box and a bigmy. It was very proud had his it. He was very to for his new home.
+
+His mommy said, "Timmy you like the for one.? you can will get it and
+. So he did you, the big boy?" Timmy's and excited to him his mom. He took the for his. He walked around his mom day so a what.
+
+L was very happy good day and started out time there again. he was so a big,. And he liked his mom was very very him.Once upon a time, a was a man. He wanted to go and play on his friends. One day, he was his
+
+==============================================================================
+NFE=4 (fwd/seq=64)  entropy=4.5652  0.5s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play together, but they didn't want to take a very big. One day, they went play together to take a toy fun. They found his friends about just they didn't want to play together.
+
+Suddenly, it was too outside to find him to play with his toy. Tim was very sad, but he that if his things didn't come from can't he back toy a while. So, he took his toy and shared it with his friends. They friends loved so much, but then him because they lost his the toy park.
+
+Timmy felt off, he didn't find it all. He were his friend Tim. Then, he saw outside to go home with friends at the toy. Timmy asked toy he what she did and his mom toy some told him when that it was very fun. Timmy smiled at his sister for his toy.
+
+His mom was surprised that the toy was very him asked. Timmy was happy to she went to a toy time if and went playing with his toy toys if he went with him. They they all day and Timmy's the toy was toy and they always said toy and he loved his new toy.Once upon a
+
+[1]  hugged the mom and smiled. Sam said. Sam
+ it was sad and excited. He tried to get it.
+
+Sam thought he will her. He took the butterfly from ran on it.
+
+M was sad.
+
+ again, she heard a. "Sam, this is too much and the butterfly is very special."
+
+Sam looked at his mom. He smiled and p at the butterfly.
+
+"I no, mom," said again.
+
+Mom was still a little.
+
+"What's okay?" said Sam.
+
+Mom smiled. "It at a butterfly. It you want to keep your. But it will to get one."
+
+Sam said, "M!, Mom."
+
+Mom want to help.
+
+He took a to. He's his flew to the door and the sun, but it didn't good to the garden. Mom got a and opened it. The garden were again.Once there was a small hole in the all was the family of them. would come so nice.
+
+One day was Sam was scared. He saw something came and very the time to be it on the sun.
+
+Sam saw Sam to an idea. He sat down and took
+
+[2]  had water. The car is again and ran until the sun's house.
+
+"Thank,,. car not in. You. Max!" Lily said.
+
+They ran out. Mommy. He was not happy find the car. He told them about the car.
+
+" a with. Sam car,". car was very. It is other. did not know and came.."
+
+" let's go. One.. did not want to take a. Can we come more?" Mommy said.
+
+The car nodded and a car car. He saw the car had and it. He was not car and his family home.
+
+"L. if you want to do your like the car one. Mom you can be get it and that's be good with you. What is be?" Mom asked.
+
+"He is toys. play took car for one. He have car too. It is a car.
+
+Lily took a good day and took out. She did not want them for a big box. She he liked on the and Ben's playing. She gave it go.
+
+"I me your me. It was my car on me car. I put your red house?"
+
+==============================================================================
+NFE=8 (fwd/seq=128)  entropy=4.8147  1.0s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play together, but they didn't want to take a very big. One day, they went fishing together to take a better fishing. They showed his grand about how they lived in line.
+
+The grand were later, it was a good to allow him to play with a fish. Tim was very upset, but he that if his things couldn't break from first, he had in a boat. So, he took his bag and cast it into his boat.
+
+After a while, Tim got a pretty hungry and saw the boat. He pulled the fish up and off, he couldn't eat it all. There were very yummy. Then, it was time to go home with friends at the same line and the big fish. Tim knew on. He was so happy and ran when that it was okay, he can could make with his family tomorrow!Once upon a time, there was a rabbit who was very bossy. The castle was white living in the forest, but nobody liked to play his games. One day, the rabbit decided to hop it up to his and break the door. He was wise and could always loud himself and he only himself to be himself. He hopped a
+
+[1]  hugged the mom and gave his brother said. Sam realized it was sad and wished he had listened to stay on his cold before, so he promised to be more careful inside.Once upon a time, there was a box. It was big, pretty house. It was so special outside when that every day the door would shake!
+
+On the box, it got was very around and it always so through. One day a pretty yellow mouse playing near the box.
+
+The yellow mouse wanted to look around get closer and feel so excited about when it stepped into the grass. it looked like a surprise.
+
+She started away through the grass and she saw flowers playing on the red floor. It was so pretty, and she came outside to touch her parents.
+
+She was so happy, but she had't want the door blue friend box, something she didn't good to the box. She got closer and snatched it from the ground.
+
+Once there was a small hole in the room was the king of them. Whenever Jack felt in amaz know, the hole was there was a quiet wall.
+
+One day, a kind cat heard saw the forest in the forest hole. It cat said to each other kids. He asked
+
+[2]  had water. The dog tried quickly and watched until the doll's tail.
+
+The he stopped walking and the doll in the ball. The cat wanted the dog and asked't ran out. The dog's tail was so surprised find the cat flew back and thought about the cat.
+
+The cat finally was happy again. The dog was very. When the other dog did not know ran away the angryitty was back and's head showing the her tail. The cat looked't alone, but now happy, and he found Spot.
+
+The two and the cat became happily. Spot was happy fun together and laughed. He knew that he had his new home friend, and it tried even if it was lost after outside.Once upon a time, there was a man and that man was very reallyy. The silly boy was very sad and he had to go very quickly. He took looking for his people in the park and soon he found a man.
+
+He was very so scared and and started to shout there again. The man told a big man. Then he ran back to say "sorry, as he gave it go.
+
+The silly man was his good friend and the man loved his thing. Everyone said, he was his
+
+==============================================================================
+NFE=16 (fwd/seq=256)  entropy=4.9677  2.0s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but they couldn't. The animals were very big. One day, he went fishing together to catch a better rod. He found his fishing caught the kitchen stuck in a cold net. Tim his net pulled, it was too strong to help him. 
+
+Suddenly, Timmy saw a, lost little that smelled hard from the others. He couldn't know what any was it. Instead, he dropped the rod and dropped it into his net. The hunter was so sad, but Timmy knew he could catch the hunter. 
+
+Timmy felt relieved because he didn't need it alone. He were his friend to wake up, sleeping together. He realized that they all helped the squirrel animal and the big carrot. From that day on, they always learned to be when hunters. The hunter.Once upon a time, there was a little girl named Lily. She had a diary where she was very very kind. One day, she accidentally lots of her, but she got very angry. So she sn threw up the diary, throwing it clean up her face and broke.
+Her mom was upset and scumparrely and took her diary to be punished. She learned a
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and cried. He began to stay on his cold brother, so he only got close on his blanket.
+
+"O brother, I'm almost like. Please please again, please move.
+
+"Sh brother is too, I'm sorry boys!" Max said.
+
+Max nodded his blanket. He smiled and licked their faces.
+
+"I understand, you are brave too. I'm sorry for more cars to you just get some cream," Wh brother said.
+
+They both smiled. They looked at their brother. They had both brother and still.Ben and Lily were playing in the garden. They liked to smell the frogs and chase mud bugs. Ben liked to dig around the sand and make mud. Lily's had a shovel the shovel and a shovel, but she taught him good
+
+"Ben, make a better bug rock from our bucket," she said. "There was a small bug in the hole for the head of them. If you touch it."
+
+Ben looked at the small bug. He saw something black and moved as small to touch it on the leaf. He was frightened. It was an earthquake. He bent down and took
+
+[2]  had worked. The daibrarian quickly and watchedicked the lady's tail. The lady was a sweet treat and the librarian was gentle. The pet loll carefully and licked the children. The lady's owner was so happy! She told her back to think about the treat. The lollipop nodded. Everyone made it's owner was delicious. 
+
+When did went home and the lady showed the lipop, she ran it with her owner. The loll was a peacefulummy and happy, and he found an apple. Daisy was gladized and a l puppy loved her lollipop had saved it. The l licked and licked her for Daisy and her l even if it was lost little easy.Once upon a time, there was a man and had an important shirt. Everyday, the man set was very selfish and he had to use his shirt to keep which off for his sister.
+
+One day, he was playing alone. So his sister took a deep breath and started to dig even more - he soon became a big pile. When he wpped to it, he found something he carried it around.
+
+Just as he showed his sister to it, they heard a voice. She said, "Hey,
+
+==============================================================================
+NFE=32 (fwd/seq=512)  entropy=4.8700  4.0s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but to couldn't. The hedge was very big. Timmy said he would count together when he said.
+
+One day, Timmy lost his thumb in the hedge. He was very sad. But it was too bad to find him to count. Just night, Timmy saw a, a little cater bear resting behind a bush. He remembered everything he had found a stick.
+
+Timitedly, and he hid counting his thumb. The bunny found its thumb, but it was still closer. When the bunny showed Timmy. Timmy hopped off the hedge couldn't found it behind. There were very dependable. Then, it knew where to go home, friends at the bunny. Timmy big dogs, barked on the bush. Everyone cheered and ran away that the sun was gone again.Once upon a time, there was a big crocod crocodile named Croy. Cro was very bossy. Everyone in the crocod lived in the jungle, but Cro was very angry. Cro. Every day, Croy would raise his mud up to his crocodile.
+
+It was wise and could always Croy and he loved Cro to be boss. Croy Cro
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and cried. He began to stay on his cold brother, so he only got close on his blanket.
+
+"O brother, I'm almost like. Please please again, Mama softly.
+
+"Sh brother is too, I'm sorry too!" Jack said.
+
+Max wiped his blanket. He smiled and picked him tight.
+
+"I understand, you are brave too. I'm sorry for more greedy to you just get some cream," Mama Mama said.
+
+Tom felt better. He looked at his brother. He sniffed softly and nodded. He thanked his brother and nodded.
+
+Mama hugged Tom and said, "That's good. I love you brother. Just cream our cream sometimes. Let's go."
+
+Tom huggeded and smiled with joy. He ran to the playground. Mama cream bigger and giggled. Papa and Mama again.Once there was a squirrel who wanted to kick all the sharpls on. He workedwed and peuck over the leaves until everything was gone. He was very happy and happy as able to be heard on the leaf. 
+
+He wanted to go higher. He sat down and grabbed
+
+[2]  had enough. The muffopard quickly and licked the lady's fin. The lady was a sweet treat and Jane right through the food. The poor thanked the lady and said goodbye the welcome. Jane waved - she was so happy!Once upon a time, there was a happy man called Josh. He was a brilliant friend and he was very. 
+
+Josh did not know that he had his thumb was only Josh's finger. One Josh enough to his friend, feeling a sleepy better ins trouble, so he found an.
+
+The two friend gave a big hug. Josh was happy proud of his thumb. He knew his friend asked his thumb home.
+
+When Josh got home, he told the doctor about his special thumb. He showed his thumb thumb tightly and that the doctor was really reliable. 
+Josh was very happy and he had a brilliant very thumb to play a toy with his thumb in his tum forever.Once upon a time, there lived a very re reon and crawled out through the woods. He was so a big, hot field he liked nothing to crawl around anywhere, as he craw crawled around.
+
+One day he crawled crawling around the clearing and crawled on a bush. Everywhere he looked he was crawling
+
+==============================================================================
+NFE=64 (fwd/seq=1024)  entropy=4.9047  8.1s
+==============================================================================
+
+[0]  upon a time, there was a rat. Timmy cried, but they couldn't. The rats were very dead. One day, he went home together to take a wake up. He told his parents about the sleeping rat in danger.
+
+The next day up, it was a bad to protect him to run away rats. But Timmy woke up, but he still carried his things and trash. He couldn't walk back in a pit. Instead, he dropped his bag and he fellbed his shoe. The ratmy was sad, but then him appeared in a bin.
+
+After that, Timmy couldn't tell anything anymore. He realized that the humans were very dependable. Then, it made plans to go home with friends at the same animal and the big rat. Timmy was very proud of his help and ran with that. He wasn't scared if they could reach his pocket for his trust. From that day on, Timmy was dependableableableable.Once upon a time, there was a little boy named Timmy. Timmy loved running around the fields with his toy ball. One day, Timmy's favorite leather was cold and he felt dizzy and dizzy. 
+
+His mommy showed
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and cried. He began to stay on his cozy brother, so he promised to be more obedient afterwards.
+
+Tom watched his brother close and begged but he stopped crying. His parents moved just until his mom told him when that Jack was the love of them.
+
+After the next time his brother was gently smiled and forgicked him tight. Tom felt much better and was playing with his brother.Once there was a shy little boy named Alex lived in the pool. He was always swimming and wished he could spread out all his games. He lam high and wide, but he especiallyt haircly.
+
+One day he noticed a deep person in the pool outside to want to help himself. He swam over to a new's his cape where the deep pool friend yes, he had to carry on to the pool. So he waved and snatched it from the water.
+
+Suddenly one there was a deep splash in the pool for the child's person. Alex was so surprised he know that the water was actually was swimming! The deep waved burst and waved the pool to be washed without the pool.
+
+Alex saw Alex to an elephant. He wavedapped and thanked
+
+[2]  had enough. The muffener quickly and licked the lady's tentacles. The jelly was a sweet treat and the child lin food. The taste swam happily and dropped into the air. The lady's son was so happy! She told him back and talked about the jelly for getting so well. He was happy that he said he was obedient. 
+
+The family went home and had a tastyummy morning to find all yummy collos. The end.Once upon a time there was a little beetle named Joe. Bob was always alone and a big beetle. Joe was very proud of his noise. He was walking around in his family home.
+
+But Joe Joe hid, he thought't sounded like the beetle place. All of his brothers tried scared and that the beetle was taken away.
+
+Joe was very sad so he decided to comfort his home. He took looking for his brother in the bin and soon he found a jar.
+
+Joe was very happy scared and and started out behind the beetle. Joe was so a big beetle. Then he heard his fierce roar coming from away. Joe quickly became scared.
+
+Joe realized he showed his brother to all and from the lion beetle. Joe said, "Joe Joe
+
+==============================================================================
+NFE=128 (fwd/seq=2048)  entropy=5.0032  16.0s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but to couldn't. The hedge was very big. Timmy said he would bounce together when he crawled.
+
+One day, Timmy was sitting alone in the hedge when he heard a voice. But it was a stranger. She him to feel sad and scared. Timmy saw Bunny, but he hid touched his toe and never fell from. He jumped back and was gone.
+
+Timunny came up and saw him shaking his toe. Bunny Bunny tried to bounce, but Timmy got closer. Tim was too upset and alone. Timmy couldn't jump anything anymore. And it missed him forever.Once upon a time, there was a little bunny named Benny. Benny loved to play near the big carrot. One day, a little squirrel fell overhead and ran when Benny. He was so scared and wanted to get stuck in the hole home.
+
+Benny saw a little squirrel who was scared and asked. "Hello, rabbit," Sally said. "I'm here to win. I have to hurry if I have to go like you!"
+
+The little squirrel lied and Sally was wise and patient said "Don't worry any Benny, little squirrel. I am a
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and cried. He began to stay on his cozy brother, so he promised to be more obedient afterwards.
+
+Tom watched his brother close and begged but he stopped crying. His parents moved just until his mom told him when that Jack was the love of them.
+
+After the next time his brother was gently smiled and forgicked him tight. Tom felt much better and was playing with his brother.Once there was a shy little boy named Alex lived in the pool. He was always swimming and wished he could spread out all his games. He lam high and wide, but he missedt encouragingly.
+
+One day he noticed a deep person in the pool outside to want to help himself. He swam over to a new's shoulder and followed the deep pool friend yes, he had to carry on to the pool. So he waved and snatched it from the water.
+
+Soon one there was a small splash in the pool for the kid to share. Alex was so excited he learned that the water was useful was his feelings. The kid smiled and waved the kid to be carried around the pool.
+
+Alex't wait to talk to each other kids. He thanked
+
+[2]  had enough. The muffener quickly and licked the lady's tentacles. The jelly was a sweet treat and the mufffish was empty. The taste swam quickly and dropped into the air. The lady's son was so happy! She told him back to the mufffish!Once upon a time there was a famous lady. He was very quietvious morning other she did not know why he had grown.
+
+Suddenly, she heard a voice whistle to his humongling a whistlingling happy, so he looked around.
+
+The little girl saw a squirrel nearby. It was the farmer had his teeth. He was very loudly and his family home.
+
+The little girl said, "What do you like if you order again tomorrow?" 
+Old farmer said, "I'll tell you, the trees be whistumpy". 
+
+The little girl began to look at the horizon again. He kept singing and singing day so grumpy.
+
+Lily took a good day and shouted out behindOld: "Good! With a big,. Let's whistle!".Once upon a time there was a kind girl named Sarah. She wanted to march everyone, but she only moved on a chair. She said, "Please must
+
+##############################################################################
+### discretize = sample
+##############################################################################
+
+==============================================================================
+NFE=1 (fwd/seq=16)  entropy=4.1987  0.2s
+==============================================================================
+
+[0]  she car have a't by no. friends to play outside, but they all smiled and to to. They day his she
+ the and was in a happy with a her. Max was very and, a she that if you! laughed and can take her his time. They was in her mom, but she loved special very excited. She. they were very little excited. up, the ball went on the little.
+
+But ran when that her mom just had a little. Mom was very and asked. Max was the ball. She said't said, up her time and by the ball, mom was not and the.
+
+Max to get her up her the more. He. They asked and to by was very happy and back a little he. her her.
+
+But that was was no, and sad, for her. She said ". time have, Max! and, Mom one it to the.. Now you go you."
+
+, She and a me her mom said to Max other. Max could go help the toy. Then, the door to the house. Max of.
+, the up, they decided to mom for her too toy. The little said go to the toy mom. They were very
+
+[1] 
+ the mom and smiled. Mom said to " if it was a and a's the."
+
+" it.
+ I and a off Mom "Follow too!" one."
+
+ the family together it and They got around and went. Lily was They tried to, around get water and the sun.
+
+"Look, Mom!" said Mom. playing not "!"'s get over the
+.. Lily's still and on the window and the away, something very were..Once there was a little who in the all was. He house was a very and and very the and. be it on the sun. the day and little to on and up, the little looked around his. He felt a very high and in his little car. He was up to the sky.
+
+ he looked up, he went and up on and was so happy. He decided to throw his and and to over. he could have his little. When his new and the dog, saw at very big for he. The he was it and it into the little. Themy how and and little dog started playing. his time. They were on to too. He was the little girl he found outside with..
+ he could were a little girl
+
+[2]  had day. The so is that and had until the sun't tree. 
+
+The he she was. Mom soon something she was so!Once upon a little there was very. She was in the did and and and her was a. One day, the and he decided to behave. He was a excited friend and his to home.
+
+But little when the big little boy, he did over, the. She was very scared and he had to get a her..
+ her was took a little and and started to. The boy boy as he and it to.
+
+One day he was his little's.. He was so excited to in the him. He was scared.
+
+ his. But he had fun. They smiled and gave it. The little boy and little It was very nice.
+
+The very,. little, the was and her was nice that day. He wanted to did a good girl and. were he ran around much and back. He was so little. He was
+ and the boy was time.
+
+The good.Once upon a time, there was a little named named. He had over to play a her much. hismy was so excited for very independent, to
+
+==============================================================================
+NFE=2 (fwd/seq=32)  entropy=4.3599  0.2s
+==============================================================================
+
+[0]  upon a have a there was no toys friends to play with, but they always loved and to share. One day, Lily had an and blanket in the park with shemy. Max was very and, a, that she you better at it and Lily played her toys.. Lily it in her mom, but she felt special very useful. She said Max were very old to. up, Bill would she asked a Lily. Max some and ran when that it was very old. Lily was she was very and asked. Max was the dog. She said a said, up her toys and by the ball. Lily was happy and couldn felt in an playing to together.Once upon a time, there little a boy named Lily. very happy and with a little bird in her room. One liked to her bird playing with a and it, old her. She said, "Wow,, Max! Look, can I it so the." But the her man, "No no, it's a. her mom said, we the what it and not help me."
+
+L the, to the little man's ofmy said, " up, you decided to you for me, Lily. The little man go to the." owner. Lily were very
+
+[1] 
+ the mom and smiled. Mom said. She
+ it was sad and bad's the.
+
+" it., I will a?". It was a very special."
+
+ theily cut. She was.. and Mom felt.. She wanted to.
+
+"What's I?" said Ben.
+
+Mom and said. They She not the best Mom. It was not special. Lily's still a on the window and want.
+
+Lily happy.Once there was a good who. She was a. She liked for a very and and very her toys. She played on the sun and the day and the. But
+ day, the park felt. She. Her her friends very warm and friends. The was fun and laughed and her. She knew she to friends her up. They laughed and up. She was not lonely to good. They did not.
+
+The.
+
+The friends liked to Lily. They looked at their, but she was too be friends. She felt playing it and ran into the park. She saw how and and. She smiled her Lily. She. They were friends. She said she was the best.
+
+The went. She went. She were did. mom
+
+[2]  had water. The so is that and had until the sun't song. 
+
+Lily ran and. back soon. she was so happy! She made it until day was playing. 
+
+But did not know and he was just. Lily came came, and he found to longer. Lily was so. She asked ran to home.
+
+
+ momily said, "I, he did you. It we again?" But Lily's mom, to always on her.
+
+Lily took so little day and started out time on her playing. She knew it to be fine. Lily put him on, and hugged. and made they all her off in the again.Once upon a time, girl named Tim had a fun. They. and was had all kinds toys. The
+One was very nice. He liked to eat her. One, the cat and her friend like a day. He wanted to did a good girl..
+
+", she felt good. He was so something nice," the said said.
+
+".
+
+, good. You can not what I things," he said.
+
+" he took go to me," said.
+
+The box said came is very independent," said
+
+==============================================================================
+NFE=4 (fwd/seq=64)  entropy=4.6704  0.5s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play together, but they all loved them to play. One day, she had an incredible blanket in the park with her other. Tim was very excited, a, that she had better from before and he played her his friends would play it in her friends, but she felt special't like it all. They were very eager to give up, so Tim went on the slide.
+
+But ran playing, her her friends all a watch. Tim was scared and asked. Tim was not angry to she, up. They up her arm and opened the!, toy was red and even a ball. Tim and Timmy about her the park and laughed. They asked that the have was very happy and back a little could in her toy.
+
+After that day on no, was sad, old her. She said " toy time ever, when! and, if Timmy so toy. But I have I didn't take you,my and sad. Tim learned that when we saw what, you can help other happy. Then, the way to toy they got more of help,, happy that, they decided to make new adventures together and. TheOnce upon a time, there was a little boy
+
+[1]  hugged the mom and smiled his Mom said. She knew it was sad and Tom's friend.
+
+"I time, I will a like. It was me very special."
+
+Tom blew like his mom. Tom smiled and hugged away.
+
+"Mom, I get my in the sun?" said Tom.
+
+Mom mom said: " did not a best much get It was a bed. It's still go to the window and the toys, but they were safe.Once there was a small hole in the all in the ground. The was very happy and very the Benny to be it outside the sun.
+
+One day, a very up in the me. around his. Hemy was very sad and all his dad hard. He knew up to the sky.
+
+He stood up, he went to up on and not let Ben a smile. The he his and Tim to work.
+
+The his dad found all his car to the ground, but it was too for outside. She he up it and it into the sky. Timmy picked up and cried.
+
+Then his dad felt who had on to ground. He saw the dark and he was very with. She knew he could get it him off
+
+[2]  had water. The sun is again and ran until the sun's feet. 
+
+Lily ran and ran backmy. She was so happy! She made sure until day was playing. 
+
+my did not know and he was just. Lily asked his mom and he found an axe. Lily was so happy to bring his to home. 
+
+Her mom said, "I, he did you. the is again?"?" Lily's eyes, to always liked her.
+
+Lily took a good day and upon a time on her face. She knew it to be better. She put him on his back, coat and made they all her off in the garden. was upon a time, bear named Jack had a fun. They smiled and. they were so happy.
+
+One day Jack saw a tree over to eat, so he asked the small is. They saw that day. He wanted meed, so they decided to do a great, an by himself.
+
+So was some of a tree and the tree was hard. Then he did good. Then, he started the hang up. He smiled for again. He took over to to the tree.
+
+The was so happy. very. that felt
+
+==============================================================================
+NFE=8 (fwd/seq=128)  entropy=4.9157  1.0s
+==============================================================================
+
+[0]  upon a time, there was a good friends to play catch, but they all loved trying to win. One day, she had an attractive idea in the game. She wely up her room and found a game that could hard as fast as she can as her ball. would bounce it in her backyard, but she still couldn't know it because the best were her friend to give up, so she kept on it. 
+
+But ran when she her ball just jumped a time, she was very still asked. Her friends was angry - she didn't like it up her. She told her best she tried was before and the player in an idea to get her about her friend She just each playing, finally soon to by.
+
+The after her little about in her way. Then she learned that she was no she was sad, without her. She didn't want to give up when she tried, because she always stopped the her best on her called her game was better. She was sad that her hard that when she decided to her friend, she would have to wait to the beautiful to she could have any of.
+
+From that day on, the sun became even more beautiful. The love asked kept her friend each other. They were so
+
+[1]  hugged the cat and nodded his brother said. Sam knew it was sad and Jack's friend.
+
+"I understand, I and our Rabbit. We both have very one together. Then the garden together. So we Jack smiled and hugged Billy.
+
+"Yes, we get! it's nice?" said Sam.
+
+Sam and his brother Billy playing together the garden into two garden. They made a new's friend other on the window and both laughed, for they were safe.Once there was a small who in the sky was the eagle. He was very beautiful and very proud Benny to be heard outside the sun. One day, Benny saw a loud up in the me as he could. He felt out in surprise and opened his arms arms. He walked up to the sky and sniffovered holding the sky. They laughed and up high and was warm in a beautiful place to try! 
+
+The eagle coulded through his eyes, followed his angry over far away, but it was too for outside. So he flew up and soared into the sky, Benny saw how and it flew so high. He gave Benny felt who were on a soft, grass saw the pond if he was filled with great how that he could get a little bit
+
+[2]  had water. The toy rounced and watched until the doll's tail. 
+
+The two ran and hugged back happily. Everyone was so happy! From that day, Max was playing. 
+
+When did not stop and Mom was done, Jack asked his mom and he found an axe. Max was so excited to bring his new home.
+
+But his Mom said, "Max, he told you. That is be dangerous. It's all food to get angry." 
+
+Max was took a scared and and started to cry. Mom said as he hugged could go.
+
+Max put he hand his mom's hair and made was so far away couldn't think. He was safe.
+
+Max laughed and had a fun. They smiled and Max had an end. That still long that was even his life angry.Once upon a time, there was a veryber a special day. He wanted to fly a strong girl and. So he flew around well by himself. He was so fast! Everyone was long and the wind was tough.
+
+So the bad told the not to fl hang up. He flew for hours. He flew over to to the house.
+
+The animals so quickly. The people was even
+
+==============================================================================
+NFE=16 (fwd/seq=256)  entropy=4.9914  2.0s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but they still loved him to talk. One day, Timmy lost his blanket in the forest. He looked everywhere but for his blanket, but he still under his blanket. Suddenly, he heard a loud sound. The squirrelmy bark along, but Timmy couldn't know it. Timmy were his friend to wake up, so he went on the way. He sang and ran when that the sun was shining, but the wind was making him forever.Once upon a time, there was a girl named Lily. She loved to dance and often was sweet and happy.. One day, Timmy and her friend played a race. They ran fast and Lily was very happy and held a little dug in her hair. 
+
+As she was running, the ground started to move. She showed her friend sadly and easily jumped up and cheered. Timmy felt the whole dirty on her face. He was feeling very embarrassed and sad. He realized that when he decided to are different than help him.
+
+At the race stopped over they got any of noise, so happy that. She decided to prepare for lunch dinner food. The person ate a monster friend his owner. They were so
+
+[1]  hugged the shrimp and nodded his brother said.
+
+Tom was sad and angry. He put the shrimp on Sam his little pocket. He wished he had been en Sam. He looked at the shrimp holding his bucket. He wished he had lied.
+
+"Sam, can get lying in the shrimp?" Tom asked.
+
+Sam shook his head and did not let let would get him. They stared at Tom's brother and slammed the shrimp and the bucket, but they were wrong.Once there was a squirrel who wanted to swim in the ocean. He was very happy and very gr Benny to be caught after the sun.
+
+The squirrel saw trees and jumped in the ocean as he could. He felt alone in danger and in his arms arms. He slowly went to warmth and felt happy.
+
+Suddenly, he started to feeling tired and felt warm in energy. He landed on his shoulders and fell asleep.
+
+Soon his friends found Pearl and came to the ocean, saw Benny was waiting for bears. She picked him up and jumped into the sun towards him.
+
+Benny bear back and placed his parents. They were on seas sand. He saw the deep sea he was filled with. Even knew he could finally pulling him off
+
+[2]  had worked. The cater rounced and watchedases the doll's tail. 
+
+Lily ran out. Mommy who she was so quick! She chased Lily until Teddy was safe. 
+
+Lily gigg dug and said, "Good job!" She followed, he found an apple. Lily was so happy to she l Teddy home. 
+
+Mommy said, "You are he finding you. Teddy is be tough?" Lily then on, she always carried her pinkiness made her feel very happy.Once upon a time, there was a king who loved to collect flowers. One day he showed his king to a beautiful herb they all lived happily in the garden. He was amazed at all about his discovery and admired his crown. They smiled and thanked it all so bright.
+From that day on, a king held to show anyone who their words and shimmered. They told that he would make an extra crown in their kingdom and keep it glow anyone any well by himself. He was so proud of us of compliments and showed his crown crown.
+
+The end. Every day, he would hang up in the sun of his own magical looking over to explore the herblight. And they were so happy for their king that even
+
+==============================================================================
+NFE=32 (fwd/seq=512)  entropy=4.8814  3.9s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but to him he needed to sleep. One day his tummy lost his blanket in the forest. He peeked up to his bed, a little stuffed bear fell behind him, and he stumbledled his blanket. The bunny seemed so sad, but Tim felt special.
+
+So Timmy put his friend to wake up, so he went on the way. He sang and ran when, it was raining. Finally, the ground was cold and chilly. Timmy was so happy in its wrap. He snuddled up and gave the blanket, which was cold. 
+
+After that, Timmy and his friend played a nap. They asked that the forest was very wise and needed a little rest. Timmy's mom reminded everything that she was deaf, so sad, his goal. She laid down on the blanket and woke up and kissed. Timmy felt the tiver on his face and he was asleep feeling refreshed and warm.Once upon a time, there was a little girl named Lily. She loved playing outside in the rain. One day, she was picking up, they decided to prepare for a perfect adventure.
+
+She found her friend Miss Jack and Lily said hard
+
+[1]  hugged the shield and nodded his brother said.
+
+Tom was sad and angry. He put the sword on Sam his little shield and gun but he stopped and stamped it. He looked at the shield and his shield. He smiled and went away.
+
+"Sam, I get my shield," L brother said.
+
+Sam laughed and cried. They did not understand why Dad said he was not brilliant. He wanted his shield to the knight and the shield, but they were safe.Once there was a squirrel who wanted to swim in the ocean. He was very happy and very lucky able to be caught after the sun.
+
+The squirrel saw trees and swimming in the ocean as he could. He felt swimming in the sunshine in his net arms. He slowly needed to swim off.
+
+After the shore, he began to feeling tired and felt warm and refreshed. He landed on his bed and fell asleep.
+
+The morning day, after his journey to swim, he saw a spark in the sky. She picked it up and it into the sky. The saw it up and couldn't believe it.
+
+He who jumped on a rock. He saw the spark object he was swimming with it. Now he could get a little off
+
+[2]  had enough. The muff stool quickly and licked the lady's purse. 
+
+Lily sighed and hugged Mommy - she was so happy! She made sure until coffee was full. 
+
+Mom did not stop and said '�, Lily kept eating yelling and he found an cookie. Lily was so excited and she licked home. 
+
+But Mama said, "Ben, he insist you guess the cupin'.', Lily's eyes - she knew ''. 
+
+Lily took a deep breath and tried out behind a cupboard. She gave it to be real. Lily put him on, and smiled. She giggled so much tasty in her hands. There was ready he needed a wonderful time!Once upon a time, there was a brilliant cube. Everyone was long that was very exciting. One day winter day, a little boy flew towns and all alone saw a hill. He wanted to reach a hill, so he pe coloured higher and flew by himself. He was so fast! Everyone was amazed and the hill was tough. As he reached the top top, he could barely himself up. He felt enver. He flew over to explore the top hill and saw a box unwin got lost. He even
+
+==============================================================================
+NFE=64 (fwd/seq=1024)  entropy=4.9815  7.8s
+==============================================================================
+
+[0]  upon a time, there was a Jerry. Timmy cried, but they still loved him to shave. One day, Timmy lost his scarf in the bushes. He looked everywhere but for his arm, but he still under his scarf. Suddenly, he heard a loud sound. The sound tried trump loudly, but the squirrel couldn't hear it. Timmy were very eager to wake up, so he ran to the bushes. He sang and ran when that the sun was shining, but the wind was ignored him perfectly.Once upon a time, there was a girl named Lily. She loved to explore and explore was wise and interesting. One One day, they saw a little rat on a billboard. They asked that the rat was very scary and whispered a little about in her eye. 
+
+Lily was very curious and decided to examine her. She asked her mom what it was when she and parents told she wouldn't understand. But then her mom suggested Lily was sleeping very wise and curious that they discovered that some modern rats who are lost needed help. 
+
+Lily listened to the rats and couldn't help either by the billboard. She decided to look for rats and food. The rat rat found a of interesting rats. Lily were so
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and angry. He put the blanket on Sam his little pillow and glared but he refused to have it. He glared at the tight holding his pillow pillow, but he didn't�! He tried to defend away get older and hurt attention.
+
+Finally he was angry and his brother came up snatched the blanket into two him. They stared at Tom's brother other on the blanket and the blanket, but they were disappointed.Once there was a bunny who wanted to all all the animals. He was very competitive and very lucky able to be them all the way.
+
+One day he got very focused in the forest as he could all of the animals in the forest all hisggies baskets. He worked needed to allow himself to get any of the animals, squirrel displays and up fences and not able to a good things to buy! 
+
+The bunny could hardly contain his excitement. On his journey to the forest, feeling at his frustrations for bears. As he worked higher and nights, the animals managed to work all and care that the tree had just his own. 
+
+At finally, after allowing the animals to reduce the forest with great cheers that he could buy lots of off
+
+[2]  had enough. The muff stool quickly and latted the lady's purse. 
+
+The elderly chicken was filled back soon - she was so happy! She made sure until everyone was full. 
+
+When did went home and said big smiles, everyone asked her mom and he found an apple. Daisy was so excited - she'd found her delicious, and her mom even said it was the best apple!Once the silly boy was a popular boy and had a lot of playing. He loved his feet very much every day and shouted out behindcome everyone, as he possiblyashed around.
+
+One day he was his best, a noise frog that he saw something in the garden. He was scared. He opened his eyes and take a look. Frog smiled and thanked it. The frog nodded and explained that was even brighter.
+
+The show, Frog recognized, the frog is so popular enough that day. He wanted to splash in puddle and beat if he jumped around happily by himself. He was so proud of what of Frog and the frog assured him.
+
+The frog paddly padd him to the frog and enjoyed the rest of splash. He hopped over to Frog and then pleaded and his they were so happy.There was even
+
+==============================================================================
+NFE=128 (fwd/seq=2048)  entropy=4.8905  15.7s
+==============================================================================
+
+[0]  upon a time, there was a bunny. Timmy cried, but to him he needed to sleep. He found his favorite rubber just his sandwich in the hole. As bunny woke up onto his bed, a little stuffed bear fell up onto him and rubbed him shut his lip. The bunny was so sad, but Benny felt special.
+
+So themy put his lip to wake up, so Benny went on the slide. He sang and ran when that it was nearby. Finally, the slide was up and down. The bunny was so happy in its company. Benny slid down up and sat down hills, Benny was okay. 
+
+From that day on Benny and his bunny more of friends. They played together to have the fun day and the sweet little about bunny fell off. Benny never forgot that being bunny no, so sad, okay now.Once upon a time, there was a little boy named Timmy. He went outside to play outside. He was feeling very cool and cold. Timmy felt some cold tick on his head near his neck.
+
+As the slide set over, got Timmy slipped, Sally woke up. She decided to wait for lunch for Timmy ready to go school. Sally saw his. They were very
+
+[1]  hugged the blanket and nodded his brother said.
+
+Tom was sad and angry. He put the blanket on Sam his little pillow and frowned but he refused to have it. He glared at the tight where his pillow was, but he didn't�! He tried to pull away get older and hurt attention.
+
+At night, Eli and his brother came up snatched the blanket into two him. They stared at other's brother other on the blanket and the blanket, but they were wrong.Once there was a bunny who wanted to all all the animals. He was very impatient and very lucky; to be them all the way.
+
+One day to took the bunny, the bunny hopped around his garden. Then, he hopped and all hisggies pants. He slowly needed to hop off.
+
+After the disturbed, he started to feeling tired and was able to nap forever. But he his bunny legs to secure which he could have his appetite.
+
+On mun relaxed, he saw a lucky waiting for dinner. She hoppedied it and hopped into the night. Everyone saw all and nummyled with joy.
+
+Everyone who were on a great, content while the bunny hopped around for dinner with. They knew he could get a perfect time
+
+[2]  had enough. The muffener quickly and licked the lady's tentacles. 
+
+The jellyfish was delighted and soon - she was so happy! She made the mufffish was alive. 
+
+When did neighbouring home and jelly was gone, everyone praised thanked Julius and he found an largest. Kirby was so happy he had his new home.
+
+He vowed even iffish was lucky, he taught his friend the mufffish was a place he was going to do!Once upon a time there was a gloomy day and headed out through a field. As he drove for a while, he didn't he spread his favorite plan.
+
+Then he saw something in the ground. He was scared. He opened his eyes and take a look. He smiled and thanked it.
+
+Just then something that was even behind a tree. He continued to himself for a happy moment and he was a special day. He eventually came across a fierce girl and the tummy laughed and spoke by himself.
+
+The little girl kept walking again and the brave appeared. She knew he did good. Then, she lit the puzzle and spread the sun sunshine again. He took over to it and smiled.
+
+The was so happy.Tommy was

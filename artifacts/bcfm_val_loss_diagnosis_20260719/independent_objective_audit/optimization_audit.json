@@ -1,0 +1,25 @@
+{
+  "betas": [
+    0.9,
+    0.999
+  ],
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-18_10-46-57_12345_local/checkpoints/step_0090000.ckpt",
+  "clip_fraction_established": false,
+  "epoch": 32,
+  "eps": 1e-08,
+  "global_step": 90000,
+  "grad_norm_logged": false,
+  "gradient_clip_algorithm": "Lightning default global norm",
+  "gradient_clip_val_from_resolved_config": 1.0,
+  "lr": 0.0001,
+  "optimizer": "AdamW",
+  "optimizer_initialized_fresh_for_block_run": true,
+  "optimizer_state_parameter_count": 160,
+  "optimizer_steps": [
+    90000.0
+  ],
+  "scheduler_states": 0,
+  "source_optimizer_restored": false,
+  "source_weight_checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/s_baseline.ckpt",
+  "weight_decay": 0.01
+}

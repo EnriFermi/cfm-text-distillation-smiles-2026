@@ -1,0 +1,27 @@
+{
+  "k": 256,
+  "configured_train_val_test_split": [
+    351563,
+    20000,
+    19063
+  ],
+  "train_bin_tokens": 90000000,
+  "holdout_bin_tokens": 10000000,
+  "actual_train_raw_tokens_used": 351563,
+  "actual_val_raw_tokens_used": 20000,
+  "actual_test_raw_tokens_used": 19063,
+  "actual_train_windows_stride1": 351308,
+  "actual_val_windows_stride1": 19745,
+  "actual_test_windows_stride1": 18808,
+  "train_corpus_coverage_fraction": 0.0039062555555555555,
+  "holdout_corpus_coverage_fraction": 0.0039063,
+  "train_window_adjacent_overlap_tokens": 255,
+  "validation_shuffle": false,
+  "validation_batches": 155,
+  "batch_size": 128,
+  "sd_prop": 0.25,
+  "block_size": 16,
+  "sd_type": "lag",
+  "learning_rate": 0.0001,
+  "scheduler": null
+}

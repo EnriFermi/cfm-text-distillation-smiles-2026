@@ -1,0 +1,77 @@
+{
+  "judge": "NousResearch/Meta-Llama-3.1-8B",
+  "context_size": 256,
+  "texts_file": "/home/coder/tmp/claude-1000/-home-coder-project/8f0bedb0-bfe2-426c-92d0-131a39f541d9/scratchpad/texts_snapshot_for_llama.json",
+  "gold_gen_ppl": 5.948370456695557,
+  "results": [
+    {
+      "point": "gold_reference",
+      "n_texts": 512,
+      "gen_ppl": 5.948370456695557,
+      "ratio_to_gold": 1.0
+    },
+    {
+      "point": "argmax_nfe1",
+      "n_texts": 512,
+      "gen_ppl": 56.21959686279297,
+      "ratio_to_gold": 9.451260184965703,
+      "seconds": 34.3
+    },
+    {
+      "point": "argmax_nfe2",
+      "n_texts": 512,
+      "gen_ppl": 58.8717155456543,
+      "ratio_to_gold": 9.897116525314525,
+      "seconds": 21.1
+    },
+    {
+      "point": "argmax_nfe4",
+      "n_texts": 512,
+      "gen_ppl": 52.16075897216797,
+      "ratio_to_gold": 8.768915680672713,
+      "seconds": 21.6
+    },
+    {
+      "point": "argmax_nfe8",
+      "n_texts": 512,
+      "gen_ppl": 53.23835754394531,
+      "ratio_to_gold": 8.950074298755146,
+      "seconds": 21.2
+    },
+    {
+      "point": "argmax_nfe16",
+      "n_texts": 512,
+      "gen_ppl": 60.64092254638672,
+      "ratio_to_gold": 10.194543696942844,
+      "seconds": 21.7
+    },
+    {
+      "point": "argmax_nfe32",
+      "n_texts": 512,
+      "gen_ppl": 64.79833221435547,
+      "ratio_to_gold": 10.893459424911523,
+      "seconds": 46.6
+    },
+    {
+      "point": "argmax_nfe64",
+      "n_texts": 512,
+      "gen_ppl": 64.61638641357422,
+      "ratio_to_gold": 10.862871921643892,
+      "seconds": 47.4
+    },
+    {
+      "point": "sample_nfe1",
+      "n_texts": 512,
+      "gen_ppl": 67.26538848876953,
+      "ratio_to_gold": 11.308204318891203,
+      "seconds": 46.7
+    },
+    {
+      "point": "sample_nfe2",
+      "n_texts": 512,
+      "gen_ppl": 71.71488952636719,
+      "ratio_to_gold": 12.056224481722394,
+      "seconds": 46.9
+    }
+  ]
+}

@@ -25,7 +25,9 @@ Metric groups:
 from __future__ import annotations
 
 import argparse
+import gc
 import glob
+import hashlib
 import json
 import math
 import time
@@ -140,19 +142,78 @@ def js_divergence(counts_p: Counter, counts_q: Counter) -> float:
 
 
 # --------------------------------------------------------------- external models
-def compute_mauve(reference_texts, texts, featurize_model, device_id, max_length):
+def compute_mauve(
+    reference_texts,
+    texts,
+    featurize_model,
+    device_id,
+    max_length,
+    reference_feature_cache=None,
+):
     import mauve
     from mauve.utils import featurize_tokens_from_model, get_model, get_tokenizer
     tok = get_tokenizer(featurize_model)
     model = get_model(featurize_model, tok, device_id)
 
-    def feats(items):
+    def feats(items, name):
         encoded = [tok.encode(t, return_tensors="pt", truncation=True,
                               max_length=max_length) for t in items]
-        return featurize_tokens_from_model(model, encoded, 16)
+        return featurize_tokens_from_model(
+            model, encoded, 16, name=name, verbose=True
+        ).numpy()
 
-    result = mauve.compute_mauve(p_features=feats(reference_texts),
-                                 q_features=feats(texts),
+    reference_features = None
+    cache_path = Path(reference_feature_cache) if reference_feature_cache else None
+    digest = hashlib.sha256()
+    for item in reference_texts:
+        digest.update(item.encode("utf-8"))
+        digest.update(b"\0")
+    expected_metadata = {
+        "schema": "mauve-reference-features/v1",
+        "featurize_model": featurize_model,
+        "max_length": int(max_length),
+        "n_texts": len(reference_texts),
+        "texts_sha256": digest.hexdigest(),
+    }
+    if cache_path and cache_path.is_file():
+        cached = np.load(cache_path, allow_pickle=False)
+        metadata = json.loads(str(cached["metadata"].item()))
+        if metadata != expected_metadata:
+            raise ValueError(
+                f"stale/incompatible MAUVE reference cache {cache_path}: "
+                f"expected {expected_metadata}, got {metadata}"
+            )
+        reference_features = cached["features"]
+        print(
+            f"[mauve] reference cache hit: {cache_path} "
+            f"shape={reference_features.shape}",
+            flush=True,
+        )
+    else:
+        print(
+            f"[mauve] reference cache miss: featurizing {len(reference_texts)} texts",
+            flush=True,
+        )
+        reference_features = feats(reference_texts, "reference")
+        if cache_path:
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = cache_path.with_name(cache_path.name + ".tmp.npz")
+            np.savez_compressed(
+                temporary,
+                features=reference_features,
+                metadata=np.asarray(json.dumps(expected_metadata, sort_keys=True)),
+            )
+            temporary.replace(cache_path)
+            print(f"[mauve] reference cache written: {cache_path}", flush=True)
+
+    generated_features = feats(texts, "generated")
+    del model, tok
+    gc.collect()
+    if device_id >= 0:
+        import torch
+        torch.cuda.empty_cache()
+    result = mauve.compute_mauve(p_features=reference_features,
+                                 q_features=generated_features,
                                  num_buckets="auto", seed=25, verbose=False)
     return float(result.mauve), float(result.frontier_integral)
 
@@ -162,19 +223,30 @@ def compute_gen_ppl(texts, judge, batch_size, context_size, device, dtype):
     import torch
     import torch.nn.functional as F
     import transformers
+    print(
+        f"[gen_ppl] stage=judge_load model={judge} device={device} dtype={dtype}",
+        flush=True,
+    )
     tok = transformers.AutoTokenizer.from_pretrained(judge)
     if tok.pad_token is None:
         tok.pad_token, tok.pad_token_id = tok.eos_token, tok.eos_token_id
     tok.padding_side, tok.truncation_side = "right", "right"
     model = transformers.AutoModelForCausalLM.from_pretrained(
         judge, torch_dtype=getattr(torch, dtype)).eval().to(device)
+    print(
+        f"[gen_ppl] stage=judge_ready model={judge} "
+        f"parameter_dtype={next(model.parameters()).dtype}",
+        flush=True,
+    )
     encoded = tok(texts, return_tensors="pt", return_attention_mask=True,
                   truncation=True, padding=True, max_length=context_size,
                   add_special_tokens=False)
     ids, attn = encoded["input_ids"].to(device), encoded["attention_mask"].to(device)
     total_nll, total_tokens = 0.0, 0
+    n_batches = math.ceil(ids.size(0) / batch_size)
+    started = time.perf_counter()
     with torch.inference_mode():
-        for start in range(0, ids.size(0), batch_size):
+        for batch_index, start in enumerate(range(0, ids.size(0), batch_size)):
             chunk, mask = ids[start:start + batch_size], attn[start:start + batch_size]
             logits = model(chunk, attention_mask=mask).logits.transpose(-1, -2)
             nll = F.cross_entropy(logits[..., :-1].float(), chunk[..., 1:],
@@ -183,7 +255,23 @@ def compute_gen_ppl(texts, judge, batch_size, context_size, device, dtype):
             valid = (first_eos[..., 1:] + (chunk != tok.eos_token_id)[..., 1:]).float()
             total_nll += (nll * valid).sum().item()
             total_tokens += valid.sum().item()
-    del model
+            if (
+                batch_index == 0
+                or (batch_index + 1) % 8 == 0
+                or batch_index + 1 == n_batches
+            ):
+                elapsed = time.perf_counter() - started
+                print(
+                    f"[gen_ppl] stage=judge batch={batch_index + 1}/{n_batches} "
+                    f"samples={min(start + batch_size, ids.size(0))}/{ids.size(0)} "
+                    f"tokens={total_tokens} elapsed={elapsed:.1f}s "
+                    f"batches_per_s={(batch_index + 1) / max(elapsed, 1e-9):.2f}",
+                    flush=True,
+                )
+    if total_tokens == 0:
+        raise ValueError("gen-PPL has zero valid judge tokens")
+    del model, tok, encoded, ids, attn
+    gc.collect()
     torch.cuda.empty_cache()
     return float(np.exp(total_nll / total_tokens))
 
@@ -201,6 +289,10 @@ def main() -> None:
     parser.add_argument("--judge-batch-size", type=int, default=8)
     parser.add_argument("--judge-dtype", default="float32")
     parser.add_argument("--featurize-model", default="gpt2-large")
+    parser.add_argument(
+        "--mauve-reference-cache",
+        help="validated .npz cache for reference GPT features",
+    )
     parser.add_argument("--context-size", type=int, default=256)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--device-id", type=int, default=0)
@@ -254,7 +346,8 @@ def main() -> None:
             if "mauve" in args.metrics:
                 score, frontier = compute_mauve(ref_texts, point["texts"],
                                                 args.featurize_model, args.device_id,
-                                                args.context_size)
+                                                args.context_size,
+                                                args.mauve_reference_cache)
                 row["mauve"], row["frontier_integral"] = score, frontier
             if "gen_ppl" in args.metrics:
                 row["gen_ppl"] = compute_gen_ppl(point["texts"], args.judge,
