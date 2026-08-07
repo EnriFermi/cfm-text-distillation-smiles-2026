@@ -1,0 +1,23 @@
+[bd3lm] block_size=16 params=51,119,442 length=256 weights=ema step=100000
+[gpu] NVIDIA GeForce RTX 5070 Laptop GPU
+
+  batch=  1 ancestral     S=  1    0.0939 s/batch      93.90 ms/seq      2726.3 tok/s  NFE=  16  peak 1.16 GB
+  batch=  1 ancestral     S=  2    0.2035 s/batch     203.49 ms/seq      1258.0 tok/s  NFE=  32  peak 1.16 GB
+  batch=  1 ancestral     S=  4    0.4003 s/batch     400.29 ms/seq       639.5 tok/s  NFE=  64  peak 1.16 GB
+  batch=  1 ancestral     S=  8    0.7751 s/batch     775.06 ms/seq       330.3 tok/s  NFE= 128  peak 1.16 GB
+  batch=  1 ancestral     S= 16    1.4737 s/batch    1473.71 ms/seq       173.7 tok/s  NFE= 256  peak 1.16 GB
+  batch=  1 ancestral     S= 32    2.9858 s/batch    2985.77 ms/seq        85.7 tok/s  NFE= 512  peak 1.16 GB
+  batch=  4 ancestral     S=  1    0.3199 s/batch      79.97 ms/seq      3201.3 tok/s  NFE=  16  peak 1.49 GB
+  batch=  4 ancestral     S=  2    0.6365 s/batch     159.13 ms/seq      1608.7 tok/s  NFE=  32  peak 1.49 GB
+  batch=  4 ancestral     S=  4    1.3337 s/batch     333.42 ms/seq       767.8 tok/s  NFE=  64  peak 1.49 GB
+  batch=  4 ancestral     S=  8    2.5778 s/batch     644.44 ms/seq       397.2 tok/s  NFE= 128  peak 1.49 GB
+  batch=  4 ancestral     S= 16    5.7919 s/batch    1447.98 ms/seq       176.8 tok/s  NFE= 256  peak 1.49 GB
+  batch=  4 ancestral     S= 32   11.8687 s/batch    2967.17 ms/seq        86.3 tok/s  NFE= 512  peak 1.49 GB
+  batch= 16 ancestral     S=  1    1.3911 s/batch      86.94 ms/seq      2944.4 tok/s  NFE=  16  peak 2.76 GB
+  batch= 16 ancestral     S=  2    2.7767 s/batch     173.55 ms/seq      1475.1 tok/s  NFE=  32  peak 2.81 GB
+  batch= 16 ancestral     S=  4    5.5562 s/batch     347.26 ms/seq       737.2 tok/s  NFE=  64  peak 2.81 GB
+  batch= 16 ancestral     S=  8   11.1092 s/batch     694.33 ms/seq       368.7 tok/s  NFE= 128  peak 2.81 GB
+  batch= 16 ancestral     S= 16   20.8005 s/batch    1300.03 ms/seq       196.9 tok/s  NFE= 256  peak 2.81 GB
+  batch= 16 ancestral     S= 32   42.1293 s/batch    2633.08 ms/seq        97.2 tok/s  NFE= 512  peak 2.81 GB
+
+[saved] /home/andrey/Documents/projects/SMILES 2026/eval test/results/bd3lm_latency_nocache.json

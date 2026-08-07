@@ -1,0 +1,71 @@
+[bd3lm] block_size=16 params=51,119,442 length=256 weights=ema step=100000
+[gpu] NVIDIA GeForce RTX 5070 Laptop GPU
+
+[opt] torch.compile
+
+/tmp/claude-1000/-home-andrey-Documents-projects-SMILES-2026/9094909c-ce31-4711-9f71-0b7bec1ccc58/scratchpad/venv/lib/python3.11/site-packages/torch/_inductor/compile_fx.py:236: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+W0803 15:25:09.569000 54625 torch/_inductor/utils.py:1250] [0/0] Not enough SMs to use max_autotune_gemm mode
+In file included from /home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/Python.h:12,
+                 from /tmp/tmpnglbq_1p/main.c:4:
+/home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/pyconfig.h:1796:9: warning: ‘_POSIX_C_SOURCE’ redefined
+ 1796 | #define _POSIX_C_SOURCE 200809L
+      |         ^~~~~~~~~~~~~~~
+In file included from /usr/include/bits/libc-header-start.h:33,
+                 from /usr/include/stdlib.h:26,
+                 from /tmp/claude-1000/-home-andrey-Documents-projects-SMILES-2026/9094909c-ce31-4711-9f71-0b7bec1ccc58/scratchpad/venv/lib/python3.11/site-packages/triton/backends/nvidia/include/cuda.h:56,
+                 from /tmp/tmpnglbq_1p/main.c:2:
+/usr/include/features.h:319:10: note: this is the location of the previous definition
+  319 | # define _POSIX_C_SOURCE        202405L
+      |          ^~~~~~~~~~~~~~~
+In file included from /home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/Python.h:12,
+                 from /tmp/tmp_i9_kmsx/main.c:4:
+/home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/pyconfig.h:1796:9: warning: ‘_POSIX_C_SOURCE’ redefined
+ 1796 | #define _POSIX_C_SOURCE 200809L
+      |         ^~~~~~~~~~~~~~~
+In file included from /usr/include/bits/libc-header-start.h:33,
+                 from /usr/include/stdlib.h:26,
+                 from /tmp/claude-1000/-home-andrey-Documents-projects-SMILES-2026/9094909c-ce31-4711-9f71-0b7bec1ccc58/scratchpad/venv/lib/python3.11/site-packages/triton/backends/nvidia/include/cuda.h:56,
+                 from /tmp/tmp_i9_kmsx/main.c:2:
+/usr/include/features.h:319:10: note: this is the location of the previous definition
+  319 | # define _POSIX_C_SOURCE        202405L
+      |          ^~~~~~~~~~~~~~~
+  batch=  1 ancestral     S=  1    0.0743 s/batch      74.32 ms/seq      3444.7 tok/s  NFE=  16  peak 1.24 GB
+  batch=  1 ancestral     S=  2    0.1324 s/batch     132.43 ms/seq      1933.2 tok/s  NFE=  32  peak 1.11 GB
+  batch=  1 ancestral     S=  4    0.2180 s/batch     218.04 ms/seq      1174.1 tok/s  NFE=  64  peak 1.11 GB
+  batch=  1 ancestral     S=  8    0.4193 s/batch     419.28 ms/seq       610.6 tok/s  NFE= 128  peak 1.11 GB
+  batch=  1 ancestral     S= 16    0.7423 s/batch     742.32 ms/seq       344.9 tok/s  NFE= 256  peak 1.11 GB
+In file included from /home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/Python.h:12,
+                 from /tmp/tmp7llu2cev/main.c:4:
+/home/andrey/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/include/python3.11/pyconfig.h:1796:9: warning: ‘_POSIX_C_SOURCE’ redefined
+ 1796 | #define _POSIX_C_SOURCE 200809L
+      |         ^~~~~~~~~~~~~~~
+In file included from /usr/include/bits/libc-header-start.h:33,
+                 from /usr/include/stdlib.h:26,
+                 from /tmp/claude-1000/-home-andrey-Documents-projects-SMILES-2026/9094909c-ce31-4711-9f71-0b7bec1ccc58/scratchpad/venv/lib/python3.11/site-packages/triton/backends/nvidia/include/cuda.h:56,
+                 from /tmp/tmp7llu2cev/main.c:2:
+/usr/include/features.h:319:10: note: this is the location of the previous definition
+  319 | # define _POSIX_C_SOURCE        202405L
+      |          ^~~~~~~~~~~~~~~
+W0803 15:26:00.764000 54625 torch/_dynamo/convert_frame.py:964] [0/8] torch._dynamo hit config.recompile_limit (8)
+W0803 15:26:00.764000 54625 torch/_dynamo/convert_frame.py:964] [0/8]    function: 'forward' (/home/andrey/Documents/projects/SMILES 2026/BCFM Baselines/bcfm_baselines/net/text_transformer.py:215)
+W0803 15:26:00.764000 54625 torch/_dynamo/convert_frame.py:964] [0/8]    last reason: 0/7: ___check_obj_id(cache, 94294231597144)                 
+W0803 15:26:00.764000 54625 torch/_dynamo/convert_frame.py:964] [0/8] To log all recompilation reasons, use TORCH_LOGS="recompiles".
+W0803 15:26:00.764000 54625 torch/_dynamo/convert_frame.py:964] [0/8] To diagnose recompilation issues, see https://pytorch.org/docs/main/torch.compiler_troubleshooting.html.
+  batch=  4 ancestral     S=  1    0.2067 s/batch      51.68 ms/seq      4953.5 tok/s  NFE=  16  peak 1.32 GB
+  batch=  4 ancestral     S=  2    0.4198 s/batch     104.95 ms/seq      2439.3 tok/s  NFE=  32  peak 1.32 GB
+  batch=  4 ancestral     S=  4    0.8005 s/batch     200.12 ms/seq      1279.2 tok/s  NFE=  64  peak 1.32 GB
+  batch=  4 ancestral     S=  8    1.5419 s/batch     385.47 ms/seq       664.1 tok/s  NFE= 128  peak 1.32 GB
+  batch=  4 ancestral     S= 16    3.0724 s/batch     768.10 ms/seq       333.3 tok/s  NFE= 256  peak 1.32 GB
+  batch= 16 ancestral     S=  1    0.8810 s/batch      55.06 ms/seq      4649.3 tok/s  NFE=  16  peak 1.95 GB
+  batch= 16 ancestral     S=  2    1.6446 s/batch     102.79 ms/seq      2490.6 tok/s  NFE=  32  peak 1.95 GB
+  batch= 16 ancestral     S=  4    2.8628 s/batch     178.92 ms/seq      1430.8 tok/s  NFE=  64  peak 1.95 GB
+  batch= 16 ancestral     S=  8    6.2438 s/batch     390.24 ms/seq       656.0 tok/s  NFE= 128  peak 1.95 GB
+  batch= 16 ancestral     S= 16   11.8250 s/batch     739.06 ms/seq       346.4 tok/s  NFE= 256  peak 1.95 GB
+  batch= 32 ancestral     S=  1    1.7250 s/batch      53.91 ms/seq      4748.9 tok/s  NFE=  16  peak 2.86 GB
+  batch= 32 ancestral     S=  2    3.2296 s/batch     100.92 ms/seq      2536.6 tok/s  NFE=  32  peak 2.86 GB
+  batch= 32 ancestral     S=  4    5.9387 s/batch     185.58 ms/seq      1379.4 tok/s  NFE=  64  peak 2.86 GB
+  batch= 32 ancestral     S=  8   11.3298 s/batch     354.06 ms/seq       723.1 tok/s  NFE= 128  peak 2.86 GB
+  batch= 32 ancestral     S= 16   22.4341 s/batch     701.07 ms/seq       365.2 tok/s  NFE= 256  peak 2.86 GB
+
+[saved] /home/andrey/Documents/projects/SMILES 2026/eval test/results/bd3lm_latency_lossless.json

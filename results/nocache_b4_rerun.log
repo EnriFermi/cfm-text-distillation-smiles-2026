@@ -1,0 +1,11 @@
+[bd3lm] block_size=16 params=51,119,442 length=256 weights=ema step=100000
+[gpu] NVIDIA GeForce RTX 5070 Laptop GPU
+
+  batch=  4 ancestral     S=  1    0.3666 s/batch      91.64 ms/seq      2793.4 tok/s  NFE=  16  peak 1.49 GB
+  batch=  4 ancestral     S=  2    0.7284 s/batch     182.10 ms/seq      1405.8 tok/s  NFE=  32  peak 1.49 GB
+  batch=  4 ancestral     S=  4    1.4338 s/batch     358.44 ms/seq       714.2 tok/s  NFE=  64  peak 1.49 GB
+  batch=  4 ancestral     S=  8    2.5936 s/batch     648.40 ms/seq       394.8 tok/s  NFE= 128  peak 1.49 GB
+  batch=  4 ancestral     S= 16    5.3174 s/batch    1329.35 ms/seq       192.6 tok/s  NFE= 256  peak 1.49 GB
+  batch=  4 ancestral     S= 32   10.4847 s/batch    2621.17 ms/seq        97.7 tok/s  NFE= 512  peak 1.49 GB
+
+[saved] /home/andrey/Documents/projects/SMILES 2026/eval test/results/bd3lm_nocache_b4_rerun.json
