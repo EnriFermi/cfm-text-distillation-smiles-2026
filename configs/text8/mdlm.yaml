@@ -1,0 +1,14 @@
+inherits: base.yaml
+model:
+  type: mdlm
+training:
+  # No [noisy, clean] concatenation, so a full 256 micro-batch fits ~50GB.
+  # Global batch stays 2048.
+  batch_size: 256
+  gradient_accumulation_steps: 8
+  ema_decay: 0.9999
+sampling:
+  num_steps: 5000
+  top_p: 0.9
+  top_p_include_boundary: false
+  use_kv_cache: false

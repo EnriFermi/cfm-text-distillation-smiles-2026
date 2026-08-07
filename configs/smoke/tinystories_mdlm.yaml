@@ -1,0 +1,6 @@
+inherits: tinystories_base.yaml
+model:
+  type: mdlm
+sampling:
+  start_token_id: 50256
+  use_kv_cache: false

@@ -1,0 +1,9 @@
+/data/
+__pycache__/
+/logs/
+/runs/
+.pytest_cache/
+.env
+.venv/
+slurm-*.out
+slurm-*.err

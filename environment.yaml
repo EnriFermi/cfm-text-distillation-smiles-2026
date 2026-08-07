@@ -1,0 +1,20 @@
+name: bcfm-baselines
+channels: [pytorch, nvidia, conda-forge]
+dependencies:
+  - python=3.11
+  - pytorch=2.7
+  - pytorch-cuda=12.4
+  - numpy=1.26
+  - pip
+  - pip:
+      - omegaconf==2.3.0
+      - pytest>=8.0
+      - tensorboard>=2.18
+      - tiktoken>=0.7
+      # Gen-PPL judge and MAUVE featurizer (both GPT-2 Large); the version
+      # matches the CFM reference's pin so both sides score identically.
+      - transformers==4.41.0
+      - mauve-text>=0.4.0
+      - scikit-learn>=1.3
+      - faiss-cpu>=1.7.4
+

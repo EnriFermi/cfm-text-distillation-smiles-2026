@@ -1,0 +1,17 @@
+torch==2.7.1
+numpy==1.26.4
+omegaconf==2.3.0
+tensorboard==2.18.0
+tiktoken==0.13.0
+pytest>=8.0
+
+# Generative evaluation: GPT-2 Large is the Gen-PPL judge and the MAUVE
+# featurizer. transformers is pinned to the version the CFM reference pins
+# (semicat/requirements-a100.txt), so both sides score with the same judge stack.
+# The rest are ranges because mauve-text follows whatever scikit-learn/faiss
+# build the cluster provides.
+transformers==4.41.0
+mauve-text>=0.4.0
+scikit-learn>=1.3
+faiss-cpu>=1.7.4
+

@@ -1,0 +1,11 @@
+inherits: base.yaml
+model:
+  type: ar
+training:
+  # No [noisy, clean] concatenation, so the micro-batch doubles over base.yaml.
+  # Global batch stays 128.
+  batch_size: 32
+  gradient_accumulation_steps: 4
+sampling:
+  top_p: 0.9
+  top_p_include_boundary: false
