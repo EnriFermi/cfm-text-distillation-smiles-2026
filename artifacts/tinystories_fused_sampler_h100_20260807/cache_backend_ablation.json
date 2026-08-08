@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "experiment": "M3 NFE/block=1 cache backend discriminator",
+    "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt",
+    "device": "cuda",
+    "gpu_name": "NVIDIA H100 NVL",
+    "dtype": "float32",
+    "seed": 0,
+    "batch_size": 1,
+    "length": 256,
+    "warmup_runs": 5,
+    "repeats": 30,
+    "upstream_timing_source": "/tmp/cfm-upstream-m2-latency-2e21c57/eval/run_eval.py"
+  },
+  "results": {
+    "dynamic": {
+      "sequence_latency_ms": 16.028770012781024,
+      "sequence_latency_p10_ms": 15.93155600130558,
+      "sequence_latency_p90_ms": 17.849387950263917,
+      "sequence_latency_repeats": 30
+    },
+    "preallocated": {
+      "sequence_latency_ms": 31.32074448512867,
+      "sequence_latency_p10_ms": 31.073271995410323,
+      "sequence_latency_p90_ms": 31.638295971788466,
+      "sequence_latency_repeats": 30
+    }
+  },
+  "preallocated_over_dynamic_slowdown": 1.9540329332914583,
+  "exact_token_equal": true,
+  "token_agreement": 1.0
+}

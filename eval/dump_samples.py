@@ -27,6 +27,7 @@ than on a re-tokenization).
 from __future__ import annotations
 
 import argparse
+import contextlib
 import functools
 import hashlib
 import json
@@ -47,6 +48,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from block.block_dit import BlockDIT  # noqa: E402
 from block.block_semicat import BlockSemicatModule  # noqa: E402
 from block.sampling import block_causal_sample, blockwise_sample  # noqa: E402
+from semicat.fast_inference import full_cfm_sample_fused_fast  # noqa: E402
 from semicat.models.semicat import SemicatModule  # noqa: E402
 from semicat.net.duo import DIT  # noqa: E402
 
@@ -157,6 +159,13 @@ def sample_point(module, kind, arch, nfe, discretize, n_samples, batch_size):
         if kind == "full_cfm":
             endpoint = module.sample_flow_map_batch(size, nfe)
             ids = _discretize(endpoint, discretize)
+        elif kind == "full_cfm_fused_fast":
+            ids = full_cfm_sample_fused_fast(
+                module,
+                nfe,
+                batch_size=size,
+                discretize=discretize,
+            )
         elif kind == "block_causal":
             ids = block_causal_sample(module, block_size=arch["block_size"],
                                       steps_per_block=nfe, batch_size=size,
@@ -169,6 +178,15 @@ def sample_point(module, kind, arch, nfe, discretize, n_samples, batch_size):
                 batch_size=size,
                 discretize=discretize,
                 inference_backend="compiled_cached",
+            )
+        elif kind == "block_causal_fused_fast":
+            ids = block_causal_sample(
+                module,
+                block_size=arch["block_size"],
+                steps_per_block=nfe,
+                batch_size=size,
+                discretize=discretize,
+                inference_backend="compiled_fused_cached",
             )
         elif kind == "blockwise_infer":
             ids = blockwise_sample(module, block_size=arch["_infer_block_size"],
@@ -214,8 +232,10 @@ def main() -> None:
     source.add_argument("--gold", choices=["text8", "tinystories"],
                         help="dump real held-out data instead of model samples")
     parser.add_argument("--sampler", default="auto",
-                        choices=["auto", "full_cfm", "block_causal",
-                                 "block_causal_fast", "blockwise_infer"])
+                        choices=["auto", "full_cfm", "full_cfm_fused_fast",
+                                 "block_causal",
+                                 "block_causal_fast", "block_causal_fused_fast",
+                                 "blockwise_infer"])
     parser.add_argument("--infer-block-size", type=int, default=16,
                         help="block size for M2 samplers on a full-sequence checkpoint")
     parser.add_argument("--nfe", nargs="+", type=int, default=[1, 2, 4, 8, 16])
@@ -225,17 +245,38 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--precision", choices=("fp32_tf32", "bf16"), default="fp32_tf32",
+        help="Parameter/compute precision used for generation.",
+    )
+    parser.add_argument(
+        "--compile-mode", choices=("reduce-overhead", "max-autotune"),
+        default="reduce-overhead",
+        help="TorchInductor mode used by compiled block samplers.",
+    )
     parser.add_argument("--data-dir", default="data")
     parser.add_argument("--cache-dir", default="data/tinystories")
     parser.add_argument("--label", default=None, help="human name for this dump")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
+    torch.set_float32_matmul_precision("high")
+    os.environ["BCFM_INFERENCE_COMPILE_MODE"] = args.compile_mode
+
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    cache_mode = "torch_compile" if args.sampler == "block_causal_fast" else "none"
+    cache_mode = (
+        "torch_compile+dynamic_kv+fused_transition"
+        if args.sampler == "block_causal_fused_fast"
+        else "torch_compile+fused_full_flow_step"
+        if args.sampler == "full_cfm_fused_fast"
+        else "torch_compile"
+        if args.sampler == "block_causal_fast"
+        else "none"
+    )
     print(
-        f"[config] device={args.device} dtype=float32 seed={args.seed} "
+        f"[config] device={args.device} precision={args.precision} "
+        f"compile_mode={args.compile_mode} seed={args.seed} "
         f"sampler={args.sampler} nfe={args.nfe} discretize={args.discretize} "
         f"n_samples={args.n_samples} batch_size={args.batch_size} "
         f"cache_mode={cache_mode} output={out_path.resolve()}",
@@ -267,7 +308,7 @@ def main() -> None:
         kind = args.sampler
         if kind == "auto":
             kind = "block_causal" if arch["block_size"] else "full_cfm"
-        if kind in {"block_causal", "block_causal_fast"} and not arch["block_size"]:
+        if kind in {"block_causal", "block_causal_fast", "block_causal_fused_fast"} and not arch["block_size"]:
             # This is M2 as the paper defines it (main.tex 139/141): the training-free
             # variant "reuses a pretrained full-sequence CFM as the head ... running the
             # same blockwise sampler", and "both variants share one loop". So a
@@ -282,6 +323,8 @@ def main() -> None:
             arch["block_size"] = args.infer_block_size
 
         module = build_module(arch, args.device)
+        if args.precision == "bf16":
+            module = module.to(dtype=torch.bfloat16)
         vocab_size = arch["vocab_size"]
         tok_name, detok = make_detokenizer(vocab_size, args.data_dir)
         dataset = "text8" if vocab_size == 27 else "tinystories"
@@ -297,8 +340,14 @@ def main() -> None:
                 torch.manual_seed(args.seed)
                 torch.cuda.manual_seed_all(args.seed)
                 started = time.time()
-                ids = sample_point(module, kind, arch, nfe, discretize,
-                                   args.n_samples, args.batch_size)
+                precision_context = (
+                    torch.autocast("cuda", dtype=torch.bfloat16)
+                    if args.precision == "bf16"
+                    else contextlib.nullcontext()
+                )
+                with precision_context:
+                    ids = sample_point(module, kind, arch, nfe, discretize,
+                                       args.n_samples, args.batch_size)
                 elapsed = time.time() - started
                 point_id = f"{discretize}_nfe{nfe}"
                 points.append({
@@ -314,7 +363,10 @@ def main() -> None:
                 _write(out_path, SCHEMA, model_meta_from(path, step, arch, dataset,
                                                          tok_name),
                        {"kind": kind, "block_size": block_size,
-                        "length": arch["length"], "seed": args.seed},
+                        "length": arch["length"], "seed": args.seed,
+                        "precision": args.precision,
+                        "parameter_dtype": str(next(module.parameters()).dtype).removeprefix("torch."),
+                        "compile_mode": args.compile_mode},
                        points, token_arrays, args.label)
         return _finish(out_path)
 

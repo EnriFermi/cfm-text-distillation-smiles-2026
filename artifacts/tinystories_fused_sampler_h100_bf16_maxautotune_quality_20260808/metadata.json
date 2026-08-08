@@ -1,0 +1,64 @@
+{
+  "schema": "bcfm-bf16-quality-latency/v1",
+  "rows": 19,
+  "models": [
+    "BD3-LM",
+    "M2",
+    "M3"
+  ],
+  "quality_protocol": {
+    "samples_per_point": 512,
+    "mauve_featurizer": "gpt2-large",
+    "mauve_context": 256,
+    "judge": "EleutherAI/gpt-j-6B",
+    "judge_dtype": "float32"
+  },
+  "latency_protocol": {
+    "experiment": "tinystories_fused_sampler_h100_latency",
+    "device": "cuda",
+    "gpu_name": "NVIDIA H100 NVL",
+    "precision": "bf16",
+    "parameter_dtype": "bfloat16",
+    "compute_dtype": "bfloat16",
+    "compile_mode": "max-autotune",
+    "seed": 0,
+    "batch_size": 1,
+    "length": 256,
+    "block_size": 16,
+    "warmup_runs": 5,
+    "repeats": 30,
+    "checkpoints": {
+      "M2": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/tinystories/NEW/tinystories_a100/checkpoints/best.ckpt",
+      "M3": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt",
+      "BD3-LM": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/BD3LM_best.pt"
+    },
+    "checkpoint_hashes": {
+      "M2": "4a1af3fe7008567a71338e138830b56015ade41bbdb165aba1611bfb9e3041b0",
+      "M3": "1a69c085a780f9d3af00e1e3a923611c7c6b65ccb85c7eac6cff36be51cdc7f5",
+      "BD3-LM": "c6d4ac8e5b265e565bed7819463a57be3058742eadb2696413cf288c0cd4644f"
+    },
+    "current_commit": "d921acaf8c9236b1d355d0003e008b0d02605679",
+    "implementation_source_sha256": {
+      "block/fast_inference.py": "014a40221bb453848060af8c5bf111b1911f8666dc2331098fc504ed0b6b3830",
+      "block/sampling.py": "a3a407637b77499a96a6dc5c83aeb8fad6c5cb82468b3c7e7ae9e38fc0010665",
+      "bcfm_baselines/models/bd3lm_fast.py": "f5c356b9fff71f19ae1ee9ba6178fd1785c7031b8c9569a38e42c1b52f03af69",
+      "eval/measure_fused_sampler_h100_latency.py": "28a7e9a5104c553d6dbb646be520bc1e00fe32412fa97ce23c16197e44cdcb70"
+    },
+    "upstream_commit": "2e21c57704ab94e131e3350ffd8286632f61a7b8",
+    "upstream_timing_source": "/tmp/cfm-upstream-m2-latency-2e21c57/eval/run_eval.py",
+    "upstream_timing_sha256": "120e2e53826dc540d1c7372049c1582c8bd9af679c4412489021b0ebdd3bce71",
+    "timing_code_execution": "AST nodes loaded directly from upstream source",
+    "optimization": {
+      "M2/M3": "current-block CUDA graphs + dynamic clean KV + fused clean-prev/first-noisy transition",
+      "BD3-LM": "current-block CUDA graphs + dynamic clean KV + fused transition + no CPU sync diagnostics",
+      "separate_cache_maintenance_calls": 0
+    },
+    "float32_matmul_precision": "high",
+    "cuda_matmul_allow_tf32": true,
+    "output_dir": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_fused_sampler_h100_bf16_maxautotune_fair_20260807"
+  },
+  "artifacts": {
+    "joined_csv": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_fused_sampler_h100_bf16_maxautotune_quality_20260808/optimized_quality_latency.csv",
+    "quality_delta_csv": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/artifacts/tinystories_fused_sampler_h100_bf16_maxautotune_quality_20260808/quality_delta_vs_previous_fp32.csv"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/logs/train/2026-07-28_12-43-24_12345_local/checkpoints/step_0100000.ckpt",
+  "before_model_build": {
+    "float32_matmul_precision": "highest",
+    "cuda_matmul_allow_tf32": false
+  },
+  "after_model_build": {
+    "float32_matmul_precision": "high",
+    "cuda_matmul_allow_tf32": true,
+    "parameter_dtype": "torch.float32",
+    "device": "NVIDIA H100 NVL"
+  },
+  "interpretation": "The original latency metadata was captured before model construction; Semicat construction switches the actual run to high/TF32."
+}

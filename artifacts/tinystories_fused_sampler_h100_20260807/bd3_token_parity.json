@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "checkpoint": "/home/coder/project/.CFM-DIFF-TEXT/cfm-text-distillation-smiles-2026/baseline/BD3LM_best.pt",
+    "checkpoint_step": 100000,
+    "checkpoint_sha256": "c6d4ac8e5b265e565bed7819463a57be3058742eadb2696413cf288c0cd4644f",
+    "implementation_source_sha256": {
+      "bcfm_baselines/models/bd3lm.py": "47d83c6a394bc7c4083c7859572442933686b4a7d6a1eba55110bf85c28b9cbd",
+      "bcfm_baselines/models/bd3lm_fast.py": "4191c391abab4affbe825dc80b1d621968e53e941997b102577a0ee240486fc2"
+    },
+    "device": "cuda",
+    "gpu_name": "NVIDIA H100 NVL",
+    "dtype": "float32",
+    "seed": 0,
+    "batch_size": 1,
+    "length": 256
+  },
+  "rows": [
+    {
+      "point": "ancestral_s1",
+      "configured_steps_per_block": 1,
+      "effective_steps_per_block": 1,
+      "total_denoising_nfe": 16,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "40c7410dd0e963c6423614be777e38fc8e9f802a04ef01fcab3cc0b70d46e883",
+      "fused_token_sha256": "40c7410dd0e963c6423614be777e38fc8e9f802a04ef01fcab3cc0b70d46e883",
+      "canonical_nfe": 16,
+      "fused_nfe": 16,
+      "seconds": 6.918318141018972
+    },
+    {
+      "point": "ancestral_s2",
+      "configured_steps_per_block": 2,
+      "effective_steps_per_block": 2,
+      "total_denoising_nfe": 32,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "477be6736d337e20cc9d4a0a8eeeadc41675ea1995e02fd8a2cdc43493ad23b7",
+      "fused_token_sha256": "477be6736d337e20cc9d4a0a8eeeadc41675ea1995e02fd8a2cdc43493ad23b7",
+      "canonical_nfe": 32,
+      "fused_nfe": 32,
+      "seconds": 3.829278087010607
+    },
+    {
+      "point": "ancestral_s4",
+      "configured_steps_per_block": 4,
+      "effective_steps_per_block": 4,
+      "total_denoising_nfe": 64,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "6f80e6102e0bc0412d2f8e284f24abbd1fab99b3dd836b4e4e537a7f3adb71b7",
+      "fused_token_sha256": "6f80e6102e0bc0412d2f8e284f24abbd1fab99b3dd836b4e4e537a7f3adb71b7",
+      "canonical_nfe": 64,
+      "fused_nfe": 64,
+      "seconds": 2.930882671964355
+    },
+    {
+      "point": "ancestral_s8",
+      "configured_steps_per_block": 8,
+      "effective_steps_per_block": 8,
+      "total_denoising_nfe": 128,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "57c3b996d361c0e2b83a0e561df280dd46aaae38d183135ba5c79ea0eabee015",
+      "fused_token_sha256": "57c3b996d361c0e2b83a0e561df280dd46aaae38d183135ba5c79ea0eabee015",
+      "canonical_nfe": 128,
+      "fused_nfe": 128,
+      "seconds": 0.9911682129604742
+    },
+    {
+      "point": "ancestral_s16",
+      "configured_steps_per_block": 16,
+      "effective_steps_per_block": 16,
+      "total_denoising_nfe": 256,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "e5d1c508668e1a25dc5eeac3fc30dbabef1fcc4826eaaac0d3bbcdccb3bdba64",
+      "fused_token_sha256": "e5d1c508668e1a25dc5eeac3fc30dbabef1fcc4826eaaac0d3bbcdccb3bdba64",
+      "canonical_nfe": 256,
+      "fused_nfe": 256,
+      "seconds": 1.851462661055848
+    },
+    {
+      "point": "ancestral_s32",
+      "configured_steps_per_block": 32,
+      "effective_steps_per_block": 32,
+      "total_denoising_nfe": 512,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "387e2876839707f6c9b1eeeb930a107ddf22b52f79f2e240845a1800aac64554",
+      "fused_token_sha256": "387e2876839707f6c9b1eeeb930a107ddf22b52f79f2e240845a1800aac64554",
+      "canonical_nfe": 512,
+      "fused_nfe": 512,
+      "seconds": 3.3952296029310673
+    },
+    {
+      "point": "first_hitting_nfe256",
+      "configured_steps_per_block": 256,
+      "effective_steps_per_block": 16,
+      "total_denoising_nfe": 256,
+      "exact_token_equal": true,
+      "token_agreement": 1.0,
+      "canonical_token_sha256": "968eb65ffab0a60fdc555d7d926d979ba6c949a0d35ff76ad38d6042343e4138",
+      "fused_token_sha256": "968eb65ffab0a60fdc555d7d926d979ba6c949a0d35ff76ad38d6042343e4138",
+      "canonical_nfe": 256,
+      "fused_nfe": 256,
+      "seconds": 1.8156342629808933
+    }
+  ]
+}

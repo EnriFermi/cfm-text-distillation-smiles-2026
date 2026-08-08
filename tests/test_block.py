@@ -262,7 +262,8 @@ def test_block_causal_sample():
 
 @pytest.mark.parametrize("steps", [1, 2, 4])
 @pytest.mark.parametrize("discretize", ["argmax", "sample"])
-def test_cached_block_causal_sample_matches_full_on_cpu(steps, discretize):
+@pytest.mark.parametrize("backend", ["cached", "fused_cached"])
+def test_cached_block_causal_sample_matches_full_on_cpu(steps, discretize, backend):
     """The KV path preserves the doubled-stream sampler on a deterministic CPU net."""
     m = _tiny_module().eval()
     _dezero(m.net)
@@ -274,7 +275,7 @@ def test_cached_block_causal_sample_matches_full_on_cpu(steps, discretize):
     torch.manual_seed(731)
     actual = block_causal_sample(
         m, B, steps_per_block=steps, batch_size=3, length=L,
-        discretize=discretize, inference_backend="cached",
+        discretize=discretize, inference_backend=backend,
     )
     assert torch.equal(actual, expected)
 

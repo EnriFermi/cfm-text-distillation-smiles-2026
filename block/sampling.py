@@ -133,7 +133,9 @@ def block_causal_sample(
     length: int | None = None,
     schedule: list[tuple[float, float]] | None = None,
     discretize: Literal["argmax", "sample"] = "argmax",
-    inference_backend: Literal["full", "cached", "compiled_cached"] = "full",
+    inference_backend: Literal[
+        "full", "cached", "compiled_cached", "fused_cached", "compiled_fused_cached"
+    ] = "full",
 ) -> Tensor:
     """Sampler for the trained block-causal model (M3).
 
@@ -145,9 +147,26 @@ def block_causal_sample(
     SDPA rather than FlexAttention's reduction order.
     """
     if inference_backend != "full":
-        if inference_backend not in {"cached", "compiled_cached"}:
+        if inference_backend not in {
+            "cached", "compiled_cached", "fused_cached", "compiled_fused_cached"
+        }:
             raise ValueError(f"unknown inference_backend={inference_backend!r}")
-        from block.fast_inference import block_causal_sample_cached
+        from block.fast_inference import (
+            block_causal_sample_cached,
+            block_causal_sample_fused_cached,
+        )
+
+        if inference_backend in {"fused_cached", "compiled_fused_cached"}:
+            return block_causal_sample_fused_cached(
+                module,
+                block_size,
+                steps_per_block,
+                batch_size=batch_size,
+                length=length,
+                schedule=schedule,
+                discretize=discretize,
+                compile_steps=inference_backend == "compiled_fused_cached",
+            )
 
         return block_causal_sample_cached(
             module,

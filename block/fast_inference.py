@@ -16,6 +16,7 @@ FlexAttention while this small dense path uses PyTorch SDPA.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Literal
 
@@ -206,8 +207,8 @@ class FixedShapeCleanBlock(nn.Module):
         return h
 
 
-_COMPILED_NOISY_BLOCKS: dict[int, nn.Module] = {}
-_COMPILED_CLEAN_BLOCKS: dict[int, nn.Module] = {}
+_COMPILED_NOISY_BLOCKS: dict[tuple[int, str], nn.Module] = {}
+_COMPILED_CLEAN_BLOCKS: dict[tuple[int, str], nn.Module] = {}
 
 
 class DynamicPrefixFlowStep(nn.Module):
@@ -297,27 +298,285 @@ class DynamicPrefixCleanBlock(nn.Module):
         return tuple(new_keys), tuple(new_values)
 
 
-_DYNAMIC_FLOW_STEPS: dict[int, nn.Module] = {}
-_DYNAMIC_CLEAN_BLOCKS: dict[int, nn.Module] = {}
+_DYNAMIC_FLOW_STEPS: dict[tuple[int, str], nn.Module] = {}
+_DYNAMIC_CLEAN_BLOCKS: dict[tuple[int, str], nn.Module] = {}
+
+
+class InplaceDynamicPrefixFlowStep(nn.Module):
+    """Current-block flow step backed by one fixed, preallocated KV buffer.
+
+    ``DynamicPrefixFlowStep`` grows the persistent cache with ``torch.cat`` and
+    concatenates the current K/V at every layer.  This variant writes the current
+    block into scratch slots immediately after the finalized prefix and attends to
+    a view of that storage.  The Python integer ``prefix_length`` deliberately
+    specializes Inductor once per block position, preserving the small unmasked
+    attention shapes without allocating a new K/V tensor every step.
+    """
+
+    def __init__(self, net):
+        super().__init__()
+        self.net = net
+
+    def forward(
+        self,
+        noisy_block: Tensor,
+        s: Tensor,
+        t: Tensor,
+        positions: Tensor,
+        prefix_length: int,
+        step_scale: Tensor,
+        key_storage: tuple[Tensor, ...],
+        value_storage: tuple[Tensor, ...],
+    ) -> Tensor:
+        cond = self.net._condition(s, t)
+        h = self.net._embed(noisy_block, s, cond)
+        rotary_cos_sin = _rotary_at(self.net, positions, h.dtype)
+        visible_length = prefix_length + noisy_block.shape[1]
+        for layer_index, layer in enumerate(self.net.blocks):
+            modulation = self.net._layer_modulation(layer, cond)
+            shift_msa, scale_msa, *_ = modulation
+            residual = h
+            h_norm = modulate_fused(layer.norm1(h), shift_msa, scale_msa)
+            query, key, value = _block_qkv(
+                self.net, layer, h_norm, rotary_cos_sin,
+            )
+            key_storage[layer_index].index_copy_(1, positions, key)
+            value_storage[layer_index].index_copy_(1, positions, value)
+            attention_output = _dense_attention(
+                query,
+                key_storage[layer_index][:, :visible_length],
+                value_storage[layer_index][:, :visible_length],
+            )
+            h = self.net._finish_layer(
+                layer, residual, attention_output, modulation,
+            )
+        probabilities = self.net._final_layer(h, cond).softmax(dim=-1)
+        return noisy_block + step_scale * (probabilities - noisy_block)
+
+
+class FusedCleanPreviousAndNoisyStep(nn.Module):
+    """Commit the preceding clean block during the next block's first flow step.
+
+    The clean half attends to ``[older clean prefix; clean previous block]``.
+    The noisy half attends to that same finalized prefix plus its own noisy block.
+    Thus the graph is exactly the composition of a clean-cache append followed by
+    a noisy flow step, while embedding/QKV/MLP launches for both 16-token streams
+    are issued in one compiled Transformer pass.
+    """
+
+    def __init__(self, net):
+        super().__init__()
+        self.net = net
+
+    def forward(
+        self,
+        clean_previous: Tensor,
+        noisy_block: Tensor,
+        s: Tensor,
+        t: Tensor,
+        previous_positions: Tensor,
+        noisy_positions: Tensor,
+        older_prefix_length: int,
+        step_scale: Tensor,
+        key_storage: tuple[Tensor, ...],
+        value_storage: tuple[Tensor, ...],
+    ) -> Tensor:
+        batch, block_size, _ = noisy_block.shape
+        ones = torch.ones(
+            batch, block_size, device=noisy_block.device, dtype=noisy_block.dtype,
+        )
+        combined = torch.cat((clean_previous, noisy_block), dim=1)
+        combined_s = torch.cat((ones, s), dim=1)
+        combined_t = torch.cat((ones, t), dim=1)
+        positions = torch.cat((previous_positions, noisy_positions), dim=0)
+        cond = self.net._condition(combined_s, combined_t)
+        h = self.net._embed(combined, combined_s, cond)
+        rotary_cos_sin = _rotary_at(self.net, positions, h.dtype)
+        clean_visible = older_prefix_length + block_size
+        noisy_visible = clean_visible + block_size
+
+        for layer_index, layer in enumerate(self.net.blocks):
+            modulation = self.net._layer_modulation(layer, cond)
+            shift_msa, scale_msa, *_ = modulation
+            residual = h
+            h_norm = modulate_fused(layer.norm1(h), shift_msa, scale_msa)
+            query, key, value = _block_qkv(
+                self.net, layer, h_norm, rotary_cos_sin,
+            )
+            key_storage[layer_index].index_copy_(1, positions, key)
+            value_storage[layer_index].index_copy_(1, positions, value)
+            clean_attention = _dense_attention(
+                query[:, :block_size],
+                key_storage[layer_index][:, :clean_visible],
+                value_storage[layer_index][:, :clean_visible],
+            )
+            noisy_attention = _dense_attention(
+                query[:, block_size:],
+                key_storage[layer_index][:, :noisy_visible],
+                value_storage[layer_index][:, :noisy_visible],
+            )
+            attention_output = torch.cat((clean_attention, noisy_attention), dim=1)
+            h = self.net._finish_layer(
+                layer, residual, attention_output, modulation,
+            )
+
+        noisy_cond = cond[:, block_size:]
+        probabilities = self.net._final_layer(
+            h[:, block_size:], noisy_cond,
+        ).softmax(dim=-1)
+        return noisy_block + step_scale * (probabilities - noisy_block)
+
+
+_INPLACE_FLOW_STEPS: dict[tuple[int, str], nn.Module] = {}
+_FUSED_TRANSITION_STEPS: dict[tuple[int, str], nn.Module] = {}
+
+
+class DynamicFusedCleanPreviousAndNoisyStep(nn.Module):
+    """CUDA-graph-friendly fused transition over a dynamically sized prefix.
+
+    Unlike :class:`FusedCleanPreviousAndNoisyStep`, this module does not mutate
+    graph inputs.  That permits Inductor's reduce-overhead CUDA graph fast path;
+    the newly committed clean K/V are returned and appended by the caller once
+    per block.  Profiling on H100 showed this to be faster than literal in-place
+    storage because external cache mutation disables CUDA graph capture.
+    """
+
+    def __init__(self, net):
+        super().__init__()
+        self.net = net
+
+    def forward(
+        self,
+        clean_previous: Tensor,
+        noisy_block: Tensor,
+        s: Tensor,
+        t: Tensor,
+        previous_positions: Tensor,
+        noisy_positions: Tensor,
+        step_scale: Tensor,
+        clean_keys: tuple[Tensor, ...],
+        clean_values: tuple[Tensor, ...],
+    ) -> tuple[Tensor, tuple[Tensor, ...], tuple[Tensor, ...]]:
+        batch, block_size, _ = noisy_block.shape
+        ones = torch.ones(
+            batch, block_size, device=noisy_block.device, dtype=noisy_block.dtype,
+        )
+        combined = torch.cat((clean_previous, noisy_block), dim=1)
+        combined_s = torch.cat((ones, s), dim=1)
+        combined_t = torch.cat((ones, t), dim=1)
+        positions = torch.cat((previous_positions, noisy_positions), dim=0)
+        cond = self.net._condition(combined_s, combined_t)
+        h = self.net._embed(combined, combined_s, cond)
+        rotary_cos_sin = _rotary_at(self.net, positions, h.dtype)
+        new_keys: list[Tensor] = []
+        new_values: list[Tensor] = []
+
+        for layer_index, layer in enumerate(self.net.blocks):
+            modulation = self.net._layer_modulation(layer, cond)
+            shift_msa, scale_msa, *_ = modulation
+            residual = h
+            h_norm = modulate_fused(layer.norm1(h), shift_msa, scale_msa)
+            query, key, value = _block_qkv(
+                self.net, layer, h_norm, rotary_cos_sin,
+            )
+            previous_key = key[:, :block_size]
+            previous_value = value[:, :block_size]
+            full_key = torch.cat((clean_keys[layer_index], key), dim=1)
+            full_value = torch.cat((clean_values[layer_index], value), dim=1)
+            clean_visible = clean_keys[layer_index].shape[1] + block_size
+            clean_attention = _dense_attention(
+                query[:, :block_size],
+                full_key[:, :clean_visible],
+                full_value[:, :clean_visible],
+            )
+            noisy_attention = _dense_attention(
+                query[:, block_size:], full_key, full_value,
+            )
+            attention_output = torch.cat((clean_attention, noisy_attention), dim=1)
+            h = self.net._finish_layer(
+                layer, residual, attention_output, modulation,
+            )
+            new_keys.append(previous_key)
+            new_values.append(previous_value)
+
+        probabilities = self.net._final_layer(
+            h[:, block_size:], cond[:, block_size:],
+        ).softmax(dim=-1)
+        updated = noisy_block + step_scale * (probabilities - noisy_block)
+        return updated, tuple(new_keys), tuple(new_values)
+
+
+_DYNAMIC_FUSED_TRANSITION_STEPS: dict[tuple[int, str], nn.Module] = {}
+
+
+def _inference_compile_mode() -> str:
+    mode = os.environ.get("BCFM_INFERENCE_COMPILE_MODE", "reduce-overhead")
+    if mode not in {"reduce-overhead", "max-autotune"}:
+        raise ValueError(f"unsupported BCFM_INFERENCE_COMPILE_MODE={mode!r}")
+    return mode
+
+
+def compiled_inplace_flow_step(net) -> nn.Module:
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
+    scorer = _INPLACE_FLOW_STEPS.get(key)
+    if scorer is None:
+        scorer = torch.compile(
+            InplaceDynamicPrefixFlowStep(net),
+            fullgraph=True,
+            mode=mode,
+        )
+        _INPLACE_FLOW_STEPS[key] = scorer
+    return scorer
+
+
+def compiled_fused_transition_step(net) -> nn.Module:
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
+    scorer = _FUSED_TRANSITION_STEPS.get(key)
+    if scorer is None:
+        scorer = torch.compile(
+            FusedCleanPreviousAndNoisyStep(net),
+            fullgraph=True,
+            mode=mode,
+        )
+        _FUSED_TRANSITION_STEPS[key] = scorer
+    return scorer
+
+
+def compiled_dynamic_fused_transition_step(net) -> nn.Module:
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
+    scorer = _DYNAMIC_FUSED_TRANSITION_STEPS.get(key)
+    if scorer is None:
+        scorer = torch.compile(
+            DynamicFusedCleanPreviousAndNoisyStep(net),
+            fullgraph=True,
+            mode=mode,
+        )
+        _DYNAMIC_FUSED_TRANSITION_STEPS[key] = scorer
+    return scorer
 
 
 def compiled_dynamic_flow_step(net) -> nn.Module:
-    key = id(net)
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
     scorer = _DYNAMIC_FLOW_STEPS.get(key)
     if scorer is None:
         scorer = torch.compile(
-            DynamicPrefixFlowStep(net), fullgraph=True, mode="reduce-overhead",
+            DynamicPrefixFlowStep(net), fullgraph=True, mode=mode,
         )
         _DYNAMIC_FLOW_STEPS[key] = scorer
     return scorer
 
 
 def compiled_dynamic_clean_block(net) -> nn.Module:
-    key = id(net)
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
     scorer = _DYNAMIC_CLEAN_BLOCKS.get(key)
     if scorer is None:
         scorer = torch.compile(
-            DynamicPrefixCleanBlock(net), fullgraph=True, mode="reduce-overhead",
+            DynamicPrefixCleanBlock(net), fullgraph=True, mode=mode,
         )
         _DYNAMIC_CLEAN_BLOCKS[key] = scorer
     return scorer
@@ -325,13 +584,14 @@ def compiled_dynamic_clean_block(net) -> nn.Module:
 
 def compiled_flow_step(net) -> nn.Module:
     """Return a process-local compiled flow step, cached by network identity."""
-    key = id(net)
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
     scorer = _COMPILED_NOISY_BLOCKS.get(key)
     if scorer is None:
         scorer = torch.compile(
             FixedShapeFlowStep(net),
             fullgraph=True,
-            mode="reduce-overhead",
+            mode=mode,
         )
         _COMPILED_NOISY_BLOCKS[key] = scorer
     return scorer
@@ -339,13 +599,14 @@ def compiled_flow_step(net) -> nn.Module:
 
 def compiled_clean_block(net) -> nn.Module:
     """Return a process-local compiled clean encoder, cached by network identity."""
-    key = id(net)
+    mode = _inference_compile_mode()
+    key = (id(net), mode)
     scorer = _COMPILED_CLEAN_BLOCKS.get(key)
     if scorer is None:
         scorer = torch.compile(
             FixedShapeCleanBlock(net),
             fullgraph=True,
-            mode="reduce-overhead",
+            mode=mode,
         )
         _COMPILED_CLEAN_BLOCKS[key] = scorer
     return scorer
@@ -611,5 +872,134 @@ def block_causal_sample_cached(
                     tuple(cache.values),
                 )
                 cache.seq_len = hi
+
+    return tokens
+
+
+@torch.inference_mode()
+def block_causal_sample_fused_cached(
+    module,
+    block_size: int,
+    steps_per_block: int,
+    *,
+    batch_size: int,
+    length: int | None = None,
+    schedule: list[tuple[float, float]] | None = None,
+    discretize: Literal["argmax", "sample"] = "argmax",
+    compile_steps: bool = True,
+) -> Tensor:
+    """Maximum-speed block sampler with fused cache commits.
+
+    There is no standalone clean-cache forward.  After block ``b`` is finalized,
+    its clean K/V are produced together with the first noisy flow step of block
+    ``b + 1``.  The final block is never encoded.  Consequently the sampler makes
+    exactly ``num_blocks * steps_per_block`` compiled Transformer calls rather
+    than adding ``num_blocks - 1`` cache-maintenance calls.
+    """
+    length = int(length or module.in_shape[0])
+    vocab = int(module.in_shape[-1])
+    if length != module.net.length:
+        raise ValueError("fused cached inference requires the checkpoint training length")
+    if length % block_size:
+        raise ValueError(f"length {length} not divisible by block_size {block_size}")
+    if block_size != module.net.block_size:
+        raise ValueError("sampler block_size must match BlockDIT.block_size")
+    if steps_per_block <= 0:
+        raise ValueError("steps_per_block must be positive")
+
+    device = module.device
+    sched = [
+        (float(s), float(t))
+        for s, t in (schedule or uniform_schedule(steps_per_block))
+    ]
+    tokens = torch.zeros(batch_size, length, dtype=torch.long, device=device)
+    cache = CleanPrefixKVCache.empty(module.net, batch_size)
+    cache_dtype = next(module.net.parameters()).dtype
+    if torch.is_autocast_enabled(device.type):
+        cache_dtype = torch.get_autocast_dtype(device.type)
+    head_dim = module.net.hidden_size // module.net.n_heads
+    empty_shape = (batch_size, 0, module.net.n_heads, head_dim)
+    cache.keys = [
+        torch.empty(empty_shape, device=device, dtype=cache_dtype)
+        for _ in module.net.blocks
+    ]
+    cache.values = [torch.empty_like(item) for item in cache.keys]
+    flow_step: nn.Module = (
+        compiled_dynamic_flow_step(module.net)
+        if compile_steps else DynamicPrefixFlowStep(module.net)
+    )
+    transition_step: nn.Module = (
+        compiled_dynamic_fused_transition_step(module.net)
+        if compile_steps else DynamicFusedCleanPreviousAndNoisyStep(module.net)
+    )
+
+    previous_clean: Tensor | None = None
+    n_blocks = length // block_size
+    for block_index in range(n_blocks):
+        lo = block_index * block_size
+        hi = lo + block_size
+        positions = torch.arange(lo, hi, device=device)
+        z_block = module.prior((batch_size, block_size, vocab), device=device)
+        for step_index, (s_value, t_value) in enumerate(sched):
+            s = torch.full(
+                (batch_size, block_size), s_value, device=device, dtype=z_block.dtype,
+            )
+            t = torch.full(
+                (batch_size, block_size), t_value, device=device, dtype=z_block.dtype,
+            )
+            step_scale = torch.scalar_tensor(
+                (t_value - s_value) / (1.0 - s_value + 1e-8),
+                device=device,
+                dtype=z_block.dtype,
+            )
+            if block_index and step_index == 0:
+                if previous_clean is None:
+                    raise RuntimeError("missing preceding clean block")
+                previous_positions = torch.arange(lo - block_size, lo, device=device)
+                clean_keys = tuple(cache.keys)
+                clean_values = tuple(cache.values)
+                z_block, new_keys, new_values = transition_step(
+                    previous_clean,
+                    z_block,
+                    s,
+                    t,
+                    previous_positions,
+                    positions,
+                    step_scale,
+                    clean_keys,
+                    clean_values,
+                )
+                for layer_index in range(len(cache.keys)):
+                    key = new_keys[layer_index].clone() if compile_steps else new_keys[layer_index]
+                    value = (
+                        new_values[layer_index].clone()
+                        if compile_steps else new_values[layer_index]
+                    )
+                    cache.keys[layer_index] = torch.cat(
+                        (clean_keys[layer_index], key), dim=1,
+                    )
+                    cache.values[layer_index] = torch.cat(
+                        (clean_values[layer_index], value), dim=1,
+                    )
+                cache.seq_len = lo
+            else:
+                z_block = flow_step(
+                    z_block,
+                    s,
+                    t,
+                    positions,
+                    step_scale,
+                    tuple(cache.keys),
+                    tuple(cache.values),
+                )
+            # reduce-overhead owns reusable CUDA-graph outputs.  The next replay
+            # must not overwrite the state consumed by the following flow step.
+            if compile_steps:
+                z_block = z_block.clone()
+
+        block = _discretize(z_block, discretize)
+        tokens[:, lo:hi] = block
+        if block_index + 1 < n_blocks:
+            previous_clean = F.one_hot(block, vocab).to(z_block.dtype)
 
     return tokens

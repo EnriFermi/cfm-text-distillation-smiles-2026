@@ -12,6 +12,7 @@ from bcfm_baselines.models.generative_text import (
     GenerativeTextModel,
     filter_logits,
 )
+from bcfm_baselines.models.bd3lm_fast import generate_fast_bd3
 
 
 CONFIGS = [
@@ -121,6 +122,24 @@ def test_bd3_kv_cache_matches_uncached() -> None:
     cached = model.generate(GenerationConfig(**{**base, "use_kv_cache": True}))
     uncached = model.generate(GenerationConfig(**{**base, "use_kv_cache": False}))
     assert torch.equal(cached.tokens, uncached.tokens)
+
+
+@pytest.mark.parametrize("first_hitting", [False, True])
+def test_bd3_fused_fast_sampler_matches_canonical_on_cpu(first_hitting: bool) -> None:
+    config = load_config("configs/smoke/text8_bd3lm.yaml")
+    sampling = {
+        **config["sampling"],
+        "first_hitting": first_hitting,
+        "steps_per_block": 4 if first_hitting else 2,
+    }
+    model = create_model(config).eval()
+    generation = GenerationConfig(**sampling)
+    expected = model.generate(generation)
+    actual = generate_fast_bd3(model, generation, compile_steps=False)
+    assert torch.equal(actual.tokens, expected.tokens)
+    assert actual.diagnostics["num_function_evaluations"] == expected.diagnostics[
+        "num_function_evaluations"
+    ]
 
 
 def test_mdlm_loss_only_uses_masked_positions() -> None:

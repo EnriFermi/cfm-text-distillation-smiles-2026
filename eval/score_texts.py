@@ -37,6 +37,8 @@ from pathlib import Path
 import numpy as np
 
 SCHEMA = "bcfm-textdump/v1"
+_MAUVE_MODEL_CACHE = {}
+_GEN_PPL_MODEL_CACHE = {}
 
 
 # ----------------------------------------------------------------- dump loading
@@ -149,11 +151,21 @@ def compute_mauve(
     device_id,
     max_length,
     reference_feature_cache=None,
+    reuse_external_models=False,
 ):
     import mauve
     from mauve.utils import featurize_tokens_from_model, get_model, get_tokenizer
-    tok = get_tokenizer(featurize_model)
-    model = get_model(featurize_model, tok, device_id)
+    cache_key = (featurize_model, int(device_id))
+    cached = _MAUVE_MODEL_CACHE.get(cache_key) if reuse_external_models else None
+    if cached is None:
+        tok = get_tokenizer(featurize_model)
+        model = get_model(featurize_model, tok, device_id)
+        if reuse_external_models:
+            _MAUVE_MODEL_CACHE[cache_key] = (tok, model)
+            print(f"[mauve] model cache populated: {cache_key}", flush=True)
+    else:
+        tok, model = cached
+        print(f"[mauve] model cache hit: {cache_key}", flush=True)
 
     def feats(items, name):
         encoded = [tok.encode(t, return_tensors="pt", truncation=True,
@@ -207,37 +219,54 @@ def compute_mauve(
             print(f"[mauve] reference cache written: {cache_path}", flush=True)
 
     generated_features = feats(texts, "generated")
-    del model, tok
-    gc.collect()
-    if device_id >= 0:
-        import torch
-        torch.cuda.empty_cache()
+    if not reuse_external_models:
+        del model, tok
+        gc.collect()
+        if device_id >= 0:
+            import torch
+            torch.cuda.empty_cache()
     result = mauve.compute_mauve(p_features=reference_features,
                                  q_features=generated_features,
                                  num_buckets="auto", seed=25, verbose=False)
     return float(result.mauve), float(result.frontier_integral)
 
 
-def compute_gen_ppl(texts, judge, batch_size, context_size, device, dtype):
+def compute_gen_ppl(
+    texts,
+    judge,
+    batch_size,
+    context_size,
+    device,
+    dtype,
+    reuse_external_models=False,
+):
     """Judge-tokenized perplexity; mask-after-first-eos, as upstream does."""
     import torch
     import torch.nn.functional as F
     import transformers
-    print(
-        f"[gen_ppl] stage=judge_load model={judge} device={device} dtype={dtype}",
-        flush=True,
-    )
-    tok = transformers.AutoTokenizer.from_pretrained(judge)
-    if tok.pad_token is None:
-        tok.pad_token, tok.pad_token_id = tok.eos_token, tok.eos_token_id
-    tok.padding_side, tok.truncation_side = "right", "right"
-    model = transformers.AutoModelForCausalLM.from_pretrained(
-        judge, torch_dtype=getattr(torch, dtype)).eval().to(device)
-    print(
-        f"[gen_ppl] stage=judge_ready model={judge} "
-        f"parameter_dtype={next(model.parameters()).dtype}",
-        flush=True,
-    )
+    cache_key = (judge, device, dtype)
+    cached = _GEN_PPL_MODEL_CACHE.get(cache_key) if reuse_external_models else None
+    if cached is None:
+        print(
+            f"[gen_ppl] stage=judge_load model={judge} device={device} dtype={dtype}",
+            flush=True,
+        )
+        tok = transformers.AutoTokenizer.from_pretrained(judge)
+        if tok.pad_token is None:
+            tok.pad_token, tok.pad_token_id = tok.eos_token, tok.eos_token_id
+        tok.padding_side, tok.truncation_side = "right", "right"
+        model = transformers.AutoModelForCausalLM.from_pretrained(
+            judge, torch_dtype=getattr(torch, dtype)).eval().to(device)
+        if reuse_external_models:
+            _GEN_PPL_MODEL_CACHE[cache_key] = (tok, model)
+        print(
+            f"[gen_ppl] stage=judge_ready model={judge} "
+            f"parameter_dtype={next(model.parameters()).dtype}",
+            flush=True,
+        )
+    else:
+        tok, model = cached
+        print(f"[gen_ppl] stage=judge_cache_hit key={cache_key}", flush=True)
     encoded = tok(texts, return_tensors="pt", return_attention_mask=True,
                   truncation=True, padding=True, max_length=context_size,
                   add_special_tokens=False)
@@ -270,7 +299,9 @@ def compute_gen_ppl(texts, judge, batch_size, context_size, device, dtype):
                 )
     if total_tokens == 0:
         raise ValueError("gen-PPL has zero valid judge tokens")
-    del model, tok, encoded, ids, attn
+    del encoded, ids, attn
+    if not reuse_external_models:
+        del model, tok
     gc.collect()
     torch.cuda.empty_cache()
     return float(np.exp(total_nll / total_tokens))
@@ -296,12 +327,33 @@ def main() -> None:
     parser.add_argument("--context-size", type=int, default=256)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--device-id", type=int, default=0)
+    parser.add_argument(
+        "--reuse-external-models",
+        action="store_true",
+        help="keep MAUVE and gen-PPL judge models resident across dump points",
+    )
+    parser.add_argument(
+        "--discretize",
+        nargs="+",
+        choices=["argmax", "sample"],
+        help="score only points with these discretization modes",
+    )
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
     paths = sorted({p for pattern in args.dumps for p in glob.glob(pattern)})
     if not paths:
         raise SystemExit("no dumps matched")
+
+    print(
+        f"[config] dumps={paths} metrics={args.metrics} device={args.device}:{args.device_id} "
+        f"judge={args.judge} judge_dtype={args.judge_dtype} "
+        f"judge_batch_size={args.judge_batch_size} featurize_model={args.featurize_model} "
+        f"context_size={args.context_size} discretize={args.discretize or ['all']} "
+        f"reuse_external_models={args.reuse_external_models} "
+        f"output={Path(args.out).resolve()}",
+        flush=True,
+    )
 
     reference, ref_units, ref_texts = None, None, None
     if args.reference:
@@ -320,6 +372,8 @@ def main() -> None:
         dump = load_dump(path)
         label = dump.get("label") or Path(path).stem
         for point in dump["points"]:
+            if args.discretize and point["discretize"] not in args.discretize:
+                continue
             units = point_units(dump, point)
             row = {"dump": path, "label": label,
                    "dataset": dump["model"].get("dataset"),
@@ -347,13 +401,15 @@ def main() -> None:
                 score, frontier = compute_mauve(ref_texts, point["texts"],
                                                 args.featurize_model, args.device_id,
                                                 args.context_size,
-                                                args.mauve_reference_cache)
+                                                args.mauve_reference_cache,
+                                                args.reuse_external_models)
                 row["mauve"], row["frontier_integral"] = score, frontier
             if "gen_ppl" in args.metrics:
                 row["gen_ppl"] = compute_gen_ppl(point["texts"], args.judge,
                                                  args.judge_batch_size,
                                                  args.context_size, args.device,
-                                                 args.judge_dtype)
+                                                 args.judge_dtype,
+                                                 args.reuse_external_models)
                 row["judge"] = args.judge
             row["scoring_seconds"] = round(time.time() - started, 1)
             rows.append(row)
